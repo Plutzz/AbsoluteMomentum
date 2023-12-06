@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Moving-Momentum
   m_EditorClassIdentifier: 
   speed: 30
-  jumpHeight: 5
+  jumpHeight: 10
   turnSmoothTime: 0.1
   groundDrag: 2.5
