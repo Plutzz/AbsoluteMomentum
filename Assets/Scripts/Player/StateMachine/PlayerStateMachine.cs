@@ -1,7 +1,9 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerStateMachine : NetworkBehaviour
@@ -35,7 +37,9 @@ public class PlayerStateMachine : NetworkBehaviour
     public Rigidbody rb { get; private set; }
     public Transform GroundCheck;
     public Vector3 GroundCheckSize;
-    [SerializeField] LayerMask groundLayer;
+
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private GameObject playerCameraPrefab;
 
     #endregion
 
@@ -66,9 +70,18 @@ public class PlayerStateMachine : NetworkBehaviour
         PlayerAirborneBaseInstance.Initialize(gameObject, this, playerInputActions);
 
         initialState = IdleState;
+
+
     }
     private void Start()
     {
+        if (IsOwner)
+        {
+            CinemachineFreeLook playerCamera = Instantiate(playerCameraPrefab).GetComponent<CinemachineFreeLook>();
+            playerCamera.m_LookAt = transform;
+            playerCamera.m_Follow = transform;
+        }
+
         currentState = initialState;
         currentState.EnterLogic();
     }
