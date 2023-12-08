@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerStateMachine : MonoBehaviour
+public class PlayerStateMachine : NetworkBehaviour
 {
     #region States Variables
 
@@ -74,17 +75,21 @@ public class PlayerStateMachine : MonoBehaviour
 
     private void Update()
     {
+        if (!IsOwner) return;
+
         //Debug.Log(rb.velocity);
         currentState.UpdateState();
-        CurrentStateText.text = "Current State: " + currentState.ToString();
-        GroundedText.text = "Grounded: " + GroundedCheck();
-        VelocityText.text = "Velocity: " + rb.velocity.x + "," + rb.velocity.z;
-        SpeedText.text = "Speed: " + rb.velocity.magnitude;
+        //CurrentStateText.text = "Current State: " + currentState.ToString();
+        //GroundedText.text = "Grounded: " + GroundedCheck();
+        //VelocityText.text = "Velocity: " + rb.velocity.x + "," + rb.velocity.z;
+        //SpeedText.text = "Speed: " + rb.velocity.magnitude;
 
     }
 
     private void FixedUpdate()
     {
+        if (!IsOwner) return;
+
         currentState.FixedUpdateState();
     }
 

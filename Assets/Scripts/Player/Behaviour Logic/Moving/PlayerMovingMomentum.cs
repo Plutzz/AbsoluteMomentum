@@ -22,7 +22,6 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     {
         base.DoEnterLogic();
         playerInputActions.Player.Jump.performed += Jump;
-        Cursor.lockState = CursorLockMode.Locked;
         rb.drag = groundDrag;
     }
 
