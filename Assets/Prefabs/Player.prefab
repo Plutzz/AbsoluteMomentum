@@ -116,7 +116,7 @@ MonoBehaviour:
   playerMovingBase: {fileID: 11400000, guid: e21860848c0736f4ea183a101b263ba3, type: 2}
   playerAirborneBase: {fileID: 11400000, guid: 109712c1514316b46bc965911185995a, type: 2}
   GroundCheck: {fileID: 6966744164695999863}
-  GroundCheckSize: {x: 0.95, y: 0.1, z: 0.95}
+  GroundCheckSize: {x: 0.9, y: 0.025, z: 0.9}
   groundLayer:
     serializedVersion: 2
     m_Bits: 64

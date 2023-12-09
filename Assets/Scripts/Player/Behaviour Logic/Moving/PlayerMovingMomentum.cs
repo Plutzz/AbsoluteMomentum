@@ -6,13 +6,22 @@ using UnityEngine.InputSystem;
 [CreateAssetMenu(fileName = "Moving-Momentum", menuName = "Player Logic/Moving Logic/Momentum")]
 public class PlayerMovingMomentum : PlayerMovingSOBase
 {
-    [SerializeField] private float speed = 10f;
-    [SerializeField] private float jumpHeight = 5f;
-    [SerializeField] private float turnSmoothTime = 0.1f;
-    //[SerializeField] private float deceleration = 1f;
+    [Header("Movement Variables")]
+    [SerializeField] private float walkSpeed = 7f;
+    [SerializeField] private float sprintSpeed = 15f;
     [SerializeField] private float acceleration = 1f;
     [SerializeField] private float groundDrag = 1f;
+    [SerializeField] private float turnSmoothTime = 0.1f;
+    private bool sprinting = false;
+    //[SerializeField] private float deceleration = 1f;
+
     private Transform cam;
+
+    [Header("Jump Variables")]
+    [SerializeField] private float jumpForce = 5f;
+    [SerializeField] private float jumpCooldown = 0.25f;
+    private float timeOfLastJump;
+    private bool readyToJump = true;
 
     private float turnSmoothVelocity;
     public override void Initialize(GameObject gameObject, PlayerStateMachine stateMachine, PlayerInputActions playerInputActions)
@@ -23,19 +32,13 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     public override void DoEnterLogic()
     {
         base.DoEnterLogic();
-        if(playerInputActions.Player.Jump.ReadValue<float>() == 1f)
-        {
-            Jump();
-        }
 
-        playerInputActions.Player.Jump.performed += JumpPressed;
         rb.drag = groundDrag;
     }
 
     public override void DoExitLogic()
     {
         base.DoExitLogic();
-        playerInputActions.Player.Jump.performed -= JumpPressed;
     }
 
     public override void DoFixedUpdateState()
@@ -48,6 +51,19 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     {
         GetInput();
         SpeedControl();
+
+        if (playerInputActions.Player.Jump.ReadValue<float>() == 1f)
+        {
+            Jump();
+        }
+
+        if (timeOfLastJump + jumpCooldown < Time.time)
+        {
+            ResetJump();
+        }
+
+
+
         base.DoUpdateState();
     }
 
@@ -62,15 +78,24 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     private void GetInput()
     {
         inputVector = playerInputActions.Player.Movement.ReadValue<Vector2>();
-    }
-    private void JumpPressed(InputAction.CallbackContext context)
-    {
-        Jump();
+        sprinting = playerInputActions.Player.Sprint.ReadValue<float>() != 0;
     }
     private void Jump()
     {
-        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-        rb.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
+        if(readyToJump)
+        {
+            readyToJump = false;
+
+            rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+
+            timeOfLastJump = Time.time;
+        }
+    }
+
+    private void ResetJump()
+    {
+        readyToJump = true;
     }
 
     // moves the player by adding a force
@@ -83,7 +108,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
         Vector3 _moveDir = Quaternion.Euler(0f, _targetAngle, 0f) * Vector3.forward;
 
         // sprint logic (for now)
-        if (playerInputActions.Player.Sprint.ReadValue<float>() == 1)
+        if (sprinting)
         {
 
             rb.AddForce(_moveDir.normalized * acceleration * 2, ForceMode.Force);
@@ -99,11 +124,16 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     {
         Vector3 _flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
         // limit velocity if needed
-        if (_flatVel.magnitude > speed)
+        if (!sprinting && _flatVel.magnitude > walkSpeed)
         {
-            Vector3 _limitedVel = _flatVel.normalized * speed;
+            Vector3 _limitedVel = _flatVel.normalized * walkSpeed;
             //Mathf.MoveTowards(rb.velocity.x, _limitedVel.x, deceleration);
             //Mathf.MoveTowards(rb.velocity.z, _limitedVel.z, deceleration);
+            rb.velocity = new Vector3(_limitedVel.x, rb.velocity.y, _limitedVel.z);
+        }
+        else if(sprinting && _flatVel.magnitude > sprintSpeed) 
+        {
+            Vector3 _limitedVel = _flatVel.normalized * sprintSpeed;
             rb.velocity = new Vector3(_limitedVel.x, rb.velocity.y, _limitedVel.z);
         }
 

@@ -139,4 +139,6 @@ public class PlayerStateMachine : NetworkBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(GroundCheck.transform.position, GroundCheckSize);
     }
+
+    
 }
