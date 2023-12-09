@@ -54,9 +54,14 @@ public class PlayerStateMachine : NetworkBehaviour
     {
         rb = GetComponent<Rigidbody>();
 
-        PlayerIdleBaseInstance = Instantiate(playerIdleBase);
-        PlayerMovingBaseInstance = Instantiate(playerMovingBase);
-        PlayerAirborneBaseInstance = Instantiate(playerAirborneBase);
+        //TEMP CODE TO TEST MOVEMENT
+        PlayerIdleBaseInstance = playerIdleBase;
+        PlayerMovingBaseInstance = playerMovingBase;
+        PlayerAirborneBaseInstance = playerAirborneBase;
+        //COMMENT CODE TO TEST MOVEMENT VALUES WITHOUT HAVING TO RESTART PLAY MODE
+        //PlayerIdleBaseInstance = Instantiate(playerIdleBase);
+        //PlayerMovingBaseInstance = Instantiate(playerMovingBase);
+        //PlayerAirborneBaseInstance = Instantiate(playerAirborneBase);
 
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
@@ -64,6 +69,7 @@ public class PlayerStateMachine : NetworkBehaviour
         IdleState = new PlayerIdleState(this);
         MovingState = new PlayerMovingState(this);
         AirborneState = new PlayerAirborneState(this);
+        
 
         PlayerIdleBaseInstance.Initialize(gameObject, this, playerInputActions);
         PlayerMovingBaseInstance.Initialize(gameObject, this, playerInputActions);
@@ -80,6 +86,11 @@ public class PlayerStateMachine : NetworkBehaviour
             CinemachineFreeLook playerCamera = Instantiate(playerCameraPrefab).GetComponent<CinemachineFreeLook>();
             playerCamera.m_LookAt = transform;
             playerCamera.m_Follow = transform;
+
+            CurrentStateText = DebugMenu.Instance.PlayerStateText;
+            GroundedText = DebugMenu.Instance.GroundedCheckText;
+            VelocityText = DebugMenu.Instance.VelocityText;
+            SpeedText = DebugMenu.Instance.SpeedText;
         }
 
         currentState = initialState;
@@ -90,12 +101,14 @@ public class PlayerStateMachine : NetworkBehaviour
     {
         if (!IsOwner) return;
 
-        //Debug.Log(rb.velocity);
+        
         currentState.UpdateState();
-        //CurrentStateText.text = "Current State: " + currentState.ToString();
-        //GroundedText.text = "Grounded: " + GroundedCheck();
-        //VelocityText.text = "Velocity: " + rb.velocity.x + "," + rb.velocity.z;
-        //SpeedText.text = "Speed: " + rb.velocity.magnitude;
+
+        
+        CurrentStateText.text = "Current State: " + currentState.ToString();
+        GroundedText.text = "Grounded: " + GroundedCheck();
+        VelocityText.text = "Velocity: " + rb.velocity.x + "," + rb.velocity.z;
+        SpeedText.text = "Speed: " + rb.velocity.magnitude;
 
     }
 

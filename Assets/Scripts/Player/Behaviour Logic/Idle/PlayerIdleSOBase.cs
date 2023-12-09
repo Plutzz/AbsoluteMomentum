@@ -23,7 +23,7 @@ public class PlayerIdleSOBase : PlayerStateSOBase
         {
             stateMachine.ChangeState(stateMachine.MovingState);
         }
-        // Idle => Airborne *** CHANGED TO ELSE IF POSSIBLE BUG
+        // Idle => Airborne
         else if (rb.velocity.y != 0)
         {
             stateMachine.ChangeState(stateMachine.AirborneState);

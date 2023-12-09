@@ -36,7 +36,6 @@ public class PlayerIdleDefault : PlayerIdleSOBase
 
     private void Jump(InputAction.CallbackContext context)
     {
-        rb.AddForce(Vector3.up * 5f, ForceMode.Impulse);
-        stateMachine.ChangeState(stateMachine.AirborneState);
+        stateMachine.ChangeState(stateMachine.MovingState);
     }
 }

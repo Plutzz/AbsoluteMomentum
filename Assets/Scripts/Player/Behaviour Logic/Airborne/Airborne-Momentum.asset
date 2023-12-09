@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 15
   turnSmoothTime: 0.1
-  drag: 1
+  drag: 0
