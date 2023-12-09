@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1ef6418756d0c344a304a84800e8ad4, type: 3}
   m_Name: Moving-Momentum
   m_EditorClassIdentifier: 
-  maxSpeed: 7
+  walkSpeed: 7
+  sprintSpeed: 10
   acceleration: 70
   groundDrag: 4
   turnSmoothTime: 0.1

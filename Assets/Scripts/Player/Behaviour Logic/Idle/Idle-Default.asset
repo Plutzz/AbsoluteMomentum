@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd0cf7d39f88c7245812b8b7318eb403, type: 3}
   m_Name: Idle-Default
   m_EditorClassIdentifier: 
+  groundDrag: 4

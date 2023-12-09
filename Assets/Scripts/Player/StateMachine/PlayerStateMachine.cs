@@ -41,6 +41,10 @@ public class PlayerStateMachine : NetworkBehaviour
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private GameObject playerCameraPrefab;
 
+    public Transform orientation;
+    public Transform player;
+    public Transform playerObj;
+
     #endregion
 
     #region Debug Variables
@@ -52,7 +56,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
+        rb = GetComponentInChildren<Rigidbody>();
 
         //TEMP CODE TO TEST MOVEMENT
         PlayerIdleBaseInstance = playerIdleBase;
@@ -81,11 +85,18 @@ public class PlayerStateMachine : NetworkBehaviour
     }
     private void Start()
     {
+        // Set up client side objects (Camera, debug menu)
         if (IsOwner)
         {
             CinemachineFreeLook playerCamera = Instantiate(playerCameraPrefab).GetComponent<CinemachineFreeLook>();
             playerCamera.m_LookAt = transform;
             playerCamera.m_Follow = transform;
+
+            ThirdPersonCam camSetup = playerCamera.GetComponent<ThirdPersonCam>();
+            camSetup.orientation = orientation;
+            camSetup.playerObj = playerObj;
+            camSetup.player = player;
+            camSetup.playerInputActions = playerInputActions;
 
             CurrentStateText = DebugMenu.Instance.PlayerStateText;
             GroundedText = DebugMenu.Instance.GroundedCheckText;
@@ -107,7 +118,7 @@ public class PlayerStateMachine : NetworkBehaviour
         
         CurrentStateText.text = "Current State: " + currentState.ToString();
         GroundedText.text = "Grounded: " + GroundedCheck();
-        VelocityText.text = "Velocity: " + rb.velocity.x + "," + rb.velocity.z;
+        VelocityText.text = "Input: " + playerInputActions.Player.Movement.ReadValue<Vector2>().x + "," + playerInputActions.Player.Movement.ReadValue<Vector2>().y;
         SpeedText.text = "Speed: " + rb.velocity.magnitude;
 
     }
@@ -131,6 +142,7 @@ public class PlayerStateMachine : NetworkBehaviour
     // Ex: GroundedCheck
     public bool GroundedCheck()
     {
+        //return Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.3f, groundLayer);
         return Physics.OverlapBox(GroundCheck.position, GroundCheckSize * 0.5f, Quaternion.identity, groundLayer).Length > 0;
     }
 

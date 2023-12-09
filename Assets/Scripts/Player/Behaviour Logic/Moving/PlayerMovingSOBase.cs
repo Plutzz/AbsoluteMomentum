@@ -16,6 +16,7 @@ public class PlayerMovingSOBase : PlayerStateSOBase
         this.stateMachine = stateMachine;
         rb = stateMachine.rb;
         this.playerInputActions = playerInputActions;
+
     }
 
     public override void CheckTransitions()

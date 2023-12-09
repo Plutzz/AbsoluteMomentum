@@ -6,17 +6,16 @@ using UnityEngine.InputSystem;
 [CreateAssetMenu(fileName = "Idle-Default", menuName = "Player Logic/Idle Logic/Default")]
 public class PlayerIdleDefault : PlayerIdleSOBase
 {
-
+    [SerializeField] private float groundDrag;
     public override void DoEnterLogic()
     {
         base.DoEnterLogic();
-        playerInputActions.Player.Jump.performed += Jump;
+        rb.drag = groundDrag;
     }
 
     public override void DoExitLogic()
     {
         base.DoExitLogic();
-        playerInputActions.Player.Jump.performed -= Jump;
     }
 
     public override void DoFixedUpdateState()
@@ -26,6 +25,10 @@ public class PlayerIdleDefault : PlayerIdleSOBase
 
     public override void DoUpdateState()
     {
+        if (playerInputActions.Player.Jump.ReadValue<float>() == 1f)
+        {
+            Jump();
+        }
         base.DoUpdateState();
     }
 
@@ -34,7 +37,7 @@ public class PlayerIdleDefault : PlayerIdleSOBase
         base.ResetValues();
     }
 
-    private void Jump(InputAction.CallbackContext context)
+    private void Jump()
     {
         stateMachine.ChangeState(stateMachine.MovingState);
     }

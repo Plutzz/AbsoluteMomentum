@@ -28,6 +28,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     {
         base.Initialize(gameObject, stateMachine, playerInputActions);
         cam = Camera.main.transform;
+        readyToJump = true;
     }
     public override void DoEnterLogic()
     {
@@ -101,22 +102,18 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     // moves the player by adding a force
     private void Move()
     {
-        float _targetAngle = Mathf.Atan2(inputVector.x, inputVector.y) * Mathf.Rad2Deg + cam.eulerAngles.y;
-        float _angle = Mathf.SmoothDampAngle(gameObject.transform.eulerAngles.y, _targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-        gameObject.transform.rotation = Quaternion.Euler(0f, _angle, 0f);
-
-        Vector3 _moveDir = Quaternion.Euler(0f, _targetAngle, 0f) * Vector3.forward;
-
         // sprint logic (for now)
-        if (sprinting)
-        {
+        Vector3 _moveDir = stateMachine.orientation.forward * inputVector.y + stateMachine.orientation.right * inputVector.x;
 
+        if(sprinting)
+        {
             rb.AddForce(_moveDir.normalized * acceleration * 2, ForceMode.Force);
         }
         else
         {
             rb.AddForce(_moveDir.normalized * acceleration, ForceMode.Force);
         }
+
     }
 
     // Limits the speed of the player to speed
