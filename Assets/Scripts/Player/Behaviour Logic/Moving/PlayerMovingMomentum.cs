@@ -115,6 +115,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     {
         if(readyToJump)
         {
+            stateMachine.exitingSlope = true;
             readyToJump = false;
 
             rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
@@ -130,6 +131,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     private void ResetJump()
     {
         readyToJump = true;
+        stateMachine.exitingSlope = false;
     }
 
     // moves the player by adding a force
