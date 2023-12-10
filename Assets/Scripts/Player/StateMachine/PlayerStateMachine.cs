@@ -155,7 +155,7 @@ public class PlayerStateMachine : NetworkBehaviour
         if (!IsOwner) return;
 
         //Applies a donwards force so the player cannot fly off of slope
-        if (SlopeCheck() && (currentState == IdleState || currentState == MovingState) && exitingSlope)
+        if (SlopeCheck() && !exitingSlope)
         {
             if (rb.velocity.y > 0f)
                 rb.AddForce(Vector3.down * 80f, ForceMode.Force);
