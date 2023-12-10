@@ -16,6 +16,7 @@ MonoBehaviour:
   sprintSpeed: 10
   acceleration: 70
   groundDrag: 4
-  turnSmoothTime: 0.1
+  crouchSpeed: 3.5
+  crouchYScale: 0.5
   jumpForce: 5
   jumpCooldown: 0.25

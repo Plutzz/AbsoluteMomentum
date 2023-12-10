@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Airborne-Momentum
   m_EditorClassIdentifier: 
   maxSpeed: 15
-  acceleration: 10
+  acceleration: 20
   drag: 0

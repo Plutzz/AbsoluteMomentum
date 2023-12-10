@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
 using Unity.VisualScripting;
+using UnityEditorInternal;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerStateMachine : NetworkBehaviour
 {
@@ -35,15 +37,23 @@ public class PlayerStateMachine : NetworkBehaviour
     #region Player Variables
     public PlayerInputActions playerInputActions { get; private set; }
     public Rigidbody rb { get; private set; }
-    public Transform GroundCheck;
-    public Vector3 GroundCheckSize;
 
     [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private float playerHeight;
     [SerializeField] private GameObject playerCameraPrefab;
 
     public Transform orientation;
     public Transform player;
     public Transform playerObj;
+
+    [Header("Crouching Variables")]
+    [SerializeField] private float crouchYScale = 0.5f;
+    private float startYScale;
+    private bool crouching;
+
+    [Header("Slope Handling")]
+    [SerializeField] private float maxSlopeAngle;
+    public RaycastHit slopeHit;
 
     #endregion
 
@@ -69,6 +79,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
+        playerInputActions.Player.Crouch.performed += StartCrouch;
 
         IdleState = new PlayerIdleState(this);
         MovingState = new PlayerMovingState(this);
@@ -81,7 +92,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
         initialState = IdleState;
 
-
+        startYScale = gameObject.transform.localScale.y;
     }
     private void Start()
     {
@@ -112,20 +123,42 @@ public class PlayerStateMachine : NetworkBehaviour
     {
         if (!IsOwner) return;
 
-        
+        //Crouching logic
+        crouching = playerInputActions.Player.Crouch.ReadValue<float>() == 1f;
+        if (crouching)
+        {
+            gameObject.transform.localScale = new Vector3(gameObject.transform.localScale.x, crouchYScale, gameObject.transform.localScale.z);
+        }
+        else
+        {
+            gameObject.transform.localScale = new Vector3(gameObject.transform.localScale.x, startYScale, gameObject.transform.localScale.z);
+        }
+        //Disables gravity while on slopes
+        rb.useGravity = !SlopeCheck();
+
+
         currentState.UpdateState();
 
-        
         CurrentStateText.text = "Current State: " + currentState.ToString();
         GroundedText.text = "Grounded: " + GroundedCheck();
         VelocityText.text = "Input: " + playerInputActions.Player.Movement.ReadValue<Vector2>().x + "," + playerInputActions.Player.Movement.ReadValue<Vector2>().y;
-        SpeedText.text = "Speed: " + rb.velocity.magnitude;
+        SpeedText.text = "Speed: " + rb.velocity.magnitude.ToString("F1");
+
+
+
 
     }
 
     private void FixedUpdate()
     {
         if (!IsOwner) return;
+
+        //Applies a donwards force so the player cannot fly off of slope
+        if (SlopeCheck() && (currentState == IdleState || currentState == MovingState) && PlayerMovingBaseInstance.GetComponent<PlayerMovingMomentum>().readyToJump)
+        {
+            if (rb.velocity.y > 0f)
+                rb.AddForce(Vector3.down * 80f, ForceMode.Force);
+        }
 
         currentState.FixedUpdateState();
     }
@@ -142,14 +175,24 @@ public class PlayerStateMachine : NetworkBehaviour
     // Ex: GroundedCheck
     public bool GroundedCheck()
     {
-        //return Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.3f, groundLayer);
-        return Physics.OverlapBox(GroundCheck.position, GroundCheckSize * 0.5f, Quaternion.identity, groundLayer).Length > 0;
+        return Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f * gameObject.transform.localScale.y + 0.2f , groundLayer);
+        //return Physics.OverlapBox(GroundCheck.position, GroundCheckSize * 0.5f, Quaternion.identity, groundLayer).Length > 0;
     }
-
-    private void OnDrawGizmos()
+    public bool SlopeCheck()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(GroundCheck.transform.position, GroundCheckSize);
+        if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f * gameObject.transform.localScale.y + 0.3f))
+        {
+            float _angle = Vector3.Angle(Vector3.up, slopeHit.normal);
+            Debug.Log("OnSlope: " + (_angle < maxSlopeAngle && _angle != 0));
+            return _angle < maxSlopeAngle && _angle != 0;
+        }
+
+        return false;
+    }
+    private void StartCrouch(InputAction.CallbackContext context)
+    {
+        if(currentState == IdleState || currentState == MovingState)
+        rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
     }
 
     

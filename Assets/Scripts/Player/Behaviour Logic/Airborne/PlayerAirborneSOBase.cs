@@ -21,11 +21,11 @@ public class PlayerAirborneSOBase : PlayerStateSOBase
     public override void CheckTransitions()
     {
         //Airborne => Moving
-        if (stateMachine.GroundedCheck() && playerInputActions.Player.Movement.ReadValue<Vector2>() != Vector2.zero)
+        if (stateMachine.SlopeCheck() || stateMachine.GroundedCheck() && playerInputActions.Player.Movement.ReadValue<Vector2>() != Vector2.zero)
         {
             stateMachine.ChangeState(stateMachine.MovingState);
         }
-        else if (stateMachine.GroundedCheck() && playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.zero)
+        else if (stateMachine.SlopeCheck() || stateMachine.GroundedCheck() && playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.zero)
         {
             stateMachine.ChangeState(stateMachine.IdleState);
         }
