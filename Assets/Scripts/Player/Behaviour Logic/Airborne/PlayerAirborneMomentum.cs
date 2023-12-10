@@ -5,16 +5,13 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Airborne-Momentum", menuName = "Player Logic/Airborne Logic/Momentum")]
 public class PlayerAirborneMomentum : PlayerAirborneSOBase
 {
-    [SerializeField] private float speed = 5f;
-    [SerializeField] private float turnSmoothTime = 0.1f;
+    [SerializeField] private float maxSpeed = 20f;
+    [SerializeField] private float acceleration = 40f;
     [SerializeField] private float drag = 0f;
-    private Transform cam;
-
-    private float turnSmoothVelocity;
+    private bool sprinting;
     public override void Initialize(GameObject gameObject, PlayerStateMachine stateMachine, PlayerInputActions playerInputActions)
     {
         base.Initialize(gameObject, stateMachine, playerInputActions);
-        cam = Camera.main.transform;
     }
     public override void DoEnterLogic()
     {
@@ -36,6 +33,7 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
     public override void DoUpdateState()
     {
         GetInput();
+        SpeedControl();
         base.DoUpdateState();
     }
 
@@ -47,22 +45,34 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
     private void GetInput()
     {
         inputVector = playerInputActions.Player.Movement.ReadValue<Vector2>();
+        sprinting = playerInputActions.Player.Sprint.ReadValue<float>() != 0;
     }
     private void Move()
     {
         if(inputVector == Vector2.zero) { return; }
 
-        float targetAngle = Mathf.Atan2(inputVector.x, inputVector.y) * Mathf.Rad2Deg + cam.eulerAngles.y;
-        float angle = Mathf.SmoothDampAngle(gameObject.transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-        gameObject.transform.rotation = Quaternion.Euler(0f, angle, 0f);
-        float speed = this.speed;
 
-        if (playerInputActions.Player.Sprint.ReadValue<float>() == 1)
+        Vector3 _moveDir = stateMachine.orientation.forward * inputVector.y + stateMachine.orientation.right * inputVector.x;
+        if (sprinting)
         {
-            speed = speed * 2;
+            rb.AddForce(_moveDir.normalized * acceleration * 2, ForceMode.Force);
         }
+        else
+        {
+            rb.AddForce(_moveDir.normalized * acceleration, ForceMode.Force);
+        }
+    }
 
-        Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
-        rb.AddForce(moveDir.normalized * speed, ForceMode.Force);
+    private void SpeedControl()
+    {
+        Vector3 _flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        // limit velocity if needed
+        if (_flatVel.magnitude > maxSpeed)
+        {
+            Vector3 _limitedVel = _flatVel.normalized * maxSpeed;
+            //Mathf.MoveTowards(rb.velocity.x, _limitedVel.x, deceleration);
+            //Mathf.MoveTowards(rb.velocity.z, _limitedVel.z, deceleration);
+            rb.velocity = new Vector3(_limitedVel.x, rb.velocity.y, _limitedVel.z);
+        }
     }
 }

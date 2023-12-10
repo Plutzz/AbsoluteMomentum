@@ -63,9 +63,9 @@ public class PlayerStateMachine : NetworkBehaviour
         PlayerMovingBaseInstance = playerMovingBase;
         PlayerAirborneBaseInstance = playerAirborneBase;
         //COMMENT CODE TO TEST MOVEMENT VALUES WITHOUT HAVING TO RESTART PLAY MODE
-        //PlayerIdleBaseInstance = Instantiate(playerIdleBase);
-        //PlayerMovingBaseInstance = Instantiate(playerMovingBase);
-        //PlayerAirborneBaseInstance = Instantiate(playerAirborneBase);
+        ///PlayerIdleBaseInstance = Instantiate(playerIdleBase);
+        ///PlayerMovingBaseInstance = Instantiate(playerMovingBase);
+        ///PlayerAirborneBaseInstance = Instantiate(playerAirborneBase);
 
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();

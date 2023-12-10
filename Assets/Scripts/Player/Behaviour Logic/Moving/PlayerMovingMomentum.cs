@@ -11,23 +11,17 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     [SerializeField] private float sprintSpeed = 15f;
     [SerializeField] private float acceleration = 1f;
     [SerializeField] private float groundDrag = 1f;
-    [SerializeField] private float turnSmoothTime = 0.1f;
     private bool sprinting = false;
     //[SerializeField] private float deceleration = 1f;
-
-    private Transform cam;
 
     [Header("Jump Variables")]
     [SerializeField] private float jumpForce = 5f;
     [SerializeField] private float jumpCooldown = 0.25f;
     private float timeOfLastJump;
     private bool readyToJump = true;
-
-    private float turnSmoothVelocity;
     public override void Initialize(GameObject gameObject, PlayerStateMachine stateMachine, PlayerInputActions playerInputActions)
     {
         base.Initialize(gameObject, stateMachine, playerInputActions);
-        cam = Camera.main.transform;
         readyToJump = true;
     }
     public override void DoEnterLogic()
