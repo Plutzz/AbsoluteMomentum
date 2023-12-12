@@ -51,8 +51,14 @@ public class PlayerStateMachine : NetworkBehaviour
     [HideInInspector] public float desiredMoveSpeed;
     private float lastDesiredMoveSpeed;
 
+
+    [SerializeField] private float exitingGroundTimer = 0.15f;
+    [HideInInspector] public float timeOfLastJump;
+    public bool exitingGround;
+
     [SerializeField] private float speedIncreaseMultiplier;
     [SerializeField] private float slopeIncreaseMultiplier;
+
     
 
 
@@ -68,7 +74,6 @@ public class PlayerStateMachine : NetworkBehaviour
     [Header("Slope Handling")]
     [SerializeField] private float maxSlopeAngle;
     public RaycastHit slopeHit;
-    public bool exitingSlope;
 
     #endregion
 
@@ -194,7 +199,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
     public void ChangeState(PlayerState newState)
     {
-        //Debug.Log("Changing to: " + newState);
+        Debug.Log("Changing to: " + newState);
         currentState.ExitLogic();
         currentState = newState;
         currentState.EnterLogic();
@@ -235,9 +240,13 @@ public class PlayerStateMachine : NetworkBehaviour
     // Limits the speed of the player to speed
     private void SpeedControl()
     {
+        exitingGround = timeOfLastJump + exitingGroundTimer > Time.time;
+
+        // If the player is mid jump don't limit velocity
+        if (exitingGround) return;
 
         // limit velocity on slope if player is not leaving the slope
-        if (SlopeCheck() && !exitingSlope)
+        if (SlopeCheck())
         {
             if (rb.velocity.magnitude > moveSpeed)
                 rb.velocity = rb.velocity.normalized * moveSpeed;
@@ -282,6 +291,13 @@ public class PlayerStateMachine : NetworkBehaviour
         }
 
         moveSpeed = desiredMoveSpeed;
+    }
+
+    public IEnumerator CoyoteFrames(float _coyoteTime)
+    {
+        rb.useGravity = true;
+        yield return new WaitForSeconds(_coyoteTime);
+        ChangeState(AirborneState);
     }
 
     #endregion

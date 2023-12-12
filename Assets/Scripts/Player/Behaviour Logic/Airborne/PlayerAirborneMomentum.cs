@@ -5,9 +5,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Airborne-Momentum", menuName = "Player Logic/Airborne Logic/Momentum")]
 public class PlayerAirborneMomentum : PlayerAirborneSOBase
 {
-    [SerializeField] private float airSpeed = 20f;
+    [SerializeField] private float airSpeed = 25f;
     [SerializeField] private float acceleration = 40f;
     [SerializeField] private float drag = 0f;
+    [SerializeField] private float minimumSlideVelocity = 9f;
     private bool sprinting;
     public override void Initialize(GameObject gameObject, PlayerStateMachine stateMachine, PlayerInputActions playerInputActions)
     {
@@ -33,6 +34,7 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
     public override void DoUpdateState()
     {
         GetInput();
+        stateMachine.desiredMoveSpeed = airSpeed;
         base.DoUpdateState();
     }
 
@@ -62,4 +64,24 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
         }
     }
 
+    public override void CheckTransitions()
+    {
+        //if no collision detected, no transitions
+        if (!stateMachine.SlopeCheck() && !stateMachine.GroundedCheck()) return;
+
+        // Airborne => Sliding
+        if (stateMachine.crouching && playerInputActions.Player.Jump.ReadValue<float>() == 0 && rb.velocity.magnitude > minimumSlideVelocity)
+        {
+            stateMachine.ChangeState(stateMachine.SlidingState);
+        }
+        // Airborne => Moving
+        else if (playerInputActions.Player.Movement.ReadValue<Vector2>() != Vector2.zero)
+        {
+            stateMachine.ChangeState(stateMachine.MovingState);
+        }
+        else if (playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.zero)
+        {
+            stateMachine.ChangeState(stateMachine.IdleState);
+        }
+    }
 }

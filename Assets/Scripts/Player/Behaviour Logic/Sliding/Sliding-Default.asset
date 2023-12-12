@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7060affba1eb0b545ab1e86c98aaad5f, type: 3}
   m_Name: Sliding-Default
   m_EditorClassIdentifier: 
-  maxSlideTime: 0.5
+  maxSlideTime: 0.75
   slideSpeed: 50
+  minimumSlideSpeed: 10
   sprintSpeed: 10
   slideAcceleration: 200

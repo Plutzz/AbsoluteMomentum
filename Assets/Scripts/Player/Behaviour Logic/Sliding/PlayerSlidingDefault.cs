@@ -9,6 +9,7 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
     [Header("Sliding")]
     [SerializeField] private float maxSlideTime;
     [SerializeField] private float slideSpeed;
+    [SerializeField] private float minimumSlideSpeed;
     [SerializeField] private float sprintSpeed; //SHOULD BE SAME SPRINT SPEED AS FROM MOVEMENT SCRIPTS
     [SerializeField] private float slideAcceleration;
     private float slideTimer;
@@ -16,6 +17,7 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
     public override void DoEnterLogic()
     {
         base.DoEnterLogic();
+        inputVector = playerInputActions.Player.Movement.ReadValue<Vector2>();
         StartSlide();
     }
 
@@ -42,8 +44,6 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
 
     private void GetInput()
     {
-        inputVector = playerInputActions.Player.Movement.ReadValue<Vector2>();
-
         if(!stateMachine.crouching)
         {
             StopSlide();
@@ -91,7 +91,7 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
         }
 
 
-        if (slideTimer <= 0)
+        if (slideTimer <= 0 && rb.velocity.magnitude < minimumSlideSpeed)
         {
             StopSlide();
         }

@@ -210,6 +210,8 @@ MonoBehaviour:
   playerHeight: 2
   playerCameraPrefab: {fileID: 189743957778359187, guid: ac0fb975af2fb9f4bb85911e96021a28, type: 3}
   desiredMoveSpeed: 0
+  exitingGroundTimer: 0.25
+  timeLeftGround: 0
   speedIncreaseMultiplier: 3
   slopeIncreaseMultiplier: 4
   orientation: {fileID: 8671897353048501037}
@@ -217,7 +219,6 @@ MonoBehaviour:
   playerObj: {fileID: 176134913370103247}
   crouchYScale: 0.5
   maxSlopeAngle: 40
-  exitingSlope: 0
   CurrentStateText: {fileID: 0}
   GroundedText: {fileID: 0}
   VelocityText: {fileID: 0}

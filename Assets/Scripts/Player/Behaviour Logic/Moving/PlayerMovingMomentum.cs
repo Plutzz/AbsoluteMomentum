@@ -26,7 +26,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     [Header("Jump Variables")]
     [SerializeField] private float jumpForce = 5f;
     [SerializeField] private float jumpCooldown = 0.25f;
-    private float timeOfLastJump;
+    [SerializeField] private float coyoteTime = 0.25f;
     public bool readyToJump = true;
     private bool jumping;
 
@@ -37,7 +37,6 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     {
         base.Initialize(gameObject, stateMachine, playerInputActions);
         readyToJump = true;
-        timeOfLastJump = Time.time;
         jumping = false;
     }
     public override void DoEnterLogic()
@@ -104,37 +103,39 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
         jumping = playerInputActions.Player.Jump.ReadValue<float>() == 1f;
         crouching = playerInputActions.Player.Crouch.ReadValue<float>() == 1f;
 
+
+        if (stateMachine.timeOfLastJump + jumpCooldown < Time.time)
+        {
+            ResetJump();
+        }
+
         if (jumping)
         {
             Jump();
         }
 
-        if (timeOfLastJump + jumpCooldown < Time.time)
-        {
-            ResetJump();
-        }
+
     }
     private void Jump()
     {
         if(readyToJump)
         {
-            stateMachine.exitingSlope = true;
+            
             readyToJump = false;
 
             rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
 
-            timeOfLastJump = Time.time;
-
-
+            stateMachine.timeOfLastJump = Time.time;
+            stateMachine.exitingGround = true;
 
         }
     }
 
     private void ResetJump()
     {
+        stateMachine.exitingGround = false;
         readyToJump = true;
-        stateMachine.exitingSlope = false;
     }
 
     // moves the player by adding a force
@@ -159,6 +160,29 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
         if (sprinting || stateMachine.SlopeCheck())
         {
             stateMachine.ChangeState(stateMachine.SlidingState);
+        }
+    }
+
+    public override void CheckTransitions()
+    {
+        // Moving => Airborne
+        if (!stateMachine.GroundedCheck() && !stateMachine.SlopeCheck())
+        {
+            if(readyToJump)
+            {
+                // Coyote Frames
+                stateMachine.StartCoroutine(stateMachine.CoyoteFrames(coyoteTime));
+            }
+            else
+            {
+                stateMachine.ChangeState(stateMachine.AirborneState);
+            }
+
+        }
+        // Moving => Idle
+        else if (playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.zero)
+        {
+            stateMachine.ChangeState(stateMachine.IdleState);
         }
     }
 
