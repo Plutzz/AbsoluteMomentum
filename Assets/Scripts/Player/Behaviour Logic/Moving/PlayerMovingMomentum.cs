@@ -30,16 +30,21 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     public bool readyToJump = true;
     private bool jumping;
 
+    [SerializeField] private int bhopFrames;
+    private int groundedFrames;
+
 
     public override void Initialize(GameObject gameObject, PlayerStateMachine stateMachine, PlayerInputActions playerInputActions)
     {
         base.Initialize(gameObject, stateMachine, playerInputActions);
         readyToJump = true;
+        timeOfLastJump = Time.time;
         jumping = false;
     }
     public override void DoEnterLogic()
     {
         moveDirection = Vector3.zero;
+        groundedFrames = 0;
         base.DoEnterLogic();
     }
 
@@ -50,8 +55,9 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
 
     public override void DoFixedUpdateState()
     {
-
+        SpeedControl();
         Move();
+
         base.DoFixedUpdateState();
     }
 
@@ -59,7 +65,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     {
         GetInput();
         MovementTypeHandler();
-        SpeedControl();
+
 
 
 
@@ -72,7 +78,6 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     }
 
     #region Helper Methods
-
     private void MovementTypeHandler()
     {
         // Type - Sprinting
@@ -148,16 +153,15 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
         {
             rb.AddForce(moveDirection.normalized * acceleration, ForceMode.Force);
         }
-
-
     }
 
     // Limits the speed of the player to speed
     private void SpeedControl()
     {
         // if the player is auto bhopping don't limit speed on ground
-        if (jumping)
+        if (groundedFrames < bhopFrames)
         {
+            groundedFrames++;
             return;
         }
         rb.drag = groundDrag;

@@ -18,5 +18,5 @@ MonoBehaviour:
   groundDrag: 4
   crouchSpeed: 3.5
   jumpForce: 7
-  jumpCooldown: 0.25
+  jumpCooldown: 1
   readyToJump: 0

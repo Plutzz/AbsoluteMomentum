@@ -143,7 +143,6 @@ public class PlayerStateMachine : NetworkBehaviour
         CurrentStateText.text = "Current State: " + currentState.ToString();
         GroundedText.text = "Grounded: " + GroundedCheck();
         VelocityText.text = "Input: " + playerInputActions.Player.Movement.ReadValue<Vector2>().x + "," + playerInputActions.Player.Movement.ReadValue<Vector2>().y;
-        SpeedText.text = "Speed: " + rb.velocity.magnitude.ToString("F1");
 
 
 
@@ -162,6 +161,8 @@ public class PlayerStateMachine : NetworkBehaviour
         }
 
         currentState.FixedUpdateState();
+
+        SpeedText.text = "Speed: " + rb.velocity.magnitude.ToString("F1");
     }
 
     public void ChangeState(PlayerState newState)
