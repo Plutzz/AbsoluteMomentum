@@ -6,7 +6,9 @@ using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEditorInternal;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 
 public class PlayerStateMachine : NetworkBehaviour
 {
@@ -19,6 +21,7 @@ public class PlayerStateMachine : NetworkBehaviour
     public PlayerIdleState IdleState;
     public PlayerMovingState MovingState;
     public PlayerAirborneState AirborneState;
+    public PlayerSlidingState SlidingState;
 
     #endregion
 
@@ -27,10 +30,12 @@ public class PlayerStateMachine : NetworkBehaviour
     [SerializeField] private PlayerIdleSOBase playerIdleBase;
     [SerializeField] private PlayerMovingSOBase playerMovingBase;
     [SerializeField] private PlayerAirborneSOBase playerAirborneBase;
+    [SerializeField] private PlayerSlidingSOBase playerSlidingBase;
 
     public PlayerIdleSOBase PlayerIdleBaseInstance { get; private set; }
     public PlayerMovingSOBase PlayerMovingBaseInstance { get; private set; }
     public PlayerAirborneSOBase PlayerAirborneBaseInstance { get; private set; }
+    public PlayerSlidingSOBase PlayerSlidingBaseInstance { get; private set; }
 
     #endregion
 
@@ -42,6 +47,15 @@ public class PlayerStateMachine : NetworkBehaviour
     [SerializeField] private float playerHeight;
     [SerializeField] private GameObject playerCameraPrefab;
 
+    private float moveSpeed;
+    [HideInInspector] public float desiredMoveSpeed;
+    private float lastDesiredMoveSpeed;
+
+    [SerializeField] private float speedIncreaseMultiplier;
+    [SerializeField] private float slopeIncreaseMultiplier;
+    
+
+
     public Transform orientation;
     public Transform player;
     public Transform playerObj;
@@ -49,7 +63,7 @@ public class PlayerStateMachine : NetworkBehaviour
     [Header("Crouching Variables")]
     [SerializeField] private float crouchYScale = 0.5f;
     private float startYScale;
-    private bool crouching;
+    public bool crouching { get; private set; }
 
     [Header("Slope Handling")]
     [SerializeField] private float maxSlopeAngle;
@@ -73,10 +87,12 @@ public class PlayerStateMachine : NetworkBehaviour
         PlayerIdleBaseInstance = playerIdleBase;
         PlayerMovingBaseInstance = playerMovingBase;
         PlayerAirborneBaseInstance = playerAirborneBase;
+        PlayerSlidingBaseInstance = playerSlidingBase;
         //COMMENT CODE TO TEST MOVEMENT VALUES WITHOUT HAVING TO RESTART PLAY MODE
         ///PlayerIdleBaseInstance = Instantiate(playerIdleBase);
         ///PlayerMovingBaseInstance = Instantiate(playerMovingBase);
         ///PlayerAirborneBaseInstance = Instantiate(playerAirborneBase);
+        ///PlayerSlidingBaseInstance = Instantiate(playerSlidingBase);
 
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
@@ -85,11 +101,13 @@ public class PlayerStateMachine : NetworkBehaviour
         IdleState = new PlayerIdleState(this);
         MovingState = new PlayerMovingState(this);
         AirborneState = new PlayerAirborneState(this);
+        SlidingState = new PlayerSlidingState(this);
         
 
         PlayerIdleBaseInstance.Initialize(gameObject, this, playerInputActions);
         PlayerMovingBaseInstance.Initialize(gameObject, this, playerInputActions);
         PlayerAirborneBaseInstance.Initialize(gameObject, this, playerInputActions);
+        PlayerSlidingBaseInstance.Initialize(gameObject, this, playerInputActions, orientation);
 
         initialState = IdleState;
 
@@ -153,12 +171,7 @@ public class PlayerStateMachine : NetworkBehaviour
     {
         if (!IsOwner) return;
 
-        //Applies a donwards force so the player cannot fly off of slope
-        if (SlopeCheck() && !exitingSlope)
-        {
-            if (rb.velocity.y > 0f)
-                rb.AddForce(Vector3.down * 80f, ForceMode.Force);
-        }
+        SpeedControl();
 
         currentState.FixedUpdateState();
 
@@ -185,17 +198,96 @@ public class PlayerStateMachine : NetworkBehaviour
         if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f * gameObject.transform.localScale.y + 0.3f))
         {
             float _angle = Vector3.Angle(Vector3.up, slopeHit.normal);
-            Debug.Log("OnSlope: " + (_angle < maxSlopeAngle && _angle != 0));
+            //Debug.Log("OnSlope: " + (_angle < maxSlopeAngle && _angle != 0));
             return _angle < maxSlopeAngle && _angle != 0;
         }
 
         return false;
     }
+    public Vector3 GetSlopeMoveDirection(Vector3 _direction)
+    {
+        return Vector3.ProjectOnPlane(_direction, slopeHit.normal).normalized;
+    }
+ 
+
     private void StartCrouch(InputAction.CallbackContext context)
     {
         if(currentState == IdleState || currentState == MovingState)
-        rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
+            rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
     }
 
-    
+    #region SpeedControl
+
+    // Limits the speed of the player to speed
+    private void SpeedControl()
+    {
+
+        // limit velocity on slope if player is not leaving the slope
+        if (SlopeCheck() && !exitingSlope)
+        {
+            if (rb.velocity.magnitude > moveSpeed)
+                rb.velocity = rb.velocity.normalized * moveSpeed;
+        }
+        // limit velocity on ground
+        else
+        {
+            Vector3 _flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+            if (_flatVel.magnitude > moveSpeed)
+            {
+                Vector3 _limitedVelTarget = _flatVel.normalized * moveSpeed;
+                rb.velocity = new Vector3(_limitedVelTarget.x, rb.velocity.y, _limitedVelTarget.z);
+            }
+        }
+
+
+        // check if desiredMoveSpeed has changed drastically
+        if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > 4f && moveSpeed != 0)
+        {
+            Debug.Log("START COROUTINE");
+            StopAllCoroutines();
+            StartCoroutine(SmoothlyLerpMoveSpeed());
+        }
+        else
+        {
+            moveSpeed = desiredMoveSpeed;
+        }
+
+        lastDesiredMoveSpeed = desiredMoveSpeed;
+
+    }
+
+    private IEnumerator SmoothlyLerpMoveSpeed()
+    {
+        //smoothly lerp movementSpeed to desired value
+        float _time = 0;
+        float _difference = Mathf.Abs(desiredMoveSpeed - moveSpeed);
+        float _startValue = moveSpeed;
+
+        while (_time < _difference)
+        {
+            moveSpeed = Mathf.Lerp(_startValue, desiredMoveSpeed, _time / _difference);
+
+            if(SlopeCheck())
+            {
+                float _slopeAngle = Vector3.Angle(Vector3.up, slopeHit.normal);
+                float _slopeAngleIncrease = 1 + (_slopeAngle / 90f);
+
+                _time += Time.deltaTime * speedIncreaseMultiplier * slopeIncreaseMultiplier * _slopeAngleIncrease;
+            }
+            else
+            {
+                _time += Time.deltaTime * speedIncreaseMultiplier;
+            }
+            yield return null;
+        }
+
+        moveSpeed = desiredMoveSpeed;
+    }
+
+    #endregion
+
+
+
+
+
 }

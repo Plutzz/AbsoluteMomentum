@@ -180,7 +180,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2177907669
+  GlobalObjectIdHash: 3517694577
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -203,16 +203,21 @@ MonoBehaviour:
   playerIdleBase: {fileID: 11400000, guid: e556b29af0cea6d43bd28a4a2c624ab8, type: 2}
   playerMovingBase: {fileID: 11400000, guid: e21860848c0736f4ea183a101b263ba3, type: 2}
   playerAirborneBase: {fileID: 11400000, guid: 109712c1514316b46bc965911185995a, type: 2}
+  playerSlidingBase: {fileID: 11400000, guid: f06437ceae2fd64469ea5d99c0f0dd5f, type: 2}
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
   playerHeight: 2
   playerCameraPrefab: {fileID: 189743957778359187, guid: ac0fb975af2fb9f4bb85911e96021a28, type: 3}
+  desiredMoveSpeed: 0
+  speedIncreaseMultiplier: 3
+  slopeIncreaseMultiplier: 4
   orientation: {fileID: 8671897353048501037}
   player: {fileID: 5911603449596199529}
   playerObj: {fileID: 176134913370103247}
   crouchYScale: 0.5
   maxSlopeAngle: 40
+  exitingSlope: 0
   CurrentStateText: {fileID: 0}
   GroundedText: {fileID: 0}
   VelocityText: {fileID: 0}

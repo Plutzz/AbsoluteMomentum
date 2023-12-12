@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerIdleSOBase : PlayerStateSOBase
@@ -20,6 +21,10 @@ public class PlayerIdleSOBase : PlayerStateSOBase
     {
         // Idle => Airborne
         if (!stateMachine.SlopeCheck() && !stateMachine.GroundedCheck())
+        {
+            stateMachine.ChangeState(stateMachine.AirborneState);
+        }
+        else if(stateMachine.crouching && stateMachine.SlopeCheck())
         {
             stateMachine.ChangeState(stateMachine.AirborneState);
         }

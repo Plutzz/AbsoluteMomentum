@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Airborne-Momentum", menuName = "Player Logic/Airborne Logic/Momentum")]
 public class PlayerAirborneMomentum : PlayerAirborneSOBase
 {
-    [SerializeField] private float maxSpeed = 20f;
+    [SerializeField] private float airSpeed = 20f;
     [SerializeField] private float acceleration = 40f;
     [SerializeField] private float drag = 0f;
     private bool sprinting;
@@ -33,7 +33,6 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
     public override void DoUpdateState()
     {
         GetInput();
-        SpeedControl();
         base.DoUpdateState();
     }
 
@@ -63,16 +62,4 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
         }
     }
 
-    private void SpeedControl()
-    {
-        Vector3 _flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-        // limit velocity if needed
-        if (_flatVel.magnitude > maxSpeed)
-        {
-            Vector3 _limitedVel = _flatVel.normalized * maxSpeed;
-            //Mathf.MoveTowards(rb.velocity.x, _limitedVel.x, deceleration);
-            //Mathf.MoveTowards(rb.velocity.z, _limitedVel.z, deceleration);
-            rb.velocity = new Vector3(_limitedVel.x, rb.velocity.y, _limitedVel.z);
-        }
-    }
 }

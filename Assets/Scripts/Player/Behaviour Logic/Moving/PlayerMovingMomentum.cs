@@ -13,10 +13,10 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     [Header("Movement Variables")]
     [SerializeField] private float walkSpeed = 7f;
     [SerializeField] private float sprintSpeed = 15f;
+
     [SerializeField] private float acceleration = 1f;
     [SerializeField] private float groundDrag = 1f;
     private bool sprinting = false;
-    private float moveSpeed;
     private Vector3 moveDirection;
 
     [Header("Crouching Variables")]
@@ -31,7 +31,6 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     private bool jumping;
 
     [SerializeField] private int bhopFrames;
-    private int groundedFrames;
 
 
     public override void Initialize(GameObject gameObject, PlayerStateMachine stateMachine, PlayerInputActions playerInputActions)
@@ -44,18 +43,19 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     public override void DoEnterLogic()
     {
         moveDirection = Vector3.zero;
-        groundedFrames = 0;
+        rb.drag = groundDrag;
+        playerInputActions.Player.Crouch.performed += TryStartSlide;
         base.DoEnterLogic();
     }
 
     public override void DoExitLogic()
     {
         base.DoExitLogic();
+        playerInputActions.Player.Crouch.performed -= TryStartSlide;
     }
 
     public override void DoFixedUpdateState()
     {
-        SpeedControl();
         Move();
 
         base.DoFixedUpdateState();
@@ -64,7 +64,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     public override void DoUpdateState()
     {
         GetInput();
-        MovementTypeHandler();
+        MovementSpeedHandler();
 
 
 
@@ -78,25 +78,23 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     }
 
     #region Helper Methods
-    private void MovementTypeHandler()
+    private void MovementSpeedHandler()
     {
         // Type - Sprinting
         if (sprinting && !crouching)
         {
-            moveSpeed = sprintSpeed;
+            stateMachine.desiredMoveSpeed = sprintSpeed;
         }
         // Type - Crouching
         else if (crouching)
         {
-            moveSpeed = crouchSpeed;
+            stateMachine.desiredMoveSpeed = crouchSpeed;
         }
         // Type - Walking
         else
         {
-            moveSpeed = walkSpeed;
+            stateMachine.desiredMoveSpeed = walkSpeed;
         }
-      
-
     }
 
     private void GetInput()
@@ -147,7 +145,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
 
         if(stateMachine.SlopeCheck())
         {
-            rb.AddForce(GetSlopeMoveDirection() * acceleration, ForceMode.Force);
+            rb.AddForce(stateMachine.GetSlopeMoveDirection(moveDirection) * acceleration, ForceMode.Force);
         }
         else
         {
@@ -155,39 +153,16 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
         }
     }
 
-    // Limits the speed of the player to speed
-    private void SpeedControl()
+    
+    private void TryStartSlide(InputAction.CallbackContext context)
     {
-        // if the player is auto bhopping don't limit speed on ground
-        if (groundedFrames < bhopFrames)
+        if (sprinting || stateMachine.SlopeCheck())
         {
-            groundedFrames++;
-            return;
+            stateMachine.ChangeState(stateMachine.SlidingState);
         }
-        rb.drag = groundDrag;
-
-        // limit velocity on slope if player is not jumping
-        if(stateMachine.SlopeCheck() && readyToJump)
-        {
-            if (rb.velocity.magnitude > moveSpeed)
-                rb.velocity = rb.velocity.normalized * moveSpeed;
-        }
-        // limit velocity on ground
-        else
-        {
-            Vector3 _flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-            if (_flatVel.magnitude > moveSpeed)
-            {
-                Vector3 _limitedVelTarget = _flatVel.normalized * moveSpeed;
-                rb.velocity = new Vector3(_limitedVelTarget.x, rb.velocity.y, _limitedVelTarget.z);
-            }
-        }
-
     }
-    private Vector3 GetSlopeMoveDirection()
-    {
-        return Vector3.ProjectOnPlane(moveDirection, stateMachine.slopeHit.normal).normalized;
-    }
+
+
 
     #endregion
 }

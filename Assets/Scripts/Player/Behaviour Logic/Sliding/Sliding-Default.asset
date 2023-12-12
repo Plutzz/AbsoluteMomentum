@@ -9,15 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1ef6418756d0c344a304a84800e8ad4, type: 3}
-  m_Name: Moving-Momentum
+  m_Script: {fileID: 11500000, guid: 7060affba1eb0b545ab1e86c98aaad5f, type: 3}
+  m_Name: Sliding-Default
   m_EditorClassIdentifier: 
-  walkSpeed: 7
+  maxSlideTime: 0.5
+  slideSpeed: 50
   sprintSpeed: 10
-  acceleration: 100
-  groundDrag: 4
-  crouchSpeed: 3.5
-  jumpForce: 7
-  jumpCooldown: 0.25
-  readyToJump: 0
-  bhopFrames: 2
+  slideAcceleration: 200
