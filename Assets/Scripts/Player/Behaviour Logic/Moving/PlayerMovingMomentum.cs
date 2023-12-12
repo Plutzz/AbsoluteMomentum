@@ -76,7 +76,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     private void MovementTypeHandler()
     {
         // Type - Sprinting
-        if (sprinting)
+        if (sprinting && !crouching)
         {
             moveSpeed = sprintSpeed;
         }
