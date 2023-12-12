@@ -155,8 +155,24 @@ public class PlayerStateMachine : NetworkBehaviour
         //Disables gravity while on slopes
         rb.useGravity = !SlopeCheck();
 
+        SpeedControl();
 
         currentState.UpdateState();
+
+        // check if desiredMoveSpeed has changed drastically (THIS 7 NEEDS TO BE GREATER THAN SPRINT SPEED - CROUCH SPEED)
+        if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > 7f && moveSpeed != 0)
+        {
+            Debug.Log("START COROUTINE");
+            StopAllCoroutines();
+            StartCoroutine(SmoothlyLerpMoveSpeed());
+        }
+        else
+        {
+            moveSpeed = desiredMoveSpeed;
+        }
+
+        lastDesiredMoveSpeed = desiredMoveSpeed;
+
 
         CurrentStateText.text = "Current State: " + currentState.ToString();
         GroundedText.text = "Grounded: " + GroundedCheck();
@@ -170,8 +186,6 @@ public class PlayerStateMachine : NetworkBehaviour
     private void FixedUpdate()
     {
         if (!IsOwner) return;
-
-        SpeedControl();
 
         currentState.FixedUpdateState();
 
@@ -239,20 +253,6 @@ public class PlayerStateMachine : NetworkBehaviour
             }
         }
 
-
-        // check if desiredMoveSpeed has changed drastically
-        if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > 4f && moveSpeed != 0)
-        {
-            Debug.Log("START COROUTINE");
-            StopAllCoroutines();
-            StartCoroutine(SmoothlyLerpMoveSpeed());
-        }
-        else
-        {
-            moveSpeed = desiredMoveSpeed;
-        }
-
-        lastDesiredMoveSpeed = desiredMoveSpeed;
 
     }
 
