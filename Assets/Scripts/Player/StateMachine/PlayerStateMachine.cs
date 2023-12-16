@@ -47,12 +47,11 @@ public class PlayerStateMachine : NetworkBehaviour
     [SerializeField] private float playerHeight;
     [SerializeField] private GameObject playerCameraPrefab;
 
-    private float moveSpeed;
+    public float moveSpeed;
     [HideInInspector] public float desiredMoveSpeed;
-    private float lastDesiredMoveSpeed;
 
 
-    [SerializeField] private float exitingGroundTimer = 0.15f;
+
     [HideInInspector] public float timeOfLastJump;
     public bool exitingGround;
 
@@ -149,35 +148,21 @@ public class PlayerStateMachine : NetworkBehaviour
 
         //Crouching logic
         crouching = playerInputActions.Player.Crouch.ReadValue<float>() == 1f;
+
         if (crouching)
         {
+            Debug.Log("Crouching");
             gameObject.transform.localScale = new Vector3(gameObject.transform.localScale.x, crouchYScale, gameObject.transform.localScale.z);
         }
         else
         {
             gameObject.transform.localScale = new Vector3(gameObject.transform.localScale.x, startYScale, gameObject.transform.localScale.z);
         }
+
         //Disables gravity while on slopes
         rb.useGravity = !SlopeCheck();
 
-        SpeedControl();
-
         currentState.UpdateState();
-
-        // check if desiredMoveSpeed has changed drastically (THIS 7 NEEDS TO BE GREATER THAN SPRINT SPEED - CROUCH SPEED)
-        if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > 7f && moveSpeed != 0)
-        {
-            Debug.Log("START COROUTINE");
-            StopAllCoroutines();
-            StartCoroutine(SmoothlyLerpMoveSpeed());
-        }
-        else
-        {
-            moveSpeed = desiredMoveSpeed;
-        }
-
-        lastDesiredMoveSpeed = desiredMoveSpeed;
-
 
         CurrentStateText.text = "Current State: " + currentState.ToString();
         GroundedText.text = "Grounded: " + GroundedCheck();
@@ -237,35 +222,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
     #region SpeedControl
 
-    // Limits the speed of the player to speed
-    private void SpeedControl()
-    {
-        exitingGround = timeOfLastJump + exitingGroundTimer > Time.time;
-
-        // If the player is mid jump don't limit velocity
-        if (exitingGround) return;
-
-        // limit velocity on slope if player is not leaving the slope
-        if (SlopeCheck())
-        {
-            if (rb.velocity.magnitude > moveSpeed)
-                rb.velocity = rb.velocity.normalized * moveSpeed;
-        }
-        // limit velocity on ground
-        else
-        {
-            Vector3 _flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-            if (_flatVel.magnitude > moveSpeed)
-            {
-                Vector3 _limitedVelTarget = _flatVel.normalized * moveSpeed;
-                rb.velocity = new Vector3(_limitedVelTarget.x, rb.velocity.y, _limitedVelTarget.z);
-            }
-        }
-
-
-    }
-
-    private IEnumerator SmoothlyLerpMoveSpeed()
+    public IEnumerator SmoothlyLerpMoveSpeed()
     {
         //smoothly lerp movementSpeed to desired value
         float _time = 0;

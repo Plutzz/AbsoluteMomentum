@@ -21,7 +21,6 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
 
     [Header("Crouching Variables")]
     [SerializeField] private float crouchSpeed = 3.5f;
-    private bool crouching;
 
     [Header("Jump Variables")]
     [SerializeField] private float jumpForce = 5f;
@@ -56,7 +55,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     public override void DoFixedUpdateState()
     {
         Move();
-
+        SpeedControl();
         base.DoFixedUpdateState();
     }
 
@@ -64,10 +63,6 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     {
         GetInput();
         MovementSpeedHandler();
-
-
-
-
         base.DoUpdateState();
     }
 
@@ -80,12 +75,12 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     private void MovementSpeedHandler()
     {
         // Type - Sprinting
-        if (sprinting && !crouching)
+        if (sprinting && !stateMachine.crouching)
         {
             stateMachine.desiredMoveSpeed = sprintSpeed;
         }
         // Type - Crouching
-        else if (crouching)
+        else if (stateMachine.crouching)
         {
             stateMachine.desiredMoveSpeed = crouchSpeed;
         }
@@ -94,6 +89,10 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
         {
             stateMachine.desiredMoveSpeed = walkSpeed;
         }
+
+
+        stateMachine.moveSpeed = stateMachine.desiredMoveSpeed;
+
     }
 
     private void GetInput()
@@ -101,7 +100,6 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
         inputVector = playerInputActions.Player.Movement.ReadValue<Vector2>();
         sprinting = playerInputActions.Player.Sprint.ReadValue<float>() == 1f;
         jumping = playerInputActions.Player.Jump.ReadValue<float>() == 1f;
-        crouching = playerInputActions.Player.Crouch.ReadValue<float>() == 1f;
 
 
         if (stateMachine.timeOfLastJump + jumpCooldown < Time.time)
@@ -186,7 +184,35 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
         }
     }
 
+    // Limits the speed of the player to speed
+    private void SpeedControl()
+    {
+        //exitingGround = timeOfLastJump + exitingGroundTimer > Time.time;
 
+       
+
+        // If the player is mid jump don't limit velocity
+        if (!readyToJump) return;
+
+        // limit velocity on slope if player is not leaving the slope
+        if (stateMachine.SlopeCheck())
+        {
+            if (rb.velocity.magnitude > stateMachine.moveSpeed)
+                rb.velocity = rb.velocity.normalized * stateMachine.moveSpeed;
+        }
+        // limit velocity on ground
+        else
+        {
+            Vector3 _flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+            if (_flatVel.magnitude > stateMachine.moveSpeed)
+            {
+                Vector3 _limitedVelTarget = _flatVel.normalized * stateMachine.moveSpeed;
+                rb.velocity = new Vector3(_limitedVelTarget.x, rb.velocity.y, _limitedVelTarget.z);
+            }
+        }
+
+
+    }
 
     #endregion
 }
