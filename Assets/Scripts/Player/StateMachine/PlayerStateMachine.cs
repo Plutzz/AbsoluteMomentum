@@ -49,6 +49,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
     public float moveSpeed;
     [HideInInspector] public float desiredMoveSpeed;
+    [HideInInspector] public float lastDesiredMoveSpeed;
 
 
 

@@ -209,10 +209,12 @@ MonoBehaviour:
     m_Bits: 64
   playerHeight: 2
   playerCameraPrefab: {fileID: 189743957778359187, guid: ac0fb975af2fb9f4bb85911e96021a28, type: 3}
+  moveSpeed: 0
   desiredMoveSpeed: 0
-  exitingGroundTimer: 0.25
-  timeLeftGround: 0
-  speedIncreaseMultiplier: 3
+  lastDesiredMoveSpeed: 0
+  timeOfLastJump: 0
+  exitingGround: 0
+  speedIncreaseMultiplier: 20
   slopeIncreaseMultiplier: 4
   orientation: {fileID: 8671897353048501037}
   player: {fileID: 5911603449596199529}

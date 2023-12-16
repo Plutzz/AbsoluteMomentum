@@ -91,6 +91,17 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
         }
 
 
+        if (Mathf.Abs(stateMachine.desiredMoveSpeed - stateMachine.lastDesiredMoveSpeed) > 1f && stateMachine.moveSpeed != 0)
+        {
+            Debug.Log("START COROUTINE");
+            stateMachine.StopCoroutine(stateMachine.SmoothlyLerpMoveSpeed());
+            stateMachine.StartCoroutine(stateMachine.SmoothlyLerpMoveSpeed());
+        }
+        else
+        {
+            stateMachine.moveSpeed = stateMachine.desiredMoveSpeed;
+        }
+
         stateMachine.moveSpeed = stateMachine.desiredMoveSpeed;
 
     }
@@ -192,7 +203,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
        
 
         // If the player is mid jump don't limit velocity
-        if (!readyToJump) return;
+        //if (!readyToJump) return;
 
         // limit velocity on slope if player is not leaving the slope
         if (stateMachine.SlopeCheck())
