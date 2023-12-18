@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Sliding-Default
   m_EditorClassIdentifier: 
   maxSlideTime: 0.75
-  slideSpeed: 50
-  minimumSlideSpeed: 10
-  sprintSpeed: 10
-  slideAcceleration: 200
+  maxSlideSpeed: 15
+  minimumSlideSpeed: 5
+  slideAcceleration: 20
+  slideDeceleration: 5

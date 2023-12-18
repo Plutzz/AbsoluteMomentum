@@ -17,7 +17,7 @@ MonoBehaviour:
   acceleration: 100
   groundDrag: 4
   crouchSpeed: 3.5
-  jumpForce: 7
+  jumpForce: 10
   jumpCooldown: 0.25
   coyoteTime: 0.15
   readyToJump: 1

@@ -43,6 +43,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
         moveDirection = Vector3.zero;
         rb.drag = groundDrag;
         playerInputActions.Player.Crouch.performed += TryStartSlide;
+        stateMachine.StopAllCoroutines();
         base.DoEnterLogic();
     }
 
@@ -94,15 +95,15 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
         if (Mathf.Abs(stateMachine.desiredMoveSpeed - stateMachine.lastDesiredMoveSpeed) > 1f && stateMachine.moveSpeed != 0)
         {
             Debug.Log("START COROUTINE");
-            stateMachine.StopCoroutine(stateMachine.SmoothlyLerpMoveSpeed());
-            stateMachine.StartCoroutine(stateMachine.SmoothlyLerpMoveSpeed());
+            stateMachine.StopCoroutine(stateMachine.SmoothlyLerpMoveSpeed(acceleration));
+            stateMachine.StartCoroutine(stateMachine.SmoothlyLerpMoveSpeed(acceleration));
         }
         else
         {
             stateMachine.moveSpeed = stateMachine.desiredMoveSpeed;
         }
 
-        stateMachine.moveSpeed = stateMachine.desiredMoveSpeed;
+        stateMachine.lastDesiredMoveSpeed = stateMachine.desiredMoveSpeed;
 
     }
 
@@ -203,8 +204,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
        
 
         // If the player is mid jump don't limit velocity
-        //if (!readyToJump) return;
-
+        if (!readyToJump) return;
         // limit velocity on slope if player is not leaving the slope
         if (stateMachine.SlopeCheck())
         {

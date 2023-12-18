@@ -48,15 +48,14 @@ public class PlayerStateMachine : NetworkBehaviour
     [SerializeField] private GameObject playerCameraPrefab;
 
     public float moveSpeed;
-    [HideInInspector] public float desiredMoveSpeed;
-    [HideInInspector] public float lastDesiredMoveSpeed;
+    public float desiredMoveSpeed;
+    public float lastDesiredMoveSpeed;
 
 
 
     [HideInInspector] public float timeOfLastJump;
     public bool exitingGround;
 
-    [SerializeField] private float speedIncreaseMultiplier;
     [SerializeField] private float slopeIncreaseMultiplier;
 
     
@@ -223,7 +222,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
     #region SpeedControl
 
-    public IEnumerator SmoothlyLerpMoveSpeed()
+    public IEnumerator SmoothlyLerpMoveSpeed(float speedIncreaseMultiplier)
     {
         //smoothly lerp movementSpeed to desired value
         float _time = 0;
