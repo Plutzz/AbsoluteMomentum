@@ -28,8 +28,9 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     [SerializeField] private float coyoteTime = 0.25f;
     public bool readyToJump = true;
     private bool jumping;
-
-    [SerializeField] private int bhopFrames;
+    private bool bhopFrame;
+    private int bhopFrames;
+    [SerializeField] private int numBhopFrames;
 
 
     public override void Initialize(GameObject gameObject, PlayerStateMachine stateMachine, PlayerInputActions playerInputActions)
@@ -42,6 +43,8 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     {
         moveDirection = Vector3.zero;
         rb.drag = groundDrag;
+        bhopFrame = true;
+        bhopFrames = numBhopFrames;
         playerInputActions.Player.Crouch.performed += TryStartSlide;
         stateMachine.StopAllCoroutines();
         base.DoEnterLogic();
@@ -75,6 +78,8 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     #region Helper Methods
     private void MovementSpeedHandler()
     {
+        if (bhopFrame) return;
+
         // Type - Sprinting
         if (sprinting && !stateMachine.crouching)
         {
@@ -201,10 +206,15 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     {
         //exitingGround = timeOfLastJump + exitingGroundTimer > Time.time;
 
-       
+
 
         // If the player is mid jump don't limit velocity
-        if (!readyToJump) return;
+        if (bhopFrames > 0)
+        {
+            bhopFrames--;
+            return;
+        }
+        bhopFrame = false;
         // limit velocity on slope if player is not leaving the slope
         if (stateMachine.SlopeCheck())
         {
@@ -222,7 +232,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
             }
         }
 
-
+        
     }
 
     #endregion

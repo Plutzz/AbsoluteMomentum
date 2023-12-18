@@ -151,7 +151,6 @@ public class PlayerStateMachine : NetworkBehaviour
 
         if (crouching)
         {
-            Debug.Log("Crouching");
             gameObject.transform.localScale = new Vector3(gameObject.transform.localScale.x, crouchYScale, gameObject.transform.localScale.z);
         }
         else
@@ -220,7 +219,7 @@ public class PlayerStateMachine : NetworkBehaviour
             rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
     }
 
-    #region SpeedControl
+    #region Speed Control
 
     public IEnumerator SmoothlyLerpMoveSpeed(float speedIncreaseMultiplier)
     {

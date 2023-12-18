@@ -21,4 +21,4 @@ MonoBehaviour:
   jumpCooldown: 0.25
   coyoteTime: 0.15
   readyToJump: 1
-  bhopFrames: 2
+  numBhopFrames: 2

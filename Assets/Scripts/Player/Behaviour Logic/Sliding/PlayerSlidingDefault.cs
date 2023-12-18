@@ -19,7 +19,7 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
     {
         base.DoEnterLogic();
         inputVector = playerInputActions.Player.Movement.ReadValue<Vector2>();
-        reachedMaxSpeed = false;
+        rb.drag = 0;
         StartSlide();
     }
 
@@ -59,20 +59,28 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
 
     private void StartSlide()
     {
-        rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
+        //rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
         stateMachine.desiredMoveSpeed = maxSlideSpeed;
-        stateMachine.moveSpeed = stateMachine.desiredMoveSpeed;
+        reachedMaxSpeed = false;
     }
 
     private void MovementSpeedHandler()
     {
-        // if moving downwards on a slope, 
-        if (rb.velocity.magnitude <= maxSlideSpeed - 0.2f || (stateMachine.SlopeCheck() && rb.velocity.y < 0.1f))
+        Debug.Log("Sliding Velocity: " + rb.velocity.magnitude);
+        // sliding down a slope
+        if (stateMachine.SlopeCheck() && rb.velocity.y < 0.1f)
+        {
+            reachedMaxSpeed = false;
+            stateMachine.desiredMoveSpeed = maxSlideSpeed;
+            acceleration = slideAcceleration;
+        }
+        // max speed hasn't been reached yet
+        else if (!reachedMaxSpeed && (rb.velocity.magnitude <= maxSlideSpeed))
         {
             stateMachine.desiredMoveSpeed = maxSlideSpeed;
             acceleration = slideAcceleration;
         }
-        else if(rb.velocity.magnitude > maxSlideSpeed - 0.2f && !reachedMaxSpeed)
+        else
         {
             reachedMaxSpeed = true;
             stateMachine.desiredMoveSpeed = minimumSlideSpeed;
@@ -81,7 +89,7 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
 
         if (Mathf.Abs(stateMachine.desiredMoveSpeed - stateMachine.lastDesiredMoveSpeed) > 1f && stateMachine.moveSpeed != 0)
         {
-            Debug.Log("START COROUTINE");
+            Debug.Log("Sliding Coroutine: " + acceleration);
             stateMachine.StopCoroutine(stateMachine.SmoothlyLerpMoveSpeed(acceleration));
             stateMachine.StartCoroutine(stateMachine.SmoothlyLerpMoveSpeed(acceleration));
         }
@@ -93,8 +101,9 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
     {
         slideDirection = orientation.forward * inputVector.y + orientation.right * inputVector.x;
 
+
         //Sliding Normal
-        if(!stateMachine.SlopeCheck() || rb.velocity.y > -0.1f)
+        if (!stateMachine.SlopeCheck() || rb.velocity.y > -0.1f)
         {
             rb.AddForce(slideDirection.normalized * slideAcceleration, ForceMode.Force);
         }
@@ -102,12 +111,11 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
         //Sliding down a slope
         else
         {
-            rb.AddForce(stateMachine.GetSlopeMoveDirection(slideDirection) * slideAcceleration, ForceMode.Force);
-
+           rb.AddForce(stateMachine.GetSlopeMoveDirection(slideDirection) * slideAcceleration, ForceMode.Force);
         }
 
 
-        if (rb.velocity.magnitude < minimumSlideSpeed)
+        if (rb.velocity.magnitude <= minimumSlideSpeed + 1f)
         {
             StopSlide();
         }
