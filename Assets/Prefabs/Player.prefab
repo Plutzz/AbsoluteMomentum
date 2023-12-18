@@ -204,6 +204,7 @@ MonoBehaviour:
   playerMovingBase: {fileID: 11400000, guid: e21860848c0736f4ea183a101b263ba3, type: 2}
   playerAirborneBase: {fileID: 11400000, guid: 109712c1514316b46bc965911185995a, type: 2}
   playerSlidingBase: {fileID: 11400000, guid: f06437ceae2fd64469ea5d99c0f0dd5f, type: 2}
+  playerWallrunBase: {fileID: 11400000, guid: 94101bc732a33964980b581bca0e153e, type: 2}
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -214,7 +215,6 @@ MonoBehaviour:
   lastDesiredMoveSpeed: 0
   timeOfLastJump: 0
   exitingGround: 0
-  speedIncreaseMultiplier: 20
   slopeIncreaseMultiplier: 4
   orientation: {fileID: 8671897353048501037}
   player: {fileID: 5911603449596199529}

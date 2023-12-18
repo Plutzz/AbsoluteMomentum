@@ -22,6 +22,7 @@ public class PlayerStateMachine : NetworkBehaviour
     public PlayerMovingState MovingState;
     public PlayerAirborneState AirborneState;
     public PlayerSlidingState SlidingState;
+    public PlayerWallrunState WallrunState;
 
     #endregion
 
@@ -31,11 +32,13 @@ public class PlayerStateMachine : NetworkBehaviour
     [SerializeField] private PlayerMovingSOBase playerMovingBase;
     [SerializeField] private PlayerAirborneSOBase playerAirborneBase;
     [SerializeField] private PlayerSlidingSOBase playerSlidingBase;
+    [SerializeField] private PlayerWallrunSOBase playerWallrunBase;
 
     public PlayerIdleSOBase PlayerIdleBaseInstance { get; private set; }
     public PlayerMovingSOBase PlayerMovingBaseInstance { get; private set; }
     public PlayerAirborneSOBase PlayerAirborneBaseInstance { get; private set; }
     public PlayerSlidingSOBase PlayerSlidingBaseInstance { get; private set; }
+    public PlayerWallrunSOBase PlayerWallrunBaseInstance { get; private set; }
 
     #endregion
 
@@ -92,11 +95,13 @@ public class PlayerStateMachine : NetworkBehaviour
         PlayerMovingBaseInstance = playerMovingBase;
         PlayerAirborneBaseInstance = playerAirborneBase;
         PlayerSlidingBaseInstance = playerSlidingBase;
+        PlayerWallrunBaseInstance = playerWallrunBase;
         //COMMENT CODE TO TEST MOVEMENT VALUES WITHOUT HAVING TO RESTART PLAY MODE
-        ///PlayerIdleBaseInstance = Instantiate(playerIdleBase);
-        ///PlayerMovingBaseInstance = Instantiate(playerMovingBase);
-        ///PlayerAirborneBaseInstance = Instantiate(playerAirborneBase);
-        ///PlayerSlidingBaseInstance = Instantiate(playerSlidingBase);
+        //PlayerIdleBaseInstance = Instantiate(playerIdleBase);
+        //PlayerMovingBaseInstance = Instantiate(playerMovingBase);
+        //PlayerAirborneBaseInstance = Instantiate(playerAirborneBase);
+        //PlayerSlidingBaseInstance = Instantiate(playerSlidingBase);
+        //PlayerWallrunBaseInstance = Instantiate(playerWallrunBase);
 
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
@@ -106,15 +111,16 @@ public class PlayerStateMachine : NetworkBehaviour
         MovingState = new PlayerMovingState(this);
         AirborneState = new PlayerAirborneState(this);
         SlidingState = new PlayerSlidingState(this);
+        WallrunState = new PlayerWallrunState(this);
         
 
         PlayerIdleBaseInstance.Initialize(gameObject, this, playerInputActions);
         PlayerMovingBaseInstance.Initialize(gameObject, this, playerInputActions);
         PlayerAirborneBaseInstance.Initialize(gameObject, this, playerInputActions);
         PlayerSlidingBaseInstance.Initialize(gameObject, this, playerInputActions, orientation);
+        PlayerWallrunBaseInstance.Initialize(gameObject, this, playerInputActions);
 
         initialState = IdleState;
-
         startYScale = gameObject.transform.localScale.y;
     }
     private void Start()
