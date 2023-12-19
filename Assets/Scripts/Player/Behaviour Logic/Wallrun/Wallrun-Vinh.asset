@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aee98ac8c3fb29a43bb36c1f6613a8f9, type: 3}
+  m_Name: Wallrun-Vinh
+  m_EditorClassIdentifier: 
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  isWallLeft: 0
+  isWallRight: 0
+  isWallRunning: 0
+  wallRunForce: 1
+  maxRunSpeed: 10
+  maxRunTime: 3
+  jumpForce: 10
+  maxWallRunCameraTilt: 0
+  wallRunCameraTilt: 0
