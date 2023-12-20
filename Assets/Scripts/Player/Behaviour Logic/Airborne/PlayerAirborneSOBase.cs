@@ -21,7 +21,7 @@ public class PlayerAirborneSOBase : PlayerStateSOBase
     public override void CheckTransitions()
     {
         //if no collision detected, no transitions
-        if (!stateMachine.SlopeCheck() && !stateMachine.GroundedCheck()) return;
+        if (!stateMachine.SlopeCheck() && !stateMachine.GroundedCheck() && !stateMachine.WallCheck()) return;
 
         // Airborne => Moving
         if (playerInputActions.Player.Movement.ReadValue<Vector2>() != Vector2.zero)

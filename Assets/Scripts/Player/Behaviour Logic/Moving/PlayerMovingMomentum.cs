@@ -199,6 +199,9 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
         {
             stateMachine.ChangeState(stateMachine.IdleState);
         }
+        // Moving => Wallrun
+        else if (sprinting && stateMachine.WallCheck())
+            stateMachine.ChangeState(stateMachine.WallrunState);
     }
 
     // Limits the speed of the player to speed

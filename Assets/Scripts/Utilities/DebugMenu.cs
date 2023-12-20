@@ -7,6 +7,7 @@ public class DebugMenu : Singleton<DebugMenu>
 {
     public TextMeshProUGUI PlayerStateText;
     public TextMeshProUGUI GroundedCheckText;
+    public TextMeshProUGUI WallrunCheckText;
     public TextMeshProUGUI VelocityText;
     public TextMeshProUGUI SpeedText;
 }

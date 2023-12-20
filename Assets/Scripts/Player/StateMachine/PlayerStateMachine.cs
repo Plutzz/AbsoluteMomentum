@@ -82,6 +82,7 @@ public class PlayerStateMachine : NetworkBehaviour
     #region Debug Variables
     public TextMeshProUGUI CurrentStateText;
     public TextMeshProUGUI GroundedText;
+    public TextMeshProUGUI WallrunText;
     public TextMeshProUGUI VelocityText;
     public TextMeshProUGUI SpeedText;
     #endregion
@@ -140,6 +141,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
             CurrentStateText = DebugMenu.Instance.PlayerStateText;
             GroundedText = DebugMenu.Instance.GroundedCheckText;
+            WallrunText = DebugMenu.Instance.WallrunCheckText;
             VelocityText = DebugMenu.Instance.VelocityText;
             SpeedText = DebugMenu.Instance.SpeedText;
         }
@@ -171,10 +173,8 @@ public class PlayerStateMachine : NetworkBehaviour
 
         CurrentStateText.text = "Current State: " + currentState.ToString();
         GroundedText.text = "Grounded: " + GroundedCheck();
+        WallrunText.text = "Wallrun: " + WallCheck();
         VelocityText.text = "Input: " + playerInputActions.Player.Movement.ReadValue<Vector2>().x + "," + playerInputActions.Player.Movement.ReadValue<Vector2>().y;
-
-
-
 
     }
 
@@ -202,6 +202,13 @@ public class PlayerStateMachine : NetworkBehaviour
         return Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f * gameObject.transform.localScale.y + 0.2f , groundLayer);
         //return Physics.OverlapBox(GroundCheck.position, GroundCheckSize * 0.5f, Quaternion.identity, groundLayer).Length > 0;
     }
+
+    public bool WallCheck()
+    {
+        return Physics.Raycast(transform.position, -orientation.right, 2f, LayerMask.GetMask("Wall")) ||
+                Physics.Raycast(transform.position, orientation.right, 2f, LayerMask.GetMask("Wall"));
+    }
+
     public bool SlopeCheck()
     {
         if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f * gameObject.transform.localScale.y + 0.3f))

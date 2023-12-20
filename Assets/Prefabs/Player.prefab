@@ -223,6 +223,7 @@ MonoBehaviour:
   maxSlopeAngle: 40
   CurrentStateText: {fileID: 0}
   GroundedText: {fileID: 0}
+  WallrunText: {fileID: 0}
   VelocityText: {fileID: 0}
   SpeedText: {fileID: 0}
 --- !u!54 &2083876072485818274

@@ -61,7 +61,7 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
     }
     private void Move()
     {
-        if(inputVector == Vector2.zero) { return; }
+        if (inputVector == Vector2.zero) { return; }
 
 
         Vector3 _moveDir = stateMachine.orientation.forward * inputVector.y + stateMachine.orientation.right * inputVector.x;
@@ -78,12 +78,17 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
     public override void CheckTransitions()
     {
         //if no collision detected, no transitions
-        if (!stateMachine.SlopeCheck() && !stateMachine.GroundedCheck()) return;
+        if (!stateMachine.SlopeCheck() && !stateMachine.GroundedCheck() && !stateMachine.WallCheck()) return;
 
         // Airborne => Sliding
         if (stateMachine.crouching && playerInputActions.Player.Jump.ReadValue<float>() == 0 && rb.velocity.magnitude > minimumSlideVelocity)
         {
             stateMachine.ChangeState(stateMachine.SlidingState);
+        }
+        // Airborne => Wallrunning
+        else if (stateMachine.WallCheck() && sprinting)
+        {
+            stateMachine.ChangeState(stateMachine.WallrunState);
         }
         // Airborne => Moving
         else if (playerInputActions.Player.Movement.ReadValue<Vector2>() != Vector2.zero)

@@ -8,26 +8,26 @@ public class PlayerWallrunState : PlayerState
 
     public override void CheckTransitions()
     {
-        base.CheckTransitions();
+        stateMachine.PlayerWallrunBaseInstance.CheckTransitions();
     }
 
     public override void EnterLogic()
     {
-        base.EnterLogic();
+        stateMachine.PlayerWallrunBaseInstance.DoEnterLogic();
     }
 
     public override void ExitLogic()
     {
-        base.ExitLogic();
+        stateMachine.PlayerWallrunBaseInstance.DoExitLogic();
     }
 
     public override void FixedUpdateState()
     {
-        base.FixedUpdateState();
+        stateMachine.PlayerWallrunBaseInstance.DoFixedUpdateState();
     }
 
     public override void UpdateState()
     {
-        base.UpdateState();
+        stateMachine.PlayerWallrunBaseInstance.DoUpdateState();
     }
 }
