@@ -39,8 +39,7 @@ public class PlayerWallrunVinh : PlayerWallrunSOBase
 
     public override void CheckTransitions()
     {
-        Debug.Log("WallrunCheckTransitions");
-        // if (isWallRunning || stateMachine.WallCheck()) return;
+        if (stateMachine.WallCheck()) return;
         // Player is grounded and moving
         if (playerInputActions.Player.Movement.ReadValue<Vector2>() != Vector2.zero && !stateMachine.WallCheck()) stateMachine.ChangeState(stateMachine.MovingState);
         // Player is grounded and not moving
@@ -52,7 +51,6 @@ public class PlayerWallrunVinh : PlayerWallrunSOBase
 
     public override void DoEnterLogic()
     {
-        Debug.Log("Wallrun");
         rb.useGravity = false;
         isWallRunning = true;
         base.DoEnterLogic();
@@ -60,7 +58,6 @@ public class PlayerWallrunVinh : PlayerWallrunSOBase
 
     public override void DoExitLogic()
     {
-        Debug.Log("StopWallrun");
         rb.useGravity = true;
         isWallRunning = false;
         base.DoExitLogic();
