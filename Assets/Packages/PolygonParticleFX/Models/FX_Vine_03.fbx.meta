@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 41e18b74cd8bd984b94d58c040bb66da
-timeCreated: 1517370620
+guid: f2d9cca9ec7e3e4468eb7a7e4f0db98d
+timeCreated: 1588215796
 licenseType: Store
 ModelImporter:
   serializedVersion: 21
@@ -9,7 +9,7 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: SM_Particle_Smoke_01
+    4300000: FX_Vine_03
     9500000: //RootNode
   materials:
     importMaterials: 0
@@ -60,7 +60,7 @@ ModelImporter:
     normalSmoothAngle: 5
     normalImportMode: 1
     tangentImportMode: 3
-    normalCalculationMode: 0
+    normalCalculationMode: 4
   importAnimation: 0
   copyAvatar: 0
   humanDescription:

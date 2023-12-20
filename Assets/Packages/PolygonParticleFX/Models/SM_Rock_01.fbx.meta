@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 41e18b74cd8bd984b94d58c040bb66da
-timeCreated: 1517370620
+guid: 047fc1cd24ff3e945872c4f22e03d106
+timeCreated: 1528252016
 licenseType: Store
 ModelImporter:
   serializedVersion: 21
@@ -9,7 +9,7 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: SM_Particle_Smoke_01
+    4300000: SM_Rock_01
     9500000: //RootNode
   materials:
     importMaterials: 0
