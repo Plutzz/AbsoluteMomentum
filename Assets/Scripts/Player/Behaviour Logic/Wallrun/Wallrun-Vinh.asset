@@ -14,15 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   wallLayer:
     serializedVersion: 2
-    m_Bits: 0
-  isWallLeft: 0
-  isWallRight: 0
+    m_Bits: 128
   isWallRunning: 0
   wallRunForce: 1
   maxRunSpeed: 10
   maxRunTime: 3
   jumpForce: 10
   sprinting: 0
-  jumping: 0
+  jumping: 1
   maxWallRunCameraTilt: 0
   wallRunCameraTilt: 0
