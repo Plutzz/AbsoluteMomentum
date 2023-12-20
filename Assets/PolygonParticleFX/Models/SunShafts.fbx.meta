@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 41e18b74cd8bd984b94d58c040bb66da
-timeCreated: 1517370620
+guid: 26e4a750d47e56a408d32a571488849e
+timeCreated: 1527115221
 licenseType: Store
 ModelImporter:
   serializedVersion: 21
@@ -9,7 +9,7 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: SM_Particle_Smoke_01
+    4300000: SunShafts
     9500000: //RootNode
   materials:
     importMaterials: 0
@@ -38,7 +38,7 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 100
     meshCompression: 0
     addColliders: 0
     importVisibility: 0
