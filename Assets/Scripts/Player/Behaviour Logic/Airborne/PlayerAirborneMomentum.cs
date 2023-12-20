@@ -93,7 +93,7 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
             else if (playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.zero)
             {
                 stateMachine.ChangeState(stateMachine.IdleState);
-            }
+            } 
         }
         // Airborne => Wallrunning
         else if (stateMachine.WallCheck() && sprinting)

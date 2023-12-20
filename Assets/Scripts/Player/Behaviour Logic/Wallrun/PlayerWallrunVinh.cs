@@ -42,7 +42,7 @@ public class PlayerWallrunVinh : PlayerWallrunSOBase
         if (stateMachine.WallCheck()) return;
 
         // Player is grounded and moving
-        if (playerInputActions.Player.Movement.ReadValue<Vector2>() != Vector2.zero && !stateMachine.WallCheck()) stateMachine.ChangeState(stateMachine.MovingState);
+        if (playerInputActions.Player.Movement.ReadValue<Vector2>() != Vector2.zero && stateMachine.GroundedCheck()) stateMachine.ChangeState(stateMachine.MovingState);
         // Player is grounded and not moving
         else if (playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.zero || !stateMachine.WallCheck()) stateMachine.ChangeState(stateMachine.IdleState);
         // Player is jumping off the wall
