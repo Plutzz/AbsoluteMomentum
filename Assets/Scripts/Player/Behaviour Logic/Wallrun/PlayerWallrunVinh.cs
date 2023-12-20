@@ -40,6 +40,7 @@ public class PlayerWallrunVinh : PlayerWallrunSOBase
     public override void CheckTransitions()
     {
         if (stateMachine.WallCheck()) return;
+
         // Player is grounded and moving
         if (playerInputActions.Player.Movement.ReadValue<Vector2>() != Vector2.zero && !stateMachine.WallCheck()) stateMachine.ChangeState(stateMachine.MovingState);
         // Player is grounded and not moving
@@ -76,27 +77,27 @@ public class PlayerWallrunVinh : PlayerWallrunSOBase
 
     void WallJump()
     {
-        // if (isWallRunning)
-        // {
+        //if (isWallRunning)
+        //{
 
-        //     //normal jump
-        //     if (isWallLeft && !Input.GetKey(KeyCode.D) || isWallRight && !Input.GetKey(KeyCode.A))
-        //     {
-        //         rb.AddForce(Vector2.up * jumpForce * 1.5f);
-        //         rb.AddForce(stateMachine.orientation.forward * jumpForce * 0.5f);
-        //     }
+        //    //normal jump
+        //    if (isWallLeft && !Input.GetKey(KeyCode.D) || isWallRight && !Input.GetKey(KeyCode.A))
+        //    {
+        //        rb.AddForce(Vector2.up * jumpForce * 1.5f);
+        //        rb.AddForce(stateMachine.orientation.forward * jumpForce * 0.5f);
+        //    }
 
-        //     //sidwards wallhop
-        //     if (isWallRight || isWallLeft && Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) rb.AddForce(-stateMachine.orientation.up * jumpForce * 1f);
-        //     if (isWallRight && Input.GetKey(KeyCode.A)) rb.AddForce(-stateMachine.orientation.right * jumpForce * 3.2f);
-        //     if (isWallLeft && Input.GetKey(KeyCode.D)) rb.AddForce(stateMachine.orientation.right * jumpForce * 3.2f);
+        //    //sidwards wallhop
+        //    if (isWallRight || isWallLeft && Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) rb.AddForce(-stateMachine.orientation.up * jumpForce * 1f);
+        //    if (isWallRight && Input.GetKey(KeyCode.A)) rb.AddForce(-stateMachine.orientation.right * jumpForce * 3.2f);
+        //    if (isWallLeft && Input.GetKey(KeyCode.D)) rb.AddForce(stateMachine.orientation.right * jumpForce * 3.2f);
 
-        //     //Always add forward force
-        //     rb.AddForce(stateMachine.orientation.forward * jumpForce * 1f);
+        //    //Always add forward force
+        //    rb.AddForce(stateMachine.orientation.forward * jumpForce * 1f);
 
-        //     //reset jump
-        //     //ResetValues();
-        // }
+        //    //reset jump
+        //    //ResetValues();
+        //}
 
     }
 
@@ -113,9 +114,9 @@ public class PlayerWallrunVinh : PlayerWallrunSOBase
 
     void WallRunInput()
     {
-        // if ((Input.GetKey(KeyCode.D) && stateMachine.WallCheck()) || (Input.GetKey(KeyCode.A) && stateMachine.WallCheck())) StartWallrun();
-        // if (Input.GetKeyDown(KeyCode.Space) && isWallRunning) WallJump();
-        // if (Input.GetKey(KeyCode.S) && isWallRunning) DoExitLogic();
+        //if ((Input.GetKey(KeyCode.D) && stateMachine.WallCheck()) || (Input.GetKey(KeyCode.A) && stateMachine.WallCheck())) StartWallrun();
+        //if (Input.GetKeyDown(KeyCode.Space) && isWallRunning) WallJump();
+        //if (Input.GetKey(KeyCode.S) && isWallRunning) DoExitLogic();
 
     }
 

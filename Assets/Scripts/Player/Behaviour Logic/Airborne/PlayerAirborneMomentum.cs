@@ -77,28 +77,31 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
 
     public override void CheckTransitions()
     {
-        //if no collision detected, no transitions
-        if (!stateMachine.SlopeCheck() && !stateMachine.GroundedCheck() && !stateMachine.WallCheck()) return;
-
-        // Airborne => Sliding
-        if (stateMachine.crouching && playerInputActions.Player.Jump.ReadValue<float>() == 0 && rb.velocity.magnitude > minimumSlideVelocity)
+        if(stateMachine.GroundedCheck() || stateMachine.SlopeCheck())
         {
-            stateMachine.ChangeState(stateMachine.SlidingState);
+            // Airborne => Sliding
+            if (stateMachine.crouching && playerInputActions.Player.Jump.ReadValue<float>() == 0 && rb.velocity.magnitude > minimumSlideVelocity)
+            {
+                stateMachine.ChangeState(stateMachine.SlidingState);
+            }
+            // Airborne => Moving
+            else if (playerInputActions.Player.Movement.ReadValue<Vector2>() != Vector2.zero)
+            {
+                stateMachine.ChangeState(stateMachine.MovingState);
+            }
+            // Airborne => Idle
+            else if (playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.zero)
+            {
+                stateMachine.ChangeState(stateMachine.IdleState);
+            }
         }
         // Airborne => Wallrunning
         else if (stateMachine.WallCheck() && sprinting)
         {
             stateMachine.ChangeState(stateMachine.WallrunState);
         }
-        // Airborne => Moving
-        else if (playerInputActions.Player.Movement.ReadValue<Vector2>() != Vector2.zero)
-        {
-            stateMachine.ChangeState(stateMachine.MovingState);
-        }
-        else if (playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.zero)
-        {
-            stateMachine.ChangeState(stateMachine.IdleState);
-        }
+
+
     }
 
     private void SpeedControl()
