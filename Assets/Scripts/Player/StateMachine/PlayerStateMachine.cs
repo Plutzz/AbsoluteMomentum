@@ -16,6 +16,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
     private PlayerState currentState; // State that player is currently in
     private PlayerState initialState; // State that player starts as
+    public PlayerState previousState { get; private set; } // State that player starts as
 
     // References to all player states
     public PlayerIdleState IdleState;
@@ -192,6 +193,7 @@ public class PlayerStateMachine : NetworkBehaviour
     {
         Debug.Log("Changing to: " + newState);
         currentState.ExitLogic();
+        previousState = currentState;
         currentState = newState;
         currentState.EnterLogic();
     }

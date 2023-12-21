@@ -12,6 +12,7 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
     [SerializeField] private float minimumSlideSpeed;
     [SerializeField] private float slideAcceleration;
     [SerializeField] private float slideDeceleration;
+    [SerializeField] private float verticalMomentumBoostAmount = 10f;
     private float acceleration;
     private Vector3 slideDirection;
     public override void DoEnterLogic()
@@ -60,6 +61,16 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
     {
         //rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
         stateMachine.desiredMoveSpeed = maxSlideSpeed;
+
+        if(stateMachine.previousState == stateMachine.AirborneState && stateMachine.SlopeCheck() && rb.velocity.y < 0.1f)
+        {
+            stateMachine.desiredMoveSpeed = stateMachine.maxSpeed;
+            stateMachine.moveSpeed = stateMachine.maxSpeed;
+            stateMachine.lastDesiredMoveSpeed = stateMachine.maxSpeed;
+            slideDirection = orientation.forward * inputVector.y + orientation.right * inputVector.x;
+            rb.AddForce(stateMachine.GetSlopeMoveDirection(slideDirection) * (rb.velocity.y * -1) * verticalMomentumBoostAmount,
+                ForceMode.Impulse);
+        }
     }
 
     private void MovementSpeedHandler()
