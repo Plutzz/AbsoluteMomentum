@@ -14,7 +14,6 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
     [SerializeField] private float slideDeceleration;
     private float acceleration;
     private Vector3 slideDirection;
-    private bool reachedMaxSpeed;
     public override void DoEnterLogic()
     {
         base.DoEnterLogic();
@@ -61,7 +60,6 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
     {
         //rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
         stateMachine.desiredMoveSpeed = maxSlideSpeed;
-        reachedMaxSpeed = false;
     }
 
     private void MovementSpeedHandler()
@@ -71,7 +69,7 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
         if (stateMachine.SlopeCheck() && rb.velocity.y < 0.1f)
         {
             reachedMaxSpeed = false;
-            stateMachine.desiredMoveSpeed = maxSlideSpeed;
+            stateMachine.desiredMoveSpeed = stateMachine.maxSpeed;
             acceleration = slideAcceleration;
         }
         // max speed hasn't been reached yet
@@ -153,6 +151,7 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
 
     private void StopSlide()
     {
+        reachedMaxSpeed = false;
         stateMachine.ChangeState(stateMachine.MovingState);
     }
     

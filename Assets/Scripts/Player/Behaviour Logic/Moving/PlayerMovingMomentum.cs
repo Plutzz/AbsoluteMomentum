@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
@@ -217,6 +218,8 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
             bhopFrames--;
             return;
         }
+        //This resets the sliding boost if the player is not chaining slides
+        stateMachine.PlayerSlidingBaseInstance.reachedMaxSpeed = false;
         bhopFrame = false;
         // limit velocity on slope if player is not leaving the slope
         if (stateMachine.SlopeCheck())

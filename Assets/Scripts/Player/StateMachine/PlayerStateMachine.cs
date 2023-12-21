@@ -60,6 +60,7 @@ public class PlayerStateMachine : NetworkBehaviour
     public bool exitingGround;
 
     [SerializeField] private float slopeIncreaseMultiplier;
+    [SerializeField] public float maxSpeed = 100f;
 
     
 
