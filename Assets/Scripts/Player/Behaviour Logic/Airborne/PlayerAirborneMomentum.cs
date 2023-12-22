@@ -36,6 +36,7 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
 
     public override void DoUpdateState()
     {
+        stateMachine.WallCheck();
         GetInput();
         MovementSpeedHandler();
         base.DoUpdateState();

@@ -225,8 +225,9 @@ public class PlayerStateMachine : NetworkBehaviour
         // Debugging rays
         Debug.DrawRay(player.position, -playerObj.right * 2f, Color.red);
         Debug.DrawRay(player.position, playerObj.right * 2f, Color.red);
-        return Physics.Raycast(player.position, -orientation.right, 2f, LayerMask.GetMask("Wall")) ||
-                Physics.Raycast(player.position, orientation.right, 2f, LayerMask.GetMask("Wall"));
+        wallRight = Physics.Raycast(player.position, -orientation.right, out leftSideWall, wallCheckDistance, LayerMask.GetMask("Wall"));
+        wallLeft = Physics.Raycast(player.position, orientation.right, out rightSideWall, wallCheckDistance, LayerMask.GetMask("Wall"));
+        return wallLeft || wallRight;
     }
 
     public bool SlopeCheck()
@@ -241,15 +242,15 @@ public class PlayerStateMachine : NetworkBehaviour
         return false;
     }
 
-    public void WallCheck()
-    {
-        //added by David
-        // wallRight = Physics.Raycast(playerObj.transform.position, orientation.right, out rightSideWall, wallCheckDistance, wallLayer);
-        // wallLeft = Physics.Raycast(playerObj.transform.position, -orientation.right, out leftSideWall, wallCheckDistance, wallLayer);
-        wallRight = Physics.Raycast(player.position, -orientation.right, out leftSideWall, wallCheckDistance, LayerMask.GetMask("Ground"));
-        wallLeft = Physics.Raycast(player.position, orientation.right, out rightSideWall, wallCheckDistance, LayerMask.GetMask("Ground"));
+    // public void WallCheck()
+    // {
+    //     //added by David
+    //     // wallRight = Physics.Raycast(playerObj.transform.position, orientation.right, out rightSideWall, wallCheckDistance, wallLayer);
+    //     // wallLeft = Physics.Raycast(playerObj.transform.position, -orientation.right, out leftSideWall, wallCheckDistance, wallLayer);
+    //     wallRight = Physics.Raycast(player.position, -orientation.right, out leftSideWall, wallCheckDistance, LayerMask.GetMask("Ground"));
+    //     wallLeft = Physics.Raycast(player.position, orientation.right, out rightSideWall, wallCheckDistance, LayerMask.GetMask("Ground"));
 
-    }
+    // }
 
     public bool AboveGround()
     {
