@@ -18,4 +18,4 @@ MonoBehaviour:
   minimumSlideSpeed: 5
   slideAcceleration: 20
   slideDeceleration: 10
-  verticalMomentumBoostAmount: 0.5
+  verticalMomentumBoostAmount: 1

@@ -156,6 +156,8 @@ public class PlayerStateMachine : NetworkBehaviour
     {
         if (!IsOwner) return;
 
+        //rb.velocity = new Vector3(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -10f, 100f), rb.velocity.z);
+
         //Crouching logic
         crouching = playerInputActions.Player.Crouch.ReadValue<float>() == 1f;
 
@@ -176,7 +178,8 @@ public class PlayerStateMachine : NetworkBehaviour
         CurrentStateText.text = "Current State: " + currentState.ToString();
         GroundedText.text = "Grounded: " + GroundedCheck();
         WallrunText.text = "Wallrun: " + WallCheck();
-        VelocityText.text = "Input: " + playerInputActions.Player.Movement.ReadValue<Vector2>().x + "," + playerInputActions.Player.Movement.ReadValue<Vector2>().y;
+        //VelocityText.text = "Input: " + playerInputActions.Player.Movement.ReadValue<Vector2>().x + "," + playerInputActions.Player.Movement.ReadValue<Vector2>().y;
+        VelocityText.text = "Vertical Speed: " + rb.velocity.y;
 
     }
 
@@ -217,7 +220,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
     public bool SlopeCheck()
     {
-        if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f * gameObject.transform.localScale.y + 0.3f))
+        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f * gameObject.transform.localScale.y + 0.3f, groundLayer))
         {
             float _angle = Vector3.Angle(Vector3.up, slopeHit.normal);
             //Debug.Log("OnSlope: " + (_angle < maxSlopeAngle && _angle != 0));

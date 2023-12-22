@@ -13,8 +13,10 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
     [SerializeField] private float slideAcceleration;
     [SerializeField] private float slideDeceleration;
     [SerializeField] private float verticalMomentumBoostAmount = 10f;
+    [SerializeField] private AnimationCurve verticalBoostCurve;
     private float acceleration;
     private Vector3 slideDirection;
+    private bool SlopeLastFrame;
     public override void DoEnterLogic()
     {
         base.DoEnterLogic();
@@ -62,36 +64,53 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
         //rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
         stateMachine.desiredMoveSpeed = maxSlideSpeed;
 
+        // if transitioning from airborne state and landing on a slope add a force proportional to height
         if(stateMachine.previousState == stateMachine.AirborneState && stateMachine.SlopeCheck() && rb.velocity.y < 0.1f)
         {
             stateMachine.desiredMoveSpeed = stateMachine.maxSpeed;
             stateMachine.moveSpeed = stateMachine.maxSpeed;
             stateMachine.lastDesiredMoveSpeed = stateMachine.maxSpeed;
             slideDirection = orientation.forward * inputVector.y + orientation.right * inputVector.x;
-            rb.AddForce(stateMachine.GetSlopeMoveDirection(slideDirection) * (rb.velocity.y * -1) * verticalMomentumBoostAmount,
-                ForceMode.Impulse);
+
+            // Exopnential
+            rb.AddForce(stateMachine.GetSlopeMoveDirection(slideDirection) * Mathf.Pow((rb.velocity.y * -1) * verticalMomentumBoostAmount, 2),
+             ForceMode.Impulse);
+ 
+            // Nathan's abomination (dot product)
+            //float magnitude = Mathf.Sqrt((rb.velocity.y * rb.velocity.y) / (1 - (Mathf.Pow(rb.velocity.x + rb.velocity.z, 2) * Mathf.Pow(Mathf.Cos(Vector3.Angle(Vector3.up, stateMachine.slopeHit.normal)), 2))));
+            //rb.AddForce(stateMachine.GetSlopeMoveDirection(slideDirection) * magnitude, ForceMode.Impulse);
+
+            // Animation curve
         }
     }
 
     private void MovementSpeedHandler()
     {
+
+        if (rb.velocity.magnitude >= maxSlideSpeed)
+            reachedMaxSpeed = true;
+
+        if (SlopeLastFrame)
+            stateMachine.moveSpeed = rb.velocity.magnitude;
+
         Debug.Log("Sliding Velocity: " + rb.velocity.magnitude);
         // sliding down a slope
         if (stateMachine.SlopeCheck() && rb.velocity.y < 0.1f)
         {
-            reachedMaxSpeed = false;
+            SlopeLastFrame = true;
             stateMachine.desiredMoveSpeed = stateMachine.maxSpeed;
             acceleration = slideAcceleration;
         }
         // max speed hasn't been reached yet
-        else if (!reachedMaxSpeed && (rb.velocity.magnitude <= maxSlideSpeed))
+        else if (!reachedMaxSpeed)
         {
+            SlopeLastFrame = false;
             stateMachine.desiredMoveSpeed = maxSlideSpeed;
             acceleration = slideAcceleration;
         }
         else
         {
-            reachedMaxSpeed = true;
+            SlopeLastFrame = false;
             stateMachine.desiredMoveSpeed = minimumSlideSpeed;
             acceleration = slideDeceleration;
         }
