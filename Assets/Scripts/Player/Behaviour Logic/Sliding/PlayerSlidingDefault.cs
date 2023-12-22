@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.EventSystems;
 
 [CreateAssetMenu(fileName = "Sliding-Default", menuName = "Player Logic/Sliding Logic/Default")]
@@ -14,6 +15,7 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
     [SerializeField] private float slideDeceleration;
     [SerializeField] private float verticalMomentumBoostAmount = 10f;
     [SerializeField] private AnimationCurve verticalBoostCurve;
+    [SerializeField] private float angleTest;
     private float acceleration;
     private Vector3 slideDirection;
     private bool SlopeLastFrame;
@@ -70,14 +72,16 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
             stateMachine.desiredMoveSpeed = stateMachine.maxSpeed;
             stateMachine.moveSpeed = stateMachine.maxSpeed;
             stateMachine.lastDesiredMoveSpeed = stateMachine.maxSpeed;
-            //slideDirection = orientation.forward * inputVector.y + orientation.right * inputVector.x;
-            slideDirection = Vector3.Cross(stateMachine.slopeHit.normal, Vector3.up);
+
+            //Get direction DOWN the slope
+            slideDirection = Vector3.Cross(stateMachine.slopeHit.normal, Vector3.up * angleTest) ;
             Vector3 test = Vector3.Cross(stateMachine.slopeHit.normal, slideDirection);
             slideDirection = test;
-            //Debug.DrawRay(gameObject.transform.position, slideDirection * 100f, Color.blue);
+            Debug.DrawRay(gameObject.transform.position, slideDirection * 100f, Color.blue);
+
             //Exopnential
-            rb.AddForce(stateMachine.GetSlopeMoveDirection(slideDirection) * Mathf.Pow((rb.velocity.y * -1) * verticalMomentumBoostAmount, 2),
-             ForceMode.Impulse);
+            //rb.AddForce(stateMachine.GetSlopeMoveDirection(slideDirection) * Mathf.Pow((rb.velocity.y * -1) * verticalMomentumBoostAmount, 2),
+             //ForceMode.Impulse);
  
             // Nathan's abomination (dot product)
             //float magnitude = Mathf.Sqrt((rb.velocity.y * rb.velocity.y) / (1 - (Mathf.Pow(rb.velocity.x + rb.velocity.z, 2) * Mathf.Pow(Mathf.Cos(Vector3.Angle(Vector3.up, stateMachine.slopeHit.normal)), 2))));
@@ -130,6 +134,7 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
     
     private void SlidingMovement()
     {
+ 
         slideDirection = orientation.forward * inputVector.y + orientation.right * inputVector.x;
 
         //Sliding Normal
