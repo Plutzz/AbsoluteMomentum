@@ -7,15 +7,12 @@ public class PlayerWallrunVinh : PlayerWallrunSOBase
 {
     [SerializeField] private LayerMask wallLayer;
     [SerializeField] private bool isWallRunning;
-    [SerializeField] private float wallRunForce = 1f;
+    [SerializeField] private float wallRunForce = 5f;
     [SerializeField] private float maxRunSpeed = 10f;
-    [SerializeField] private float maxRunTime = 3f;
     [SerializeField] private float jumpForce = 10f;
     [SerializeField] private bool sprinting, jumping;
-
-    public float maxWallRunCameraTilt, wallRunCameraTilt;
-    Vector3 direction = Vector3.zero;
-    Vector3 groundNormal = Vector3.up;
+    private bool isWallRight, isWallLeft;
+    private Vector3 moveDirection;
 
     public override void Initialize(GameObject gameObject, PlayerStateMachine stateMachine, PlayerInputActions playerInputActions)
     {
@@ -25,9 +22,17 @@ public class PlayerWallrunVinh : PlayerWallrunSOBase
 
     public override void DoUpdateState()
     {
-        Debug.Log(isWallRunning);
         GetInput();
         base.DoUpdateState();
+    }
+
+    public override void DoFixedUpdateState()
+    {
+        WallRun();
+        // SpeedControl();
+        WallJump();
+
+        base.DoFixedUpdateState();
     }
 
     private void GetInput()
@@ -39,21 +44,23 @@ public class PlayerWallrunVinh : PlayerWallrunSOBase
 
     public override void CheckTransitions()
     {
-        if (stateMachine.WallCheck()) return;
-
-        // Player is grounded and moving
-        if (playerInputActions.Player.Movement.ReadValue<Vector2>() != Vector2.zero && stateMachine.GroundedCheck()) stateMachine.ChangeState(stateMachine.MovingState);
-        // Player is grounded and not moving
+        // Player is moving in the opposite direction of the wall
+        if ((playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.left && isWallLeft)
+               || playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.right && isWallRight)
+            stateMachine.ChangeState(stateMachine.MovingState);
+        // Player is not on wall or not moving
         else if (playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.zero || !stateMachine.WallCheck()) stateMachine.ChangeState(stateMachine.IdleState);
-        // Player is jumping off the wall
-        else if (playerInputActions.Player.Jump.ReadValue<float>() == 1f || !sprinting) stateMachine.ChangeState(stateMachine.AirborneState);
     }
 
 
     public override void DoEnterLogic()
     {
+        Debug.Log("Do Enter Logic");
+        moveDirection = Vector3.zero;
         rb.useGravity = false;
         isWallRunning = true;
+        float climbForce = 10f;
+        rb.AddForce(Vector3.up * climbForce, ForceMode.Impulse);
         base.DoEnterLogic();
     }
 
@@ -64,21 +71,16 @@ public class PlayerWallrunVinh : PlayerWallrunSOBase
         base.DoExitLogic();
     }
 
-    public override void DoFixedUpdateState()
-    {
-        base.DoFixedUpdateState();
-    }
-
 
     public override void ResetValues()
     {
         base.ResetValues();
     }
 
-    void WallJump()
+    private void WallJump()
     {
-        //if (isWallRunning)
-        //{
+        // if (isWallRunning)
+        // {
 
         //    //normal jump
         //    if (isWallLeft && !Input.GetKey(KeyCode.D) || isWallRight && !Input.GetKey(KeyCode.A))
@@ -97,27 +99,65 @@ public class PlayerWallrunVinh : PlayerWallrunSOBase
 
         //    //reset jump
         //    //ResetValues();
-        //}
+        // }
 
     }
-
-    Vector3 RotateToWall(Vector3 direction, Vector3 wallNormal)
+    private void SpeedControl()
     {
-        Vector3 rotDir = Vector3.ProjectOnPlane(wallNormal, Vector3.up);
-        Quaternion rotation = Quaternion.AngleAxis(-90f, Vector3.up);
-        rotDir = rotation * rotDir;
-        float angle = -Vector3.Angle(Vector3.up, wallNormal);
-        rotation = Quaternion.AngleAxis(angle, rotDir);
-        direction = rotation * direction;
-        return direction;
+        // limit velocity on wall
+        if (rb.velocity.magnitude > maxRunSpeed)
+        {
+            rb.velocity = rb.velocity.normalized * maxRunSpeed;
+        }
     }
-
-    void WallRunInput()
+    private void WallRun()
     {
-        //if ((Input.GetKey(KeyCode.D) && stateMachine.WallCheck()) || (Input.GetKey(KeyCode.A) && stateMachine.WallCheck())) StartWallrun();
-        //if (Input.GetKeyDown(KeyCode.Space) && isWallRunning) WallJump();
-        //if (Input.GetKey(KeyCode.S) && isWallRunning) DoExitLogic();
+        WallDirection();
+        Vector3 horizontalDir = stateMachine.playerObj.right * inputVector.x;
+        Vector3 verticalDir = stateMachine.playerObj.forward * inputVector.y;
+        float hMultiplier = 2f;
+        float vMultiplier = 0.25f;
 
+        Vector3 wallRunVelo = (horizontalDir * hMultiplier + verticalDir * vMultiplier).normalized * 10f;
+        rb.AddForce(wallRunVelo, ForceMode.Force);
+
+        if (rb.velocity.magnitude <= maxRunSpeed)
+        {
+
+            //Make sure char sticks to wall
+            if (isWallRight)
+            {
+                rb.AddForce(-stateMachine.playerObj.right * wallRunForce, ForceMode.Force);
+            }
+            else if (isWallLeft)
+            {
+                rb.AddForce(stateMachine.playerObj.right * wallRunForce, ForceMode.Force);
+            }
+        }
     }
 
+    private void WallDirection()
+    {
+        isWallRight = Physics.Raycast(stateMachine.player.position, stateMachine.playerObj.right, out RaycastHit right, 2f, wallLayer);
+        isWallLeft = Physics.Raycast(stateMachine.player.position, -stateMachine.playerObj.right, out RaycastHit left, 2f, wallLayer);
+
+        // if (isWallRight)
+        //     RotateToWall(right);
+        // else if (isWallLeft)
+        //     RotateToWall(left);
+
+        //leave wall run
+        if (!isWallLeft && !isWallRight)
+        {
+            DoExitLogic();
+        }
+    }
+    void RotateToWall(RaycastHit hit)
+    {
+        Vector3 directionAlongWall = -hit.normal;
+        Quaternion rotation = Quaternion.LookRotation(directionAlongWall, Vector3.up);
+        Vector3 eulerRotation = rotation.eulerAngles;
+        eulerRotation.z += 45;
+        stateMachine.player.rotation = Quaternion.Euler(eulerRotation);
+    }
 }

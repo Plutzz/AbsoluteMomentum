@@ -208,8 +208,8 @@ public class PlayerStateMachine : NetworkBehaviour
         // Debugging rays
         Debug.DrawRay(player.position, -playerObj.right * 2f, Color.red);
         Debug.DrawRay(player.position, playerObj.right * 2f, Color.red);
-        return Physics.Raycast(player.position, -orientation.right, 2f, LayerMask.GetMask("Wall")) ||
-                Physics.Raycast(player.position, orientation.right, 2f, LayerMask.GetMask("Wall"));
+        return Physics.Raycast(player.position, -playerObj.right, 2f, LayerMask.GetMask("Wall")) ||
+                Physics.Raycast(player.position, playerObj.right, 2f, LayerMask.GetMask("Wall"));
     }
 
     public bool SlopeCheck()

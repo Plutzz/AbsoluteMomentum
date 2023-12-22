@@ -96,7 +96,7 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
             } 
         }
         // Airborne => Wallrunning
-        else if (stateMachine.WallCheck() && sprinting)
+        else if (stateMachine.WallCheck())
         {
             stateMachine.ChangeState(stateMachine.WallrunState);
         }
