@@ -200,7 +200,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
             stateMachine.ChangeState(stateMachine.IdleState);
         }
         // Moving => Wallrun
-        else if (stateMachine.WallCheck())
+        else if (stateMachine.WallCheck() && jumping && !stateMachine.GroundedCheck())
             stateMachine.ChangeState(stateMachine.WallrunState);
     }
 

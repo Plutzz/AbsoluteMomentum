@@ -6,13 +6,15 @@ using UnityEngine;
 public class PlayerWallrunVinh : PlayerWallrunSOBase
 {
     [SerializeField] private LayerMask wallLayer;
-    [SerializeField] private bool isWallRunning;
-    [SerializeField] private float wallRunForce = 5f;
-    [SerializeField] private float maxRunSpeed = 10f;
+    [SerializeField] private float wallRunForce = 15f;
+    [SerializeField] private float maxRunSpeed = 20f;
+    [SerializeField] private float wallClimbSpeed = 20f;
     [SerializeField] private float jumpForce = 10f;
-    [SerializeField] private bool sprinting, jumping;
+    private bool isWallRunning;
+    private bool sprinting, jumping, crouching;
     private bool isWallRight, isWallLeft;
-    private Vector3 moveDirection;
+    private bool reachedMaxSpeed;
+    private RaycastHit wallRight, wallLeft;
 
     public override void Initialize(GameObject gameObject, PlayerStateMachine stateMachine, PlayerInputActions playerInputActions)
     {
@@ -23,6 +25,8 @@ public class PlayerWallrunVinh : PlayerWallrunSOBase
     public override void DoUpdateState()
     {
         GetInput();
+        WallDirection();
+        // MovementSpeedHandler();
         base.DoUpdateState();
     }
 
@@ -40,27 +44,26 @@ public class PlayerWallrunVinh : PlayerWallrunSOBase
         inputVector = playerInputActions.Player.Movement.ReadValue<Vector2>();
         sprinting = playerInputActions.Player.Sprint.ReadValue<float>() == 1f;
         jumping = playerInputActions.Player.Jump.ReadValue<float>() == 1f;
+        crouching = playerInputActions.Player.Crouch.ReadValue<float>() == 1f;
     }
 
     public override void CheckTransitions()
     {
         // Player is moving in the opposite direction of the wall
-        if ((playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.left && isWallLeft)
-               || playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.right && isWallRight)
-            stateMachine.ChangeState(stateMachine.MovingState);
+        // if ((playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.left && isWallLeft)
+        //        || playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.right && isWallRight)
+        //     stateMachine.ChangeState(stateMachine.MovingState);
         // Player is not on wall or not moving
-        else if (playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.zero || !stateMachine.WallCheck()) stateMachine.ChangeState(stateMachine.IdleState);
+        if (!stateMachine.WallCheck() && inputVector != Vector2.zero) stateMachine.ChangeState(stateMachine.MovingState);
+        else if (inputVector == Vector2.zero && (stateMachine.GroundedCheck() || !stateMachine.WallCheck())) stateMachine.ChangeState(stateMachine.IdleState);
     }
 
 
     public override void DoEnterLogic()
     {
-        Debug.Log("Do Enter Logic");
-        moveDirection = Vector3.zero;
         rb.useGravity = false;
         isWallRunning = true;
-        float climbForce = 10f;
-        rb.AddForce(Vector3.up * climbForce, ForceMode.Impulse);
+        stateMachine.desiredMoveSpeed = maxRunSpeed;
         base.DoEnterLogic();
     }
 
@@ -112,45 +115,32 @@ public class PlayerWallrunVinh : PlayerWallrunSOBase
     }
     private void WallRun()
     {
-        WallDirection();
-        Vector3 horizontalDir = stateMachine.playerObj.right * inputVector.x;
-        Vector3 verticalDir = stateMachine.playerObj.forward * inputVector.y;
-        float hMultiplier = 2f;
-        float vMultiplier = 0.25f;
+        rb.useGravity = false;
+        Vector3 wallNormal = isWallRight ? wallRight.normal : wallLeft.normal;
+        Vector3 wallForward = Vector3.Cross(wallNormal, stateMachine.playerObj.transform.up);
 
-        Vector3 wallRunVelo = (horizontalDir * hMultiplier + verticalDir * vMultiplier).normalized * 10f;
-        rb.AddForce(wallRunVelo, ForceMode.Force);
+        if ((stateMachine.playerObj.forward - wallForward).magnitude > (stateMachine.playerObj.forward - -wallForward).magnitude)
+            wallForward = -wallForward;
 
         if (rb.velocity.magnitude <= maxRunSpeed)
         {
-
-            //Make sure char sticks to wall
-            if (isWallRight)
-            {
-                rb.AddForce(-stateMachine.playerObj.right * wallRunForce, ForceMode.Force);
-            }
-            else if (isWallLeft)
-            {
-                rb.AddForce(stateMachine.playerObj.right * wallRunForce, ForceMode.Force);
-            }
+            if (inputVector.x > 0 && isWallRight || inputVector.x < 0 && isWallLeft)
+                rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
+            // up using w
+            if (inputVector.y > 0)
+                rb.AddForce(stateMachine.orientation.up * wallClimbSpeed);
+            else
+                rb.AddForce(-rb.velocity.normalized * 2f); // Decrease speed when not inputting up
         }
+        if (!(isWallLeft && inputVector.x < 0) && !(isWallRight && inputVector.x > 0))
+            rb.AddForce(-wallNormal * 200, ForceMode.Force);
     }
 
     private void WallDirection()
     {
-        isWallRight = Physics.Raycast(stateMachine.player.position, stateMachine.playerObj.right, out RaycastHit right, 2f, wallLayer);
-        isWallLeft = Physics.Raycast(stateMachine.player.position, -stateMachine.playerObj.right, out RaycastHit left, 2f, wallLayer);
+        isWallRight = Physics.Raycast(stateMachine.player.position, stateMachine.playerObj.right, out wallRight, 2f, wallLayer);
+        isWallLeft = Physics.Raycast(stateMachine.player.position, -stateMachine.playerObj.right, out wallLeft, 2f, wallLayer);
 
-        // if (isWallRight)
-        //     RotateToWall(right);
-        // else if (isWallLeft)
-        //     RotateToWall(left);
-
-        //leave wall run
-        if (!isWallLeft && !isWallRight)
-        {
-            DoExitLogic();
-        }
     }
     void RotateToWall(RaycastHit hit)
     {
