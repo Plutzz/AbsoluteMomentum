@@ -70,9 +70,12 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
             stateMachine.desiredMoveSpeed = stateMachine.maxSpeed;
             stateMachine.moveSpeed = stateMachine.maxSpeed;
             stateMachine.lastDesiredMoveSpeed = stateMachine.maxSpeed;
-            slideDirection = orientation.forward * inputVector.y + orientation.right * inputVector.x;
-
-            // Exopnential
+            //slideDirection = orientation.forward * inputVector.y + orientation.right * inputVector.x;
+            slideDirection = Vector3.Cross(stateMachine.slopeHit.normal, Vector3.up);
+            Vector3 test = Vector3.Cross(stateMachine.slopeHit.normal, slideDirection);
+            slideDirection = test;
+            //Debug.DrawRay(gameObject.transform.position, slideDirection * 100f, Color.blue);
+            //Exopnential
             rb.AddForce(stateMachine.GetSlopeMoveDirection(slideDirection) * Mathf.Pow((rb.velocity.y * -1) * verticalMomentumBoostAmount, 2),
              ForceMode.Impulse);
  
@@ -128,7 +131,6 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
     private void SlidingMovement()
     {
         slideDirection = orientation.forward * inputVector.y + orientation.right * inputVector.x;
-
 
         //Sliding Normal
         if (!stateMachine.SlopeCheck() || rb.velocity.y > -0.1f)
