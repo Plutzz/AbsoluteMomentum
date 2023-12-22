@@ -12,10 +12,11 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
     [SerializeField] private float maxSlideSpeed;
     [SerializeField] private float minimumSlideSpeed;
     [SerializeField] private float slideAcceleration;
+    [SerializeField] private float slideAccelerationSlope;
     [SerializeField] private float slideDeceleration;
+
     [SerializeField] private float verticalMomentumBoostAmount = 10f;
     [SerializeField] private AnimationCurve verticalBoostCurve;
-    [SerializeField] private float angleTest;
     private float acceleration;
     private Vector3 slideDirection;
     private bool SlopeLastFrame;
@@ -69,23 +70,28 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
         // if transitioning from airborne state and landing on a slope add a force proportional to height
         if(stateMachine.previousState == stateMachine.AirborneState && stateMachine.SlopeCheck() && rb.velocity.y < 0.1f)
         {
+            float magnitude = verticalBoostCurve.Evaluate(rb.velocity.y);
+
             stateMachine.desiredMoveSpeed = stateMachine.maxSpeed;
             stateMachine.moveSpeed = stateMachine.maxSpeed;
             stateMachine.lastDesiredMoveSpeed = stateMachine.maxSpeed;
 
             //Get direction DOWN the slope
-            slideDirection = Vector3.Cross(stateMachine.slopeHit.normal, Vector3.up * angleTest) ;
+            slideDirection = Vector3.Cross(stateMachine.slopeHit.normal, Vector3.up) ;
             Vector3 test = Vector3.Cross(stateMachine.slopeHit.normal, slideDirection);
             slideDirection = test;
             Debug.DrawRay(gameObject.transform.position, slideDirection * 100f, Color.blue);
 
             //Exopnential
             //rb.AddForce(stateMachine.GetSlopeMoveDirection(slideDirection) * Mathf.Pow((rb.velocity.y * -1) * verticalMomentumBoostAmount, 2),
-             //ForceMode.Impulse);
- 
+            //ForceMode.Impulse);
+
             // Nathan's abomination (dot product)
             //float magnitude = Mathf.Sqrt((rb.velocity.y * rb.velocity.y) / (1 - (Mathf.Pow(rb.velocity.x + rb.velocity.z, 2) * Mathf.Pow(Mathf.Cos(Vector3.Angle(Vector3.up, stateMachine.slopeHit.normal)), 2))));
-            //rb.AddForce(stateMachine.GetSlopeMoveDirection(slideDirection) * magnitude, ForceMode.Impulse);
+            
+            Debug.Log("Vertical Speed: " + rb.velocity.y);
+            Debug.Log("Magnitude: " + magnitude);
+            rb.AddForce(stateMachine.GetSlopeMoveDirection(slideDirection) * magnitude, ForceMode.Impulse);
 
             // Animation curve
         }
@@ -100,13 +106,18 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
         if (SlopeLastFrame)
             stateMachine.moveSpeed = rb.velocity.magnitude;
 
-        Debug.Log("Sliding Velocity: " + rb.velocity.magnitude);
+        //Debug.Log("Sliding Velocity: " + rb.velocity.magnitude);
         // sliding down a slope
         if (stateMachine.SlopeCheck() && rb.velocity.y < 0.1f)
         {
+            slideDirection = Vector3.Cross(stateMachine.slopeHit.normal, Vector3.up);
+            Vector3 test = Vector3.Cross(stateMachine.slopeHit.normal, slideDirection);
+            slideDirection = test;
+            Debug.DrawRay(gameObject.transform.position, slideDirection * 100f, Color.blue);
+
             SlopeLastFrame = true;
             stateMachine.desiredMoveSpeed = stateMachine.maxSpeed;
-            acceleration = slideAcceleration;
+            acceleration = slideAccelerationSlope;
         }
         // max speed hasn't been reached yet
         else if (!reachedMaxSpeed)
@@ -137,7 +148,7 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
  
         slideDirection = orientation.forward * inputVector.y + orientation.right * inputVector.x;
 
-        //Sliding Normal
+        //Sliding on flat ground or up slope
         if (!stateMachine.SlopeCheck() || rb.velocity.y > -0.1f)
         {
             rb.AddForce(slideDirection.normalized * slideAcceleration, ForceMode.Force);
@@ -146,7 +157,7 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
         //Sliding down a slope
         else
         {
-           rb.AddForce(stateMachine.GetSlopeMoveDirection(slideDirection) * slideAcceleration, ForceMode.Force);
+           rb.AddForce(stateMachine.GetSlopeMoveDirection(slideDirection) * slideAccelerationSlope, ForceMode.Force);
         }
 
 

@@ -209,6 +209,9 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 0
   playerHeight: 2
   playerCameraPrefab: {fileID: 189743957778359187, guid: ac0fb975af2fb9f4bb85911e96021a28, type: 3}
   moveSpeed: 0
@@ -223,11 +226,16 @@ MonoBehaviour:
   playerObj: {fileID: 176134913370103247}
   crouchYScale: 0.5
   maxSlopeAngle: 40
+  wallCheckDistance: 0.7
+  minHeight: 1
+  wallLeft: 0
+  wallRight: 0
   CurrentStateText: {fileID: 0}
   GroundedText: {fileID: 0}
   WallrunText: {fileID: 0}
   VelocityText: {fileID: 0}
   SpeedText: {fileID: 0}
+  RespawnPos: {x: 43.29, y: 26.75, z: -33.61}
 --- !u!54 &2083876072485818274
 Rigidbody:
   m_ObjectHideFlags: 0

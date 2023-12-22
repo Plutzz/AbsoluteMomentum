@@ -17,6 +17,7 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
     public override void DoEnterLogic()
     {
         base.DoEnterLogic();
+        stateMachine.StopAllCoroutines();
         rb.drag = drag;
         speedOnEnter = stateMachine.moveSpeed;
     }

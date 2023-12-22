@@ -96,6 +96,8 @@ public class PlayerStateMachine : NetworkBehaviour
     public TextMeshProUGUI WallrunText;
     public TextMeshProUGUI VelocityText;
     public TextMeshProUGUI SpeedText;
+    public Vector3 RespawnPos;
+    public float teleportAmount;
     #endregion
 
     private void Awake()
@@ -165,6 +167,26 @@ public class PlayerStateMachine : NetworkBehaviour
     {
 
         if (!IsOwner) return;
+
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            StopAllCoroutines();
+            rb.velocity = Vector3.zero;
+            moveSpeed = 0;
+            desiredMoveSpeed = 0;
+            lastDesiredMoveSpeed = 0;
+            transform.position = RespawnPos;
+        }
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            StopAllCoroutines();
+            rb.velocity = Vector3.zero;
+            moveSpeed = 0;
+            desiredMoveSpeed = 0;
+            lastDesiredMoveSpeed = 0;
+            transform.position = new Vector3(transform.position.x, transform.position.y + teleportAmount, transform.position.z);
+        }
 
         //rb.velocity = new Vector3(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -10f, 100f), rb.velocity.z);
 
@@ -238,7 +260,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
     public bool SlopeCheck()
     {
-        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f * gameObject.transform.localScale.y + 0.3f, groundLayer))
+        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f * gameObject.transform.localScale.y + 0.5f, groundLayer))
         {
             float _angle = Vector3.Angle(Vector3.up, slopeHit.normal);
             //Debug.Log("OnSlope: " + (_angle < maxSlopeAngle && _angle != 0));
