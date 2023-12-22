@@ -6,16 +6,18 @@ using UnityEngine;
 public class PlayerWallrunVinh : PlayerWallrunSOBase
 {
     [SerializeField] private LayerMask wallLayer;
-    [SerializeField] private bool isWallRunning;
-    [SerializeField] private float wallRunForce = 1f;
-    [SerializeField] private float maxRunSpeed = 10f;
-    [SerializeField] private float maxRunTime = 3f;
-    [SerializeField] private float jumpForce = 10f;
-    [SerializeField] private bool sprinting, jumping;
-
-    public float maxWallRunCameraTilt, wallRunCameraTilt;
-    Vector3 direction = Vector3.zero;
-    Vector3 groundNormal = Vector3.up;
+    [SerializeField] private float wallRunForce = 15f;
+    [SerializeField] private float maxRunSpeed = 20f;
+    [SerializeField] private float jumpUpForce = 7f;
+    [SerializeField] private float jumpSideForce = 12f;
+    [SerializeField] private float jumpCooldown = 0.25f;
+    private bool exitingWall, readyToJump;
+    public float exitWallTime;
+    private float exitWallTimer;
+    private bool isWallRunning;
+    private bool sprinting, jumping;
+    private bool isWallRight, isWallLeft;
+    private RaycastHit wallRight, wallLeft;
 
     public override void Initialize(GameObject gameObject, PlayerStateMachine stateMachine, PlayerInputActions playerInputActions)
     {
@@ -25,9 +27,36 @@ public class PlayerWallrunVinh : PlayerWallrunSOBase
 
     public override void DoUpdateState()
     {
-        Debug.Log(isWallRunning);
         GetInput();
+        WallDirection();
+        rb.AddForce(Vector3.down, ForceMode.Force);
+
+        if (exitingWall)
+        {
+            if (isWallRunning)
+                DoExitLogic();
+            if (exitWallTimer > 0)
+                exitWallTimer -= Time.deltaTime;
+            if (exitWallTimer <= 0)
+                exitingWall = false;
+        }
         base.DoUpdateState();
+    }
+
+    public override void DoFixedUpdateState()
+    {
+        if (!exitingWall)
+            WallRun();
+        if (jumping)
+        {
+            if (readyToJump)
+            {
+                readyToJump = false;
+                WallJump();
+                stateMachine.timeOfLastJump = Time.time;
+            }
+        }
+        base.DoFixedUpdateState();
     }
 
     private void GetInput()
@@ -35,18 +64,20 @@ public class PlayerWallrunVinh : PlayerWallrunSOBase
         inputVector = playerInputActions.Player.Movement.ReadValue<Vector2>();
         sprinting = playerInputActions.Player.Sprint.ReadValue<float>() == 1f;
         jumping = playerInputActions.Player.Jump.ReadValue<float>() == 1f;
+
+        if (stateMachine.timeOfLastJump + jumpCooldown < Time.time)
+            readyToJump = true;
     }
 
     public override void CheckTransitions()
     {
-        if (stateMachine.WallCheck()) return;
+        // Player is not on wall, ground and moving
+        if (!stateMachine.GroundedCheck() && !stateMachine.WallCheck() && inputVector != Vector2.zero) stateMachine.ChangeState(stateMachine.AirborneState);
+        // Player is not on wall or ground and moving
+        else if ((!stateMachine.WallCheck() || stateMachine.GroundedCheck()) && inputVector != Vector2.zero) stateMachine.ChangeState(stateMachine.MovingState);
+        // Player is not on wall or on ground and not moving
+        else if (inputVector == Vector2.zero && (stateMachine.GroundedCheck() || !stateMachine.WallCheck())) stateMachine.ChangeState(stateMachine.IdleState);
 
-        // Player is grounded and moving
-        if (playerInputActions.Player.Movement.ReadValue<Vector2>() != Vector2.zero && stateMachine.GroundedCheck()) stateMachine.ChangeState(stateMachine.MovingState);
-        // Player is grounded and not moving
-        else if (playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.zero || !stateMachine.WallCheck()) stateMachine.ChangeState(stateMachine.IdleState);
-        // Player is jumping off the wall
-        else if (playerInputActions.Player.Jump.ReadValue<float>() == 1f || !sprinting) stateMachine.ChangeState(stateMachine.AirborneState);
     }
 
 
@@ -54,6 +85,8 @@ public class PlayerWallrunVinh : PlayerWallrunSOBase
     {
         rb.useGravity = false;
         isWallRunning = true;
+        stateMachine.desiredMoveSpeed = maxRunSpeed;
+        stateMachine.StartCoroutine(EnterWallRun());
         base.DoEnterLogic();
     }
 
@@ -64,60 +97,76 @@ public class PlayerWallrunVinh : PlayerWallrunSOBase
         base.DoExitLogic();
     }
 
-    public override void DoFixedUpdateState()
-    {
-        base.DoFixedUpdateState();
-    }
-
 
     public override void ResetValues()
     {
         base.ResetValues();
     }
 
-    void WallJump()
+    private void WallJump()
     {
-        //if (isWallRunning)
-        //{
+        exitingWall = true;
+        exitWallTimer = exitWallTime;
+        Vector3 normal = isWallRight ? wallRight.normal : wallLeft.normal;
+        Vector3 force = stateMachine.player.up * jumpUpForce + normal * jumpSideForce;
 
-        //    //normal jump
-        //    if (isWallLeft && !Input.GetKey(KeyCode.D) || isWallRight && !Input.GetKey(KeyCode.A))
-        //    {
-        //        rb.AddForce(Vector2.up * jumpForce * 1.5f);
-        //        rb.AddForce(stateMachine.orientation.forward * jumpForce * 0.5f);
-        //    }
+        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        rb.AddForce(force, ForceMode.Impulse);
+    }
 
-        //    //sidwards wallhop
-        //    if (isWallRight || isWallLeft && Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) rb.AddForce(-stateMachine.orientation.up * jumpForce * 1f);
-        //    if (isWallRight && Input.GetKey(KeyCode.A)) rb.AddForce(-stateMachine.orientation.right * jumpForce * 3.2f);
-        //    if (isWallLeft && Input.GetKey(KeyCode.D)) rb.AddForce(stateMachine.orientation.right * jumpForce * 3.2f);
+    private void WallRun()
+    {
+        rb.useGravity = false;
+        Vector3 wallNormal = isWallRight ? wallRight.normal : wallLeft.normal;
+        Vector3 wallForward = Vector3.Cross(wallNormal, stateMachine.playerObj.transform.up);
 
-        //    //Always add forward force
-        //    rb.AddForce(stateMachine.orientation.forward * jumpForce * 1f);
+        // Debug Tools
+        Debug.DrawRay(stateMachine.player.position, wallForward * 2f, Color.red);
+        Debug.DrawRay(stateMachine.player.position, wallNormal * 2f, Color.blue);
 
-        //    //reset jump
-        //    //ResetValues();
-        //}
+        if ((stateMachine.playerObj.forward - wallForward).magnitude > (stateMachine.playerObj.forward - -wallForward).magnitude)
+            wallForward = -wallForward;
+
+        if (!(isWallLeft && inputVector.x < 0) && !(isWallRight && inputVector.x > 0))
+            rb.AddForce(-wallNormal * 200, ForceMode.Force);
+
+        if (rb.velocity.magnitude <= maxRunSpeed)
+        {
+            // forward using w
+            if (inputVector.y > 0 && (isWallRight || isWallLeft))
+                rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
+            else
+            {
+                rb.AddForce(-rb.velocity.normalized * 2f, ForceMode.Force); // Decrease speed when not inputting up
+                rb.AddForce(Vector3.down, ForceMode.Force);
+            }
+        }
+    }
+
+    private void WallDirection()
+    {
+        isWallRight = Physics.Raycast(stateMachine.player.position, stateMachine.playerObj.right, out wallRight, 2f, wallLayer);
+        isWallLeft = Physics.Raycast(stateMachine.player.position, -stateMachine.playerObj.right, out wallLeft, 2f, wallLayer);
 
     }
 
-    Vector3 RotateToWall(Vector3 direction, Vector3 wallNormal)
+    private IEnumerator EnterWallRun()
     {
-        Vector3 rotDir = Vector3.ProjectOnPlane(wallNormal, Vector3.up);
-        Quaternion rotation = Quaternion.AngleAxis(-90f, Vector3.up);
-        rotDir = rotation * rotDir;
-        float angle = -Vector3.Angle(Vector3.up, wallNormal);
-        rotation = Quaternion.AngleAxis(angle, rotDir);
-        direction = rotation * direction;
-        return direction;
+        Debug.Log("Enter Wallrun");
+        float timeElapsed = 0f;
+        float enterDuration = 0.2f;
+        Vector3 initialVelocity = rb.velocity;
+        Vector3 targetVelocity = new Vector3(rb.velocity.x, 5f, rb.velocity.z);
+
+        while (timeElapsed < enterDuration)
+        {
+            rb.velocity = Vector3.Lerp(initialVelocity, targetVelocity, timeElapsed / enterDuration);
+            timeElapsed += Time.deltaTime;
+
+            yield return null;
+        }
+        rb.velocity = targetVelocity;
     }
 
-    void WallRunInput()
-    {
-        //if ((Input.GetKey(KeyCode.D) && stateMachine.WallCheck()) || (Input.GetKey(KeyCode.A) && stateMachine.WallCheck())) StartWallrun();
-        //if (Input.GetKeyDown(KeyCode.Space) && isWallRunning) WallJump();
-        //if (Input.GetKey(KeyCode.S) && isWallRunning) DoExitLogic();
-
-    }
 
 }
