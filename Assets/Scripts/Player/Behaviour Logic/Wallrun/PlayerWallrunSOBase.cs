@@ -17,4 +17,20 @@ public class PlayerWallrunSOBase : PlayerStateSOBase
         rb = stateMachine.rb;
         this.playerInputActions = playerInputActions;
     }
+
+    // public override void CheckTransitions()
+    // {
+    //     //if wall detected but no ground, no transitions
+    //     if (stateMachine.WallRunning()) return;
+
+    //     // WallRun => Moving
+    //     if (playerInputActions.Player.Movement.ReadValue<Vector2>() != Vector2.zero)
+    //     {
+    //         stateMachine.ChangeState(stateMachine.MovingState);
+    //     }
+    //     else if (playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.zero)
+    //     {
+    //         stateMachine.ChangeState(stateMachine.IdleState);
+    //     }
+    // }
 }
