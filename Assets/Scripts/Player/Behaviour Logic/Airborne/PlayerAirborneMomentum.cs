@@ -31,6 +31,7 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
         base.DoFixedUpdateState();
         Move();
         SpeedControl();
+        stateMachine.WallCheck();
     }
 
     public override void DoUpdateState()
@@ -77,30 +78,30 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
 
     public override void CheckTransitions()
     {
-        if(stateMachine.GroundedCheck() || stateMachine.SlopeCheck())
-        {
-            // Airborne => Sliding
-            if (stateMachine.crouching && playerInputActions.Player.Jump.ReadValue<float>() == 0 && rb.velocity.magnitude > minimumSlideVelocity)
-            {
-                stateMachine.ChangeState(stateMachine.SlidingState);
-            }
-            // Airborne => Moving
-            else if (playerInputActions.Player.Movement.ReadValue<Vector2>() != Vector2.zero)
-            {
-                stateMachine.ChangeState(stateMachine.MovingState);
-            }
-            // Airborne => Idle
-            else if (playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.zero)
-            {
-                stateMachine.ChangeState(stateMachine.IdleState);
-            } 
-        }
-        // Airborne => Wallrunning
-        else if (stateMachine.WallCheck() && sprinting)
+        //if no collision detected, no transitions
+        if (!stateMachine.SlopeCheck() && !stateMachine.GroundedCheck() && !stateMachine.WallRunning()) return;
+
+        if (stateMachine.WallRunning()) //added by David
         {
             stateMachine.ChangeState(stateMachine.WallrunState);
+            //Debug.Log("changed state to wallrunning");
+            return;
         }
 
+        // Airborne => Sliding
+        else if (stateMachine.crouching && playerInputActions.Player.Jump.ReadValue<float>() == 0 && rb.velocity.magnitude > minimumSlideVelocity)
+        {
+            stateMachine.ChangeState(stateMachine.SlidingState);
+        }
+        // Airborne => Moving
+        else if (playerInputActions.Player.Movement.ReadValue<Vector2>() != Vector2.zero)
+        {
+            stateMachine.ChangeState(stateMachine.MovingState);
+        }
+        else if (playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.zero)
+        {
+            stateMachine.ChangeState(stateMachine.IdleState);
+        }
 
     }
 

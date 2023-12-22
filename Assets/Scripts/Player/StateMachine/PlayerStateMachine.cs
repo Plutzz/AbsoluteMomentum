@@ -47,6 +47,7 @@ public class PlayerStateMachine : NetworkBehaviour
     public Rigidbody rb { get; private set; }
 
     [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private LayerMask wallLayer;
     [SerializeField] private float playerHeight;
     [SerializeField] private GameObject playerCameraPrefab;
 
@@ -76,6 +77,14 @@ public class PlayerStateMachine : NetworkBehaviour
     [Header("Slope Handling")]
     [SerializeField] private float maxSlopeAngle;
     public RaycastHit slopeHit;
+
+    [Header("Wall Handling")] //added by David
+    [SerializeField] private float wallCheckDistance = 0.7f;
+    [SerializeField] private float minHeight = 1f;
+    public RaycastHit leftSideWall;
+    public RaycastHit rightSideWall;
+    public bool wallLeft;
+    public bool wallRight;
 
     #endregion
 
@@ -152,6 +161,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
     private void Update()
     {
+
         if (!IsOwner) return;
 
         //Crouching logic
@@ -175,6 +185,13 @@ public class PlayerStateMachine : NetworkBehaviour
         GroundedText.text = "Grounded: " + GroundedCheck();
         WallrunText.text = "Wallrun: " + WallCheck();
         VelocityText.text = "Input: " + playerInputActions.Player.Movement.ReadValue<Vector2>().x + "," + playerInputActions.Player.Movement.ReadValue<Vector2>().y;
+
+        Debug.DrawRay(player.position, playerObj.right * 0.7f, Color.red);
+        Debug.DrawRay(player.position, -playerObj.right * 0.7f, Color.red);
+        //WallCheck();
+        //Debug.Log(wallRight);
+        //Debug.Log(wallLeft);
+
 
     }
 
@@ -223,6 +240,36 @@ public class PlayerStateMachine : NetworkBehaviour
 
         return false;
     }
+
+    public void WallCheck()
+    {
+        //added by David
+        // wallRight = Physics.Raycast(playerObj.transform.position, orientation.right, out rightSideWall, wallCheckDistance, wallLayer);
+        // wallLeft = Physics.Raycast(playerObj.transform.position, -orientation.right, out leftSideWall, wallCheckDistance, wallLayer);
+        wallRight = Physics.Raycast(player.position, -orientation.right, out leftSideWall, wallCheckDistance, LayerMask.GetMask("Ground"));
+        wallLeft = Physics.Raycast(player.position, orientation.right, out rightSideWall, wallCheckDistance, LayerMask.GetMask("Ground"));
+
+    }
+
+    public bool AboveGround()
+    {
+        //added by David, wondering if needed along with groundedcheck
+        return !Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f * gameObject.transform.localScale.y + 0.2f , groundLayer); //groundLayer named whatIsGround in video
+    }
+
+    public bool WallRunning()
+    {
+        //added by David
+        if((wallLeft || wallRight) && Input.GetKey(KeyCode.W)/* && AboveGround()*/)
+        {
+            //Debug.Log("Wallrunning");
+            return true;
+        } else {
+            //Debug.Log("Not Wallrunning");
+            return false;
+        }
+    }
+
     public Vector3 GetSlopeMoveDirection(Vector3 _direction)
     {
         return Vector3.ProjectOnPlane(_direction, slopeHit.normal).normalized;
