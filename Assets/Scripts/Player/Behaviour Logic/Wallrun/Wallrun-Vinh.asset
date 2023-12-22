@@ -16,6 +16,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   wallRunForce: 15
-  maxRunSpeed: 20
-  wallClimbSpeed: 5
-  jumpForce: 10
+  maxRunSpeed: 15
+  jumpUpForce: 7
+  jumpSideForce: 30
+  jumpCooldown: 0.25
+  exitWallTime: 0.2

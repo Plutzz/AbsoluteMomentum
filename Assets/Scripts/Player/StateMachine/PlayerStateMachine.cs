@@ -61,7 +61,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
     [SerializeField] private float slopeIncreaseMultiplier;
 
-    
+
 
 
     public Transform orientation;
@@ -113,7 +113,7 @@ public class PlayerStateMachine : NetworkBehaviour
         AirborneState = new PlayerAirborneState(this);
         SlidingState = new PlayerSlidingState(this);
         WallrunState = new PlayerWallrunState(this);
-        
+
 
         PlayerIdleBaseInstance.Initialize(gameObject, this, playerInputActions);
         PlayerMovingBaseInstance.Initialize(gameObject, this, playerInputActions);
@@ -152,6 +152,8 @@ public class PlayerStateMachine : NetworkBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.P))
+            player.position = new Vector3(0, 10, 0);
         if (!IsOwner) return;
 
         //Crouching logic
@@ -199,7 +201,7 @@ public class PlayerStateMachine : NetworkBehaviour
     // Ex: GroundedCheck
     public bool GroundedCheck()
     {
-        return Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f * gameObject.transform.localScale.y + 0.2f , groundLayer);
+        return Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f * gameObject.transform.localScale.y + 0.2f, groundLayer);
         //return Physics.OverlapBox(GroundCheck.position, GroundCheckSize * 0.5f, Quaternion.identity, groundLayer).Length > 0;
     }
 
@@ -214,7 +216,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
     public bool SlopeCheck()
     {
-        if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f * gameObject.transform.localScale.y + 0.3f))
+        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f * gameObject.transform.localScale.y + 0.3f))
         {
             float _angle = Vector3.Angle(Vector3.up, slopeHit.normal);
             //Debug.Log("OnSlope: " + (_angle < maxSlopeAngle && _angle != 0));
@@ -227,11 +229,11 @@ public class PlayerStateMachine : NetworkBehaviour
     {
         return Vector3.ProjectOnPlane(_direction, slopeHit.normal).normalized;
     }
- 
+
 
     private void StartCrouch(InputAction.CallbackContext context)
     {
-        if(currentState == IdleState || currentState == MovingState)
+        if (currentState == IdleState || currentState == MovingState)
             rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
     }
 
@@ -248,7 +250,7 @@ public class PlayerStateMachine : NetworkBehaviour
         {
             moveSpeed = Mathf.Lerp(_startValue, desiredMoveSpeed, _time / _difference);
 
-            if(SlopeCheck())
+            if (SlopeCheck())
             {
                 float _slopeAngle = Vector3.Angle(Vector3.up, slopeHit.normal);
                 float _slopeAngleIncrease = 1 + (_slopeAngle / 90f);
