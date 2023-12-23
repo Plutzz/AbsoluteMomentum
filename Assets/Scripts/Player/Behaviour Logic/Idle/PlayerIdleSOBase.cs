@@ -20,11 +20,7 @@ public class PlayerIdleSOBase : PlayerStateSOBase
     public override void CheckTransitions()
     {
         // Idle => Airborne
-        if (!stateMachine.SlopeCheck() && !stateMachine.GroundedCheck())
-        {
-            stateMachine.ChangeState(stateMachine.AirborneState);
-        }
-        else if(stateMachine.crouching && stateMachine.SlopeCheck())
+        if (!stateMachine.SlopeCheck() && !stateMachine.GroundedCheck() && !stateMachine.crouching)
         {
             stateMachine.ChangeState(stateMachine.AirborneState);
         }
