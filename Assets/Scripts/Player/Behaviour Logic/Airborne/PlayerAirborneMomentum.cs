@@ -80,28 +80,24 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
 
     public override void CheckTransitions()
     {
-        //if no collision detected, no transitions
-        if (!stateMachine.SlopeCheck() && !stateMachine.GroundedCheck() && !stateMachine.WallRunning()) return;
-
-        if (stateMachine.WallRunning()) //added by David
+        // Airborne => Sliding
+        if (stateMachine.crouching && playerInputActions.Player.Jump.ReadValue<float>() == 0 
+            && rb.velocity.magnitude > minimumSlideVelocity && stateMachine.SlopeCheck() || stateMachine.GroundedCheck())
         {
-            // Airborne => Sliding
-            if (stateMachine.crouching && playerInputActions.Player.Jump.ReadValue<float>() == 0 && rb.velocity.magnitude > minimumSlideVelocity)
-            {
-                stateMachine.ChangeState(stateMachine.SlidingState);
-            }
-            // Airborne => Moving
-            else if (playerInputActions.Player.Movement.ReadValue<Vector2>() != Vector2.zero)
-            {
-                stateMachine.ChangeState(stateMachine.MovingState);
-            }
-            // Airborne => Idle
-            else if (playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.zero)
-            {
-                stateMachine.ChangeState(stateMachine.IdleState);
-            } 
+            stateMachine.ChangeState(stateMachine.SlidingState);
         }
+        // Airborne => Moving
+        else if (stateMachine.GroundedCheck() && playerInputActions.Player.Movement.ReadValue<Vector2>() != Vector2.zero)
+        {
+            stateMachine.ChangeState(stateMachine.MovingState);
+        }
+        // Airborne => Idle
+        else if (stateMachine.GroundedCheck() && playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.zero)
+        {
+            stateMachine.ChangeState(stateMachine.IdleState);
+        } 
         // Airborne => Wallrunning
+        // Might need to add a check that you are pressing an input key into the wall to "latch on" to the wall
         else if (stateMachine.WallCheck())
         {
             stateMachine.ChangeState(stateMachine.WallrunState);

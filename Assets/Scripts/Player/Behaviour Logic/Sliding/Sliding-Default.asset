@@ -12,10 +12,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7060affba1eb0b545ab1e86c98aaad5f, type: 3}
   m_Name: Sliding-Default
   m_EditorClassIdentifier: 
-  reachedMaxSpeed: 0
+  reachedMaxSpeed: 1
   maxSlideTime: 0.75
   maxSlideSpeed: 15
   minimumSlideSpeed: 5
   slideAcceleration: 20
+  slideAccelerationSlope: 10
   slideDeceleration: 10
   verticalMomentumBoostAmount: 1
+  verticalBoostCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -40
+      value: 20
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: -1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
