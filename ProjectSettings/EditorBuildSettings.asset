@@ -11,7 +11,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/MapTestMovement.unity
     guid: e02a96cf440bb2b428a574a01ccd3099
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/MapRaceTestScene.unity
     guid: 73cc9be2e75828c48bdce26534695bce
   m_configObjects: {}
