@@ -79,11 +79,13 @@ public class PlayerStateMachine : NetworkBehaviour
     [SerializeField] private float maxSlopeAngle;
     public RaycastHit slopeHit;
 
-    [Header("Wall Handling")] //added by David
+    [Header("WallRun Handling")] //added by David
     [SerializeField] private float wallCheckDistance = 0.7f;
+    [SerializeField] private float groundCheckDistance = 10f;
     [SerializeField] private float minHeight = 1f;
     public RaycastHit leftSideWall;
     public RaycastHit rightSideWall;
+    public RaycastHit aboveGroundRay;
     public bool wallLeft;
     public bool wallRight;
 
@@ -270,26 +272,16 @@ public class PlayerStateMachine : NetworkBehaviour
         return false;
     }
 
-    // public void WallCheck()
-    // {
-    //     //added by David
-    //     // wallRight = Physics.Raycast(playerObj.transform.position, orientation.right, out rightSideWall, wallCheckDistance, wallLayer);
-    //     // wallLeft = Physics.Raycast(playerObj.transform.position, -orientation.right, out leftSideWall, wallCheckDistance, wallLayer);
-    //     wallRight = Physics.Raycast(player.position, -orientation.right, out leftSideWall, wallCheckDistance, LayerMask.GetMask("Ground"));
-    //     wallLeft = Physics.Raycast(player.position, orientation.right, out rightSideWall, wallCheckDistance, LayerMask.GetMask("Ground"));
-
-    // }
-
     public bool AboveGround()
     {
         //added by David, wondering if needed along with groundedcheck
-        return !Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f * gameObject.transform.localScale.y + 0.2f , groundLayer); //groundLayer named whatIsGround in video
+        return !Physics.Raycast(player.position, -playerObj.up, out aboveGroundRay, groundCheckDistance, LayerMask.GetMask("Ground"));; //groundLayer named whatIsGround in video
     }
 
     public bool WallRunning()
     {
         //added by David
-        if((wallLeft || wallRight) && Input.GetKey(KeyCode.W)/* && AboveGround()*/)
+        if((wallLeft || wallRight) && Input.GetKey(KeyCode.W) /*&& AboveGround()*/)
         {
             //Debug.Log("Wallrunning");
             return true;
