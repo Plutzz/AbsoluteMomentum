@@ -255,8 +255,8 @@ public class PlayerStateMachine : NetworkBehaviour
         // Debugging rays
         Debug.DrawRay(player.position, -playerObj.right * 2f, Color.red);
         Debug.DrawRay(player.position, playerObj.right * 2f, Color.red);
-        wallRight = Physics.Raycast(player.position, -orientation.right, out leftSideWall, wallCheckDistance, LayerMask.GetMask("Wall"));
-        wallLeft = Physics.Raycast(player.position, orientation.right, out rightSideWall, wallCheckDistance, LayerMask.GetMask("Wall"));
+        wallRight = Physics.Raycast(player.position, -orientation.right, out rightSideWall, wallCheckDistance, LayerMask.GetMask("Wall"));
+        wallLeft = Physics.Raycast(player.position, orientation.right, out leftSideWall, wallCheckDistance, LayerMask.GetMask("Wall"));
         return wallLeft || wallRight;
     }
 

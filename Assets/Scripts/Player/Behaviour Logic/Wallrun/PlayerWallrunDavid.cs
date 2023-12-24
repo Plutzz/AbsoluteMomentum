@@ -9,7 +9,7 @@ public class PlayerWallrunDavid : PlayerWallrunSOBase
     // [SerializeField] private LayerMask whatIsWall;
     // [SerializeField] private LayerMask whatIsGround;
     [SerializeField] private float wallRunSpeed = 20f;
-    [SerializeField] private float wallRunForce = 1000;
+    [SerializeField] private float wallRunForce = 1000f;
     [SerializeField] private float maxWallRunTime;
     private float wallRunSpeedx;
     private float wallRunSpeedy;
@@ -23,7 +23,6 @@ public class PlayerWallrunDavid : PlayerWallrunSOBase
 
     public override void DoEnterLogic()
     {
-
         base.DoEnterLogic();
     }
 
@@ -42,7 +41,6 @@ public class PlayerWallrunDavid : PlayerWallrunSOBase
         }
 
         WallRun();
-        Debug.Log("wallrunning");
         base.DoFixedUpdateState();
     }
 
@@ -74,11 +72,12 @@ public class PlayerWallrunDavid : PlayerWallrunSOBase
 
         Vector3 wallNormal = stateMachine.wallRight ? stateMachine.rightSideWall.normal : stateMachine.leftSideWall.normal;
         Vector3 wallForward = Vector3.Cross(wallNormal, stateMachine.playerObj.up);
-
+Debug.Log(stateMachine.rightSideWall.normal);
         if((stateMachine.playerObj.forward - wallForward).magnitude > (stateMachine.playerObj.forward - -wallForward).magnitude)
         {
             wallForward = -wallForward;
         }
+
 
         //forward force
         rb.AddForce(wallForward * wallRunForce, ForceMode.Force);

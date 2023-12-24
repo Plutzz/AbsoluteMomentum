@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Wallrun-David
   m_EditorClassIdentifier: 
   wallRunSpeed: 8.5
-  wallRunForce: 200
+  wallRunForce: 15
   maxWallRunTime: 1.5
