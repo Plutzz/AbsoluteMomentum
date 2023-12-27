@@ -104,17 +104,17 @@ public class PlayerStateMachine : NetworkBehaviour
         rb = GetComponentInChildren<Rigidbody>();
 
         //TEMP CODE TO TEST MOVEMENT
-        PlayerIdleBaseInstance = playerIdleBase;
-        PlayerMovingBaseInstance = playerMovingBase;
-        PlayerAirborneBaseInstance = playerAirborneBase;
-        PlayerSlidingBaseInstance = playerSlidingBase;
-        PlayerWallrunBaseInstance = playerWallrunBase;
+        //PlayerIdleBaseInstance = playerIdleBase;
+        //PlayerMovingBaseInstance = playerMovingBase;
+        //PlayerAirborneBaseInstance = playerAirborneBase;
+        //PlayerSlidingBaseInstance = playerSlidingBase;
+        //PlayerWallrunBaseInstance = playerWallrunBase;
         //COMMENT CODE TO TEST MOVEMENT VALUES WITHOUT HAVING TO RESTART PLAY MODE
-        //PlayerIdleBaseInstance = Instantiate(playerIdleBase);
-        //PlayerMovingBaseInstance = Instantiate(playerMovingBase);
-        //PlayerAirborneBaseInstance = Instantiate(playerAirborneBase);
-        //PlayerSlidingBaseInstance = Instantiate(playerSlidingBase);
-        //PlayerWallrunBaseInstance = Instantiate(playerWallrunBase);
+        PlayerIdleBaseInstance = Instantiate(playerIdleBase);
+        PlayerMovingBaseInstance = Instantiate(playerMovingBase);
+        PlayerAirborneBaseInstance = Instantiate(playerAirborneBase);
+        PlayerSlidingBaseInstance = Instantiate(playerSlidingBase);
+        PlayerWallrunBaseInstance = Instantiate(playerWallrunBase);
 
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
