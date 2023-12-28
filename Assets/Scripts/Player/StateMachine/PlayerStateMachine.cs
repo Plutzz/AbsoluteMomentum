@@ -151,11 +151,14 @@ public class PlayerStateMachine : NetworkBehaviour
             camSetup.player = player;
             camSetup.playerInputActions = playerInputActions;
 
-            CurrentStateText = DebugMenu.Instance.PlayerStateText;
-            GroundedText = DebugMenu.Instance.GroundedCheckText;
-            WallrunText = DebugMenu.Instance.WallrunCheckText;
-            VelocityText = DebugMenu.Instance.VelocityText;
-            SpeedText = DebugMenu.Instance.SpeedText;
+            if(DebugMenu.Instance != null)
+            {
+                CurrentStateText = DebugMenu.Instance.PlayerStateText;
+                GroundedText = DebugMenu.Instance.GroundedCheckText;
+                WallrunText = DebugMenu.Instance.WallrunCheckText;
+                VelocityText = DebugMenu.Instance.VelocityText;
+                SpeedText = DebugMenu.Instance.SpeedText;
+            }
         }
 
         currentState = initialState;
@@ -207,11 +210,15 @@ public class PlayerStateMachine : NetworkBehaviour
 
         currentState.UpdateState();
 
-        CurrentStateText.text = "Current State: " + currentState.ToString();
-        GroundedText.text = "Grounded: " + GroundedCheck();
-        WallrunText.text = "Wallrun: " + WallCheck();
-        //VelocityText.text = "Input: " + playerInputActions.Player.Movement.ReadValue<Vector2>().x + "," + playerInputActions.Player.Movement.ReadValue<Vector2>().y;
-        VelocityText.text = "Vertical Speed: " + rb.velocity.y;
+        if(CurrentStateText != null )
+        {
+            CurrentStateText.text = "Current State: " + currentState.ToString();
+            GroundedText.text = "Grounded: " + GroundedCheck();
+            WallrunText.text = "Wallrun: " + WallCheck();
+            //VelocityText.text = "Input: " + playerInputActions.Player.Movement.ReadValue<Vector2>().x + "," + playerInputActions.Player.Movement.ReadValue<Vector2>().y;
+            VelocityText.text = "Vertical Speed: " + rb.velocity.y;
+        }
+
 
         Debug.DrawRay(player.position, playerObj.right * 0.7f, Color.red);
         Debug.DrawRay(player.position, -playerObj.right * 0.7f, Color.red);
@@ -228,7 +235,8 @@ public class PlayerStateMachine : NetworkBehaviour
 
         currentState.FixedUpdateState();
 
-        SpeedText.text = "Speed: " + rb.velocity.magnitude.ToString("F1");
+        if(SpeedText != null )
+            SpeedText.text = "Speed: " + rb.velocity.magnitude.ToString("F1");
     }
 
     public void ChangeState(PlayerState newState)
