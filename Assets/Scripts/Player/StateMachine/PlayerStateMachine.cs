@@ -101,6 +101,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
     private void Awake()
     {
+
         rb = GetComponentInChildren<Rigidbody>();
 
         //TEMP CODE TO TEST MOVEMENT
@@ -141,7 +142,8 @@ public class PlayerStateMachine : NetworkBehaviour
         // Set up client side objects (Camera, debug menu)
         if (IsOwner)
         {
-            CinemachineFreeLook playerCamera = Instantiate(playerCameraPrefab).GetComponent<CinemachineFreeLook>();
+            //CinemachineFreeLook playerCamera = Instantiate(playerCameraPrefab).GetComponent<CinemachineFreeLook>();
+            CinemachineFreeLook playerCamera = playerCameraPrefab.GetComponent<CinemachineFreeLook>();
             playerCamera.m_LookAt = transform;
             playerCamera.m_Follow = transform;
 
@@ -159,16 +161,24 @@ public class PlayerStateMachine : NetworkBehaviour
                 VelocityText = DebugMenu.Instance.VelocityText;
                 SpeedText = DebugMenu.Instance.SpeedText;
             }
+
+            currentState = initialState;
+            currentState.EnterLogic();
+        }
+        else
+        {
+            Destroy(playerCameraPrefab);
+            Destroy(this);
         }
 
-        currentState = initialState;
-        currentState.EnterLogic();
+
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.P))
             player.position = new Vector3(0, 10, 0);
+
         if (!IsOwner) return;
 
         if(Input.GetKeyDown(KeyCode.R))

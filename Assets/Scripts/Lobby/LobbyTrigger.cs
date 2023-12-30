@@ -15,9 +15,9 @@ public class LobbyTrigger : NetworkBehaviour
         {
             numPlayersInCollider.Value += 1;
             
-            if(numPlayersInCollider.Value >= 2)
+            if(numPlayersInCollider.Value >= 1)
             {
-                NetworkManager.Singleton.SceneManager.LoadScene("MovementDemo", UnityEngine.SceneManagement.LoadSceneMode.Single);
+                NetworkManager.Singleton.SceneManager.LoadScene("Racing Level", UnityEngine.SceneManagement.LoadSceneMode.Single);
             }
         }
     }

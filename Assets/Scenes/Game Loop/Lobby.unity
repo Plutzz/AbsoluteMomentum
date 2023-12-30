@@ -1569,7 +1569,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 640167690}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.22945836, y: -0.01698663, z: 0.0040052165, w: 0.97316206}
+  m_LocalRotation: {x: 0.22945836, y: -0.016986614, z: 0.0040052123, w: 0.97316206}
   m_LocalPosition: {x: 0.5234928, y: 7.49, z: -14.990862}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1629,6 +1629,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: NetworkManager
       objectReference: {fileID: 0}
+    - target: {fileID: 8444224017169412384, guid: 4c750a3ffb9992b45aec5121c719031e, type: 3}
+      propertyPath: NetworkConfig.PlayerPrefab
+      value: 
+      objectReference: {fileID: 2822271724086237246, guid: 1ebdf97abf23164478dca8ff2c8d4029, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2795,7 +2799,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 849212590}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.22945836, y: -0.01698663, z: 0.0040052165, w: 0.97316206}
+  m_LocalRotation: {x: 0.22945836, y: -0.016986614, z: 0.0040052123, w: 0.97316206}
   m_LocalPosition: {x: -16.675848, y: 8.46, z: -32.369404}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
