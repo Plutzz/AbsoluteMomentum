@@ -80,7 +80,9 @@ Debug.Log(stateMachine.rightSideWall.normal);
 
 
         //forward force
-        rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
+        //rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
+
+        rb.velocity = (wallForward * wallRunForce);
 
         //push to wall force
         if(!(stateMachine.wallLeft && Input.GetKey(KeyCode.D)) && !(stateMachine.wallRight && Input.GetKey(KeyCode.A)))
