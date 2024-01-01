@@ -24,7 +24,7 @@ public class PlayerAirborneSOBase : PlayerStateSOBase
         if (!stateMachine.SlopeCheck() && !stateMachine.GroundedCheck() && !stateMachine.WallCheck()) return;
 
         // Airborne => Moving
-        if (playerInputActions.Player.Movement.ReadValue<Vector2>() != Vector2.zero)
+        else if (playerInputActions.Player.Movement.ReadValue<Vector2>() != Vector2.zero)
         {
             stateMachine.ChangeState(stateMachine.MovingState);
         }
@@ -32,5 +32,6 @@ public class PlayerAirborneSOBase : PlayerStateSOBase
         {
             stateMachine.ChangeState(stateMachine.IdleState);
         }
+
     }
 }

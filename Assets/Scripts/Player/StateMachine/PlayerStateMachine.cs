@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
 using Unity.VisualScripting;
-using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -16,6 +15,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
     private PlayerState currentState; // State that player is currently in
     private PlayerState initialState; // State that player starts as
+    public PlayerState previousState { get; private set; } // State that player starts as
 
     // References to all player states
     public PlayerIdleState IdleState;
@@ -47,6 +47,7 @@ public class PlayerStateMachine : NetworkBehaviour
     public Rigidbody rb { get; private set; }
 
     [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private LayerMask wallLayer;
     [SerializeField] private float playerHeight;
     [SerializeField] private GameObject playerCameraPrefab;
 
@@ -60,8 +61,9 @@ public class PlayerStateMachine : NetworkBehaviour
     public bool exitingGround;
 
     [SerializeField] private float slopeIncreaseMultiplier;
+    [SerializeField] public float maxSpeed = 100f;
 
-    
+
 
 
     public Transform orientation;
@@ -77,6 +79,16 @@ public class PlayerStateMachine : NetworkBehaviour
     [SerializeField] private float maxSlopeAngle;
     public RaycastHit slopeHit;
 
+    [Header("WallRun Handling")] //added by David
+    [SerializeField] private float wallCheckDistance = 0.7f;
+    [SerializeField] private float groundCheckDistance = 10f;
+    [SerializeField] private float minHeight = 1f;
+    public RaycastHit leftSideWall;
+    public RaycastHit rightSideWall;
+    public RaycastHit aboveGroundRay;
+    public bool wallLeft;
+    public bool wallRight;
+
     #endregion
 
     #region Debug Variables
@@ -85,6 +97,8 @@ public class PlayerStateMachine : NetworkBehaviour
     public TextMeshProUGUI WallrunText;
     public TextMeshProUGUI VelocityText;
     public TextMeshProUGUI SpeedText;
+    public Vector3 RespawnPos;
+    public float teleportAmount;
     #endregion
 
     private void Awake()
@@ -113,7 +127,7 @@ public class PlayerStateMachine : NetworkBehaviour
         AirborneState = new PlayerAirborneState(this);
         SlidingState = new PlayerSlidingState(this);
         WallrunState = new PlayerWallrunState(this);
-        
+
 
         PlayerIdleBaseInstance.Initialize(gameObject, this, playerInputActions);
         PlayerMovingBaseInstance.Initialize(gameObject, this, playerInputActions);
@@ -152,7 +166,31 @@ public class PlayerStateMachine : NetworkBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.P))
+            player.position = new Vector3(0, 10, 0);
         if (!IsOwner) return;
+
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            StopAllCoroutines();
+            rb.velocity = Vector3.zero;
+            moveSpeed = 0;
+            desiredMoveSpeed = 0;
+            lastDesiredMoveSpeed = 0;
+            transform.position = RespawnPos;
+        }
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            StopAllCoroutines();
+            rb.velocity = Vector3.zero;
+            moveSpeed = 0;
+            desiredMoveSpeed = 0;
+            lastDesiredMoveSpeed = 0;
+            transform.position = new Vector3(transform.position.x, transform.position.y + teleportAmount, transform.position.z);
+        }
+
+        //rb.velocity = new Vector3(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -10f, 100f), rb.velocity.z);
 
         //Crouching logic
         crouching = playerInputActions.Player.Crouch.ReadValue<float>() == 1f;
@@ -174,7 +212,15 @@ public class PlayerStateMachine : NetworkBehaviour
         CurrentStateText.text = "Current State: " + currentState.ToString();
         GroundedText.text = "Grounded: " + GroundedCheck();
         WallrunText.text = "Wallrun: " + WallCheck();
-        VelocityText.text = "Input: " + playerInputActions.Player.Movement.ReadValue<Vector2>().x + "," + playerInputActions.Player.Movement.ReadValue<Vector2>().y;
+        //VelocityText.text = "Input: " + playerInputActions.Player.Movement.ReadValue<Vector2>().x + "," + playerInputActions.Player.Movement.ReadValue<Vector2>().y;
+        VelocityText.text = "Vertical Speed: " + rb.velocity.y;
+
+        Debug.DrawRay(player.position, playerObj.right * 0.7f, Color.red);
+        Debug.DrawRay(player.position, -playerObj.right * 0.7f, Color.red);
+        //WallCheck();
+        //Debug.Log(wallRight);
+        //Debug.Log(wallLeft);
+
 
     }
 
@@ -191,6 +237,7 @@ public class PlayerStateMachine : NetworkBehaviour
     {
         Debug.Log("Changing to: " + newState);
         currentState.ExitLogic();
+        previousState = currentState;
         currentState = newState;
         currentState.EnterLogic();
     }
@@ -199,7 +246,7 @@ public class PlayerStateMachine : NetworkBehaviour
     // Ex: GroundedCheck
     public bool GroundedCheck()
     {
-        return Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f * gameObject.transform.localScale.y + 0.2f , groundLayer);
+        return Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f * gameObject.transform.localScale.y + 0.2f, groundLayer);
         //return Physics.OverlapBox(GroundCheck.position, GroundCheckSize * 0.5f, Quaternion.identity, groundLayer).Length > 0;
     }
 
@@ -208,13 +255,14 @@ public class PlayerStateMachine : NetworkBehaviour
         // Debugging rays
         Debug.DrawRay(player.position, -playerObj.right * 2f, Color.red);
         Debug.DrawRay(player.position, playerObj.right * 2f, Color.red);
-        return Physics.Raycast(player.position, -orientation.right, 2f, LayerMask.GetMask("Wall")) ||
-                Physics.Raycast(player.position, orientation.right, 2f, LayerMask.GetMask("Wall"));
+        wallRight = Physics.Raycast(player.position, -orientation.right, out rightSideWall, wallCheckDistance, LayerMask.GetMask("Wall"));
+        wallLeft = Physics.Raycast(player.position, orientation.right, out leftSideWall, wallCheckDistance, LayerMask.GetMask("Wall"));
+        return wallLeft || wallRight;
     }
 
     public bool SlopeCheck()
     {
-        if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f * gameObject.transform.localScale.y + 0.3f))
+        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f * gameObject.transform.localScale.y + 0.5f, groundLayer))
         {
             float _angle = Vector3.Angle(Vector3.up, slopeHit.normal);
             //Debug.Log("OnSlope: " + (_angle < maxSlopeAngle && _angle != 0));
@@ -223,15 +271,35 @@ public class PlayerStateMachine : NetworkBehaviour
 
         return false;
     }
+
+    public bool AboveGround()
+    {
+        //added by David, wondering if needed along with groundedcheck
+        return !Physics.Raycast(player.position, -playerObj.up, out aboveGroundRay, groundCheckDistance, LayerMask.GetMask("Ground"));; //groundLayer named whatIsGround in video
+    }
+
+    public bool WallRunning()
+    {
+        //added by David
+        if((wallLeft || wallRight) && Input.GetKey(KeyCode.W) /*&& AboveGround()*/)
+        {
+            //Debug.Log("Wallrunning");
+            return true;
+        } else {
+            //Debug.Log("Not Wallrunning");
+            return false;
+        }
+    }
+
     public Vector3 GetSlopeMoveDirection(Vector3 _direction)
     {
         return Vector3.ProjectOnPlane(_direction, slopeHit.normal).normalized;
     }
- 
+
 
     private void StartCrouch(InputAction.CallbackContext context)
     {
-        if(currentState == IdleState || currentState == MovingState)
+        if (currentState == IdleState || currentState == MovingState)
             rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
     }
 
@@ -248,7 +316,7 @@ public class PlayerStateMachine : NetworkBehaviour
         {
             moveSpeed = Mathf.Lerp(_startValue, desiredMoveSpeed, _time / _difference);
 
-            if(SlopeCheck())
+            if (SlopeCheck())
             {
                 float _slopeAngle = Vector3.Angle(Vector3.up, slopeHit.normal);
                 float _slopeAngleIncrease = 1 + (_slopeAngle / 90f);

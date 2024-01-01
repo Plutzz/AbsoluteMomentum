@@ -17,6 +17,7 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
     public override void DoEnterLogic()
     {
         base.DoEnterLogic();
+        stateMachine.StopAllCoroutines();
         rb.drag = drag;
         speedOnEnter = stateMachine.moveSpeed;
     }
@@ -31,10 +32,12 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
         base.DoFixedUpdateState();
         Move();
         SpeedControl();
+        stateMachine.WallCheck();
     }
 
     public override void DoUpdateState()
     {
+        stateMachine.WallCheck();
         GetInput();
         MovementSpeedHandler();
         base.DoUpdateState();
@@ -77,30 +80,28 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
 
     public override void CheckTransitions()
     {
-        if(stateMachine.GroundedCheck() || stateMachine.SlopeCheck())
+        // Airborne => Sliding
+        if (stateMachine.crouching && playerInputActions.Player.Jump.ReadValue<float>() == 0 
+            && rb.velocity.magnitude > minimumSlideVelocity && stateMachine.SlopeCheck() || stateMachine.GroundedCheck())
         {
-            // Airborne => Sliding
-            if (stateMachine.crouching && playerInputActions.Player.Jump.ReadValue<float>() == 0 && rb.velocity.magnitude > minimumSlideVelocity)
-            {
-                stateMachine.ChangeState(stateMachine.SlidingState);
-            }
-            // Airborne => Moving
-            else if (playerInputActions.Player.Movement.ReadValue<Vector2>() != Vector2.zero)
-            {
-                stateMachine.ChangeState(stateMachine.MovingState);
-            }
-            // Airborne => Idle
-            else if (playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.zero)
-            {
-                stateMachine.ChangeState(stateMachine.IdleState);
-            } 
+            stateMachine.ChangeState(stateMachine.SlidingState);
         }
+        // Airborne => Moving
+        else if (stateMachine.GroundedCheck() && playerInputActions.Player.Movement.ReadValue<Vector2>() != Vector2.zero)
+        {
+            stateMachine.ChangeState(stateMachine.MovingState);
+        }
+        // Airborne => Idle
+        else if (stateMachine.GroundedCheck() && playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.zero)
+        {
+            stateMachine.ChangeState(stateMachine.IdleState);
+        } 
         // Airborne => Wallrunning
-        else if (stateMachine.WallCheck() && sprinting)
+        // Might need to add a check that you are pressing an input key into the wall to "latch on" to the wall
+        else if (stateMachine.WallCheck())
         {
             stateMachine.ChangeState(stateMachine.WallrunState);
         }
-
 
     }
 
