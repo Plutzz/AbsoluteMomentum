@@ -103,20 +103,21 @@ public class PlayerStateMachine : NetworkBehaviour
 
     private void Awake()
     {
+
         rb = GetComponentInChildren<Rigidbody>();
 
         //TEMP CODE TO TEST MOVEMENT
-        PlayerIdleBaseInstance = playerIdleBase;
-        PlayerMovingBaseInstance = playerMovingBase;
-        PlayerAirborneBaseInstance = playerAirborneBase;
-        PlayerSlidingBaseInstance = playerSlidingBase;
-        PlayerWallrunBaseInstance = playerWallrunBase;
+        //PlayerIdleBaseInstance = playerIdleBase;
+        //PlayerMovingBaseInstance = playerMovingBase;
+        //PlayerAirborneBaseInstance = playerAirborneBase;
+        //PlayerSlidingBaseInstance = playerSlidingBase;
+        //PlayerWallrunBaseInstance = playerWallrunBase;
         //COMMENT CODE TO TEST MOVEMENT VALUES WITHOUT HAVING TO RESTART PLAY MODE
-        //PlayerIdleBaseInstance = Instantiate(playerIdleBase);
-        //PlayerMovingBaseInstance = Instantiate(playerMovingBase);
-        //PlayerAirborneBaseInstance = Instantiate(playerAirborneBase);
-        //PlayerSlidingBaseInstance = Instantiate(playerSlidingBase);
-        //PlayerWallrunBaseInstance = Instantiate(playerWallrunBase);
+        PlayerIdleBaseInstance = Instantiate(playerIdleBase);
+        PlayerMovingBaseInstance = Instantiate(playerMovingBase);
+        PlayerAirborneBaseInstance = Instantiate(playerAirborneBase);
+        PlayerSlidingBaseInstance = Instantiate(playerSlidingBase);
+        PlayerWallrunBaseInstance = Instantiate(playerWallrunBase);
 
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
@@ -143,7 +144,8 @@ public class PlayerStateMachine : NetworkBehaviour
         // Set up client side objects (Camera, debug menu)
         if (IsOwner)
         {
-            CinemachineFreeLook playerCamera = Instantiate(playerCameraPrefab).GetComponent<CinemachineFreeLook>();
+            //CinemachineFreeLook playerCamera = Instantiate(playerCameraPrefab).GetComponent<CinemachineFreeLook>();
+            CinemachineFreeLook playerCamera = playerCameraPrefab.GetComponent<CinemachineFreeLook>();
             playerCamera.m_LookAt = transform;
             playerCamera.m_Follow = transform;
 
@@ -153,21 +155,32 @@ public class PlayerStateMachine : NetworkBehaviour
             camSetup.player = player;
             camSetup.playerInputActions = playerInputActions;
 
-            CurrentStateText = DebugMenu.Instance.PlayerStateText;
-            GroundedText = DebugMenu.Instance.GroundedCheckText;
-            WallrunText = DebugMenu.Instance.WallrunCheckText;
-            VelocityText = DebugMenu.Instance.VelocityText;
-            SpeedText = DebugMenu.Instance.SpeedText;
+            if(DebugMenu.Instance != null)
+            {
+                CurrentStateText = DebugMenu.Instance.PlayerStateText;
+                GroundedText = DebugMenu.Instance.GroundedCheckText;
+                WallrunText = DebugMenu.Instance.WallrunCheckText;
+                VelocityText = DebugMenu.Instance.VelocityText;
+                SpeedText = DebugMenu.Instance.SpeedText;
+            }
+
+            currentState = initialState;
+            currentState.EnterLogic();
+        }
+        else
+        {
+            Destroy(playerCameraPrefab);
+            Destroy(this);
         }
 
-        currentState = initialState;
-        currentState.EnterLogic();
+
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.P))
             player.position = new Vector3(0, 10, 0);
+
         if (!IsOwner) return;
 
         if(Input.GetKeyDown(KeyCode.R))
@@ -209,11 +222,15 @@ public class PlayerStateMachine : NetworkBehaviour
 
         currentState.UpdateState();
 
-        CurrentStateText.text = "Current State: " + currentState.ToString();
-        GroundedText.text = "Grounded: " + GroundedCheck();
-        WallrunText.text = "Wallrun: " + WallCheck();
-        //VelocityText.text = "Input: " + playerInputActions.Player.Movement.ReadValue<Vector2>().x + "," + playerInputActions.Player.Movement.ReadValue<Vector2>().y;
-        VelocityText.text = "Vertical Speed: " + rb.velocity.y;
+        if(CurrentStateText != null )
+        {
+            CurrentStateText.text = "Current State: " + currentState.ToString();
+            GroundedText.text = "Grounded: " + GroundedCheck();
+            WallrunText.text = "Wallrun: " + WallCheck();
+            //VelocityText.text = "Input: " + playerInputActions.Player.Movement.ReadValue<Vector2>().x + "," + playerInputActions.Player.Movement.ReadValue<Vector2>().y;
+            VelocityText.text = "Vertical Speed: " + rb.velocity.y;
+        }
+
 
         Debug.DrawRay(player.position, playerObj.right * 0.7f, Color.red);
         Debug.DrawRay(player.position, -playerObj.right * 0.7f, Color.red);
@@ -230,7 +247,8 @@ public class PlayerStateMachine : NetworkBehaviour
 
         currentState.FixedUpdateState();
 
-        SpeedText.text = "Speed: " + rb.velocity.magnitude.ToString("F1");
+        if(SpeedText != null )
+            SpeedText.text = "Speed: " + rb.velocity.magnitude.ToString("F1");
     }
 
     public void ChangeState(PlayerState newState)
