@@ -181,7 +181,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3517694577
+  GlobalObjectIdHash: 2177907669
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -205,7 +205,7 @@ MonoBehaviour:
   playerMovingBase: {fileID: 11400000, guid: e21860848c0736f4ea183a101b263ba3, type: 2}
   playerAirborneBase: {fileID: 11400000, guid: 109712c1514316b46bc965911185995a, type: 2}
   playerSlidingBase: {fileID: 11400000, guid: f06437ceae2fd64469ea5d99c0f0dd5f, type: 2}
-  playerWallrunBase: {fileID: 11400000, guid: 189c8ff70875b6041adf4c0f747aaa5a, type: 2}
+  playerWallrunBase: {fileID: 11400000, guid: 94101bc732a33964980b581bca0e153e, type: 2}
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -227,6 +227,7 @@ MonoBehaviour:
   crouchYScale: 0.5
   maxSlopeAngle: 40
   wallCheckDistance: 0.7
+  groundCheckDistance: 10
   minHeight: 1
   wallLeft: 0
   wallRight: 0
@@ -236,6 +237,7 @@ MonoBehaviour:
   VelocityText: {fileID: 0}
   SpeedText: {fileID: 0}
   RespawnPos: {x: 43.29, y: 26.75, z: -33.61}
+  teleportAmount: 0
 --- !u!54 &2083876072485818274
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -244,7 +246,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4229715765416641438}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 1.5
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}

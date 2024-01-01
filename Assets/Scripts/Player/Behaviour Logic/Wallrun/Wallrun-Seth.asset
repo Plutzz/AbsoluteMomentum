@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de6bb9f68ef7e344db8145e2789e46ad, type: 3}
+  m_Name: Wallrun-Seth
+  m_EditorClassIdentifier: 
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  jumpCooldown: 0.25
+  horizontalSpeedDecreaseMultiplier: 0.3
+  idealVerticalVelocity: -1
+  verticalSpeedConvergentMultiplier: 0.75
+  initialVelocityMultiplier: 1.25
+  minimumVelocityToWallRun: 2
+  slowTimeBeforeDropping: 1
+  maximumDotToTrigger_UWJ: -0.5
+  outwardMultiplier_UWJ: 2
+  upwardMultiplier_UWJ: 10
+  previousVelocityOverallMultiplier_UWJ: 0.1
+  minimumDotToTrigger_OWJ: 0.5
+  outwardMultiplier_OWJ: 20
+  upwardMultiplier_OWJ: 4
+  previousVelocityOverallMultiplier_OWJ: 0.1
+  outwardMultiplier_FWJ: 5
+  upwardMultiplier_FWJ: 5
+  previousVelocityOverallMultiplier_FWJ: 2
