@@ -84,6 +84,9 @@ public class PlayerStateMachine : NetworkBehaviour
     [SerializeField] private float wallCheckDistance = 0.7f;
     [SerializeField] private float groundCheckDistance = 10f;
     [SerializeField] private float minHeight = 1f;
+    [SerializeField] private float wallrunCooldown = 0.25f;
+    [HideInInspector] public float timeOfLastWallrun;
+    public bool canWallrun;
     public RaycastHit wallLeft;
     public RaycastHit wallRight;
     public RaycastHit activeWall;
@@ -168,11 +171,12 @@ public class PlayerStateMachine : NetworkBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
-            player.position = new Vector3(0, 10, 0);
         if (!IsOwner) return;
 
-        if(Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.P))
+            player.position = new Vector3(0, 10, 0);
+
+        if (Input.GetKeyDown(KeyCode.R))
         {
             StopAllCoroutines();
             rb.velocity = Vector3.zero;
@@ -192,6 +196,8 @@ public class PlayerStateMachine : NetworkBehaviour
             transform.position = new Vector3(transform.position.x, transform.position.y + teleportAmount, transform.position.z);
         }
 
+
+
         //rb.velocity = new Vector3(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -10f, 100f), rb.velocity.z);
 
         //Crouching logic
@@ -206,9 +212,6 @@ public class PlayerStateMachine : NetworkBehaviour
             gameObject.transform.localScale = new Vector3(gameObject.transform.localScale.x, startYScale, gameObject.transform.localScale.z);
         }
 
-        //Disables gravity while on slopes
-        rb.useGravity = !SlopeCheck();
-
         currentState.UpdateState();
 
         CurrentStateText.text = "Current State: " + currentState.ToString();
@@ -219,6 +222,11 @@ public class PlayerStateMachine : NetworkBehaviour
         //WallCheck();
         //Debug.Log(wallRight);
         //Debug.Log(wallLeft);
+
+        if(Time.time > timeOfLastWallrun + wallrunCooldown)
+        {
+            canWallrun = true;
+        }
 
 
     }
@@ -241,6 +249,8 @@ public class PlayerStateMachine : NetworkBehaviour
         currentState.EnterLogic();
     }
 
+    #region Logic Checks
+
     //Consider adding core functionalities here
     // Ex: GroundedCheck
     public bool GroundedCheck()
@@ -251,8 +261,6 @@ public class PlayerStateMachine : NetworkBehaviour
 
     public bool WallCheck()
     {
-        Debug.Log("Wall Check");
-
         // Debugging rays
         float raycastDistance = 1.5f; // Adjust this distance based on your needs
         float raycastAngle = 10f;   // Adjust the angle of rotation based on your needs
@@ -284,7 +292,6 @@ public class PlayerStateMachine : NetworkBehaviour
 
         return (isWallRight || isWallLeft);
     }
-
     public bool SlopeCheck()
     {
         if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f * gameObject.transform.localScale.y + 0.5f, groundLayer))
@@ -321,12 +328,13 @@ public class PlayerStateMachine : NetworkBehaviour
         return Vector3.ProjectOnPlane(_direction, slopeHit.normal).normalized;
     }
 
-
     private void StartCrouch(InputAction.CallbackContext context)
     {
         if (currentState == IdleState || currentState == MovingState)
             rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
     }
+
+    #endregion
 
     #region Speed Control
 

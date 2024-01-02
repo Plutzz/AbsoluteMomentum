@@ -229,6 +229,9 @@ MonoBehaviour:
   wallCheckDistance: 0.7
   groundCheckDistance: 10
   minHeight: 1
+  wallrunCooldown: 1
+  timeOfLastWallrun: 0
+  canWallrun: 0
   isWallLeft: 0
   isWallRight: 0
   CurrentStateText: {fileID: 0}

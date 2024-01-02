@@ -47,9 +47,6 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
         base.DoFixedUpdateState();
         Move();
         SpeedControl();
-        stateMachine.WallCheck();
-
-        
 
         if (rb.velocity.y > 0)
         {
@@ -66,7 +63,6 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
 
     public override void DoUpdateState()
     {
-        stateMachine.WallCheck();
         GetInput();
         MovementSpeedHandler();
         base.DoUpdateState();
@@ -124,7 +120,7 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
 
     public override void CheckTransitions()
     {
-        if (stateMachine.WallCheck())
+        if (stateMachine.canWallrun && stateMachine.WallCheck())
         {
             stateMachine.ChangeState(stateMachine.WallrunState);
         }

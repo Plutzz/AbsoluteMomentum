@@ -37,6 +37,10 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
     {
         GetInput();
         MovementSpeedHandler();
+
+        //Disables gravity while on slopes
+        rb.useGravity = !stateMachine.SlopeCheck();
+
         base.DoUpdateState();
     }
 
