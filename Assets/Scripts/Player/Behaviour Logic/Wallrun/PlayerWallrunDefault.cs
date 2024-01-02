@@ -7,19 +7,21 @@ using UnityEngine.InputSystem;
 [CreateAssetMenu(fileName = "Wallrun-Default", menuName = "Player Logic/Wallrun Logic/Default")]
 public class PlayerWallrunDefault : PlayerWallrunSOBase
 {
+    [Header("Wallrun Variables")]
     [SerializeField] private float wallrunSpeed = 35f;
     [SerializeField] private float acceleration = 10f;
     [SerializeField] private float wallrunGravity = 10f;
     [SerializeField] private float wallstickStrength = 10f;
+    [SerializeField] private float maxWallrunTime;
+    private float dropTimer;
 
+    [Header("Wall Jump Variables")]
     [SerializeField] private float wallJumpVerticalForce = 10f;
     [SerializeField] private float wallJumpSpeedBoost = 10f;
-
     [SerializeField] private float jumpCooldown;
     private bool readyToJump;
 
-    [SerializeField] private float maxWallrunTime; 
-    private float dropTimer;
+
     public override void DoEnterLogic()
     {
         base.DoEnterLogic();
