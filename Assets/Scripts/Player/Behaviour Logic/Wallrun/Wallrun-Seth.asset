@@ -22,6 +22,7 @@ MonoBehaviour:
   initialVelocityMultiplier: 1.25
   minimumVelocityToWallRun: 2
   slowTimeBeforeDropping: 1
+  jumpLagTime: 0.25
   maximumDotToTrigger_UWJ: -0.5
   outwardMultiplier_UWJ: 2
   upwardMultiplier_UWJ: 10
