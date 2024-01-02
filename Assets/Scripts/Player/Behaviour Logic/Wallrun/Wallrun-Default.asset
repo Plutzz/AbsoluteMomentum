@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b4525b65a365ba45b6b7cd59aea48ff, type: 3}
   m_Name: Wallrun-Default
   m_EditorClassIdentifier: 
+  maxWallrunTime: 0.5

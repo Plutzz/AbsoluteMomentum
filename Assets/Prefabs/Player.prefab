@@ -205,13 +205,13 @@ MonoBehaviour:
   playerMovingBase: {fileID: 11400000, guid: e21860848c0736f4ea183a101b263ba3, type: 2}
   playerAirborneBase: {fileID: 11400000, guid: 109712c1514316b46bc965911185995a, type: 2}
   playerSlidingBase: {fileID: 11400000, guid: f06437ceae2fd64469ea5d99c0f0dd5f, type: 2}
-  playerWallrunBase: {fileID: 11400000, guid: d0e71a433a3cf1848920a2d33e107cd3, type: 2}
+  playerWallrunBase: {fileID: 11400000, guid: 94101bc732a33964980b581bca0e153e, type: 2}
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
   wallLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   playerHeight: 2
   playerCameraPrefab: {fileID: 189743957778359187, guid: ac0fb975af2fb9f4bb85911e96021a28, type: 3}
   moveSpeed: 0
@@ -229,8 +229,8 @@ MonoBehaviour:
   wallCheckDistance: 0.7
   groundCheckDistance: 10
   minHeight: 1
-  wallLeft: 0
-  wallRight: 0
+  isWallLeft: 0
+  isWallRight: 0
   CurrentStateText: {fileID: 0}
   GroundedText: {fileID: 0}
   WallrunText: {fileID: 0}

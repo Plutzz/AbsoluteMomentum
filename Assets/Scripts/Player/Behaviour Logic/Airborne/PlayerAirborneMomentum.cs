@@ -124,9 +124,13 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
 
     public override void CheckTransitions()
     {
+        if (stateMachine.WallCheck())
+        {
+            stateMachine.ChangeState(stateMachine.WallrunState);
+        }
         // Airborne => Sliding
-        if (stateMachine.crouching && playerInputActions.Player.Jump.ReadValue<float>() == 0 
-            && rb.velocity.magnitude > minimumSlideVelocity && stateMachine.SlopeCheck() || stateMachine.GroundedCheck())
+        else if ((stateMachine.SlopeCheck() || stateMachine.GroundedCheck()) && stateMachine.crouching && playerInputActions.Player.Jump.ReadValue<float>() == 0 
+            && rb.velocity.magnitude > minimumSlideVelocity)
         {
             stateMachine.ChangeState(stateMachine.SlidingState);
         }
@@ -142,10 +146,7 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
         } 
         // Airborne => Wallrunning
         // Might need to add a check that you are pressing an input key into the wall to "latch on" to the wall
-        else if (stateMachine.WallCheck())
-        {
-            stateMachine.ChangeState(stateMachine.WallrunState);
-        }
+
 
     }
 

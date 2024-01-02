@@ -216,9 +216,6 @@ public class PlayerStateMachine : NetworkBehaviour
         WallrunText.text = "Wallrun: " + WallCheck();
         //VelocityText.text = "Input: " + playerInputActions.Player.Movement.ReadValue<Vector2>().x + "," + playerInputActions.Player.Movement.ReadValue<Vector2>().y;
         VelocityText.text = "Vertical Speed: " + rb.velocity.y;
-
-        Debug.DrawRay(player.position, playerObj.right * 0.7f, Color.red);
-        Debug.DrawRay(player.position, -playerObj.right * 0.7f, Color.red);
         //WallCheck();
         //Debug.Log(wallRight);
         //Debug.Log(wallLeft);
@@ -254,6 +251,8 @@ public class PlayerStateMachine : NetworkBehaviour
 
     public bool WallCheck()
     {
+        Debug.Log("Wall Check");
+
         // Debugging rays
         float raycastDistance = 1.5f; // Adjust this distance based on your needs
         float raycastAngle = 10f;   // Adjust the angle of rotation based on your needs
