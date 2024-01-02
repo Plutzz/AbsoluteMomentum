@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
 using Unity.VisualScripting;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -83,11 +84,12 @@ public class PlayerStateMachine : NetworkBehaviour
     [SerializeField] private float wallCheckDistance = 0.7f;
     [SerializeField] private float groundCheckDistance = 10f;
     [SerializeField] private float minHeight = 1f;
-    public RaycastHit leftSideWall;
-    public RaycastHit rightSideWall;
+    public RaycastHit wallLeft;
+    public RaycastHit wallRight;
+    public RaycastHit activeWall;
     public RaycastHit aboveGroundRay;
-    public bool wallLeft;
-    public bool wallRight;
+    public bool isWallLeft;
+    public bool isWallRight;
 
     #endregion
 
@@ -253,11 +255,35 @@ public class PlayerStateMachine : NetworkBehaviour
     public bool WallCheck()
     {
         // Debugging rays
-        Debug.DrawRay(player.position, -playerObj.right * 2f, Color.red);
-        Debug.DrawRay(player.position, playerObj.right * 2f, Color.red);
-        wallRight = Physics.Raycast(player.position, -orientation.right, out rightSideWall, wallCheckDistance, LayerMask.GetMask("Wall"));
-        wallLeft = Physics.Raycast(player.position, orientation.right, out leftSideWall, wallCheckDistance, LayerMask.GetMask("Wall"));
-        return wallLeft || wallRight;
+        float raycastDistance = 1.5f; // Adjust this distance based on your needs
+        float raycastAngle = 10f;   // Adjust the angle of rotation based on your needs
+
+        // Rotate right ray direction
+        Vector3 rightRayDirection = Quaternion.Euler(0, -raycastAngle, 0) * playerObj.right;
+        isWallRight = Physics.Raycast(player.position, rightRayDirection, out wallRight, raycastDistance, wallLayer);
+
+        // Rotate left ray direction
+        Vector3 leftRayDirection = Quaternion.Euler(0, raycastAngle, 0) * -playerObj.right;
+        isWallLeft = Physics.Raycast(player.position, leftRayDirection, out wallLeft, raycastDistance, wallLayer);
+
+        Debug.DrawRay(player.position, leftRayDirection * raycastDistance, Color.blue);
+        Debug.DrawRay(player.position, rightRayDirection * raycastDistance, Color.blue);
+
+
+        if (isWallRight == true)
+        {
+            activeWall = wallRight;
+        }
+        else if (isWallLeft == true)
+        {
+            activeWall = wallLeft;
+        }
+        else
+        {
+            //activeWall = null;
+        }
+
+        return (isWallRight || isWallLeft);
     }
 
     public bool SlopeCheck()
@@ -281,7 +307,7 @@ public class PlayerStateMachine : NetworkBehaviour
     public bool WallRunning()
     {
         //added by David
-        if((wallLeft || wallRight) && Input.GetKey(KeyCode.W) /*&& AboveGround()*/)
+        if(WallCheck() && Input.GetKey(KeyCode.W) /*&& AboveGround()*/)
         {
             //Debug.Log("Wallrunning");
             return true;

@@ -70,24 +70,24 @@ public class PlayerWallrunDavid : PlayerWallrunSOBase
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
 
-        Vector3 wallNormal = stateMachine.wallRight ? stateMachine.rightSideWall.normal : stateMachine.leftSideWall.normal;
-        Vector3 wallForward = Vector3.Cross(wallNormal, stateMachine.playerObj.up);
-Debug.Log(stateMachine.rightSideWall.normal);
-        if((stateMachine.playerObj.forward - wallForward).magnitude > (stateMachine.playerObj.forward - -wallForward).magnitude)
+        //Vector3 wallNormal = stateMachine.wallRight ? stateMachine.rightSideWall.normal : stateMachine.leftSideWall.normal;
+        //Vector3 wallForward = Vector3.Cross(wallNormal, stateMachine.playerObj.up);
+        //Debug.Log(stateMachine.rightSideWall.normal);
+        //if((stateMachine.playerObj.forward - wallForward).magnitude > (stateMachine.playerObj.forward - -wallForward).magnitude)
         {
-            wallForward = -wallForward;
+            //wallForward = -wallForward;
         }
 
 
         //forward force
         //rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
 
-        rb.velocity = (wallForward * wallRunForce);
+        //rb.velocity = (wallForward * wallRunForce);
 
         //push to wall force
-        if(!(stateMachine.wallLeft && Input.GetKey(KeyCode.D)) && !(stateMachine.wallRight && Input.GetKey(KeyCode.A)))
+        //if(!(stateMachine.wallLeft && Input.GetKey(KeyCode.D)) && !(stateMachine.wallRight && Input.GetKey(KeyCode.A)))
         {
-            rb.AddForce(-wallNormal * 100, ForceMode.Force);
+            //rb.AddForce(-wallNormal * 100, ForceMode.Force);
         }
     }
 }
