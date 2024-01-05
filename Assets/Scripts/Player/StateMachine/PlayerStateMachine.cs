@@ -304,12 +304,6 @@ public class PlayerStateMachine : NetworkBehaviour
         return false;
     }
 
-    public bool AboveGround()
-    {
-        //added by David, wondering if needed along with groundedcheck
-        return !Physics.Raycast(player.position, -playerObj.up, out aboveGroundRay, groundCheckDistance, LayerMask.GetMask("Ground"));; //groundLayer named whatIsGround in video
-    }
-
     public bool WallRunning()
     {
         //added by David

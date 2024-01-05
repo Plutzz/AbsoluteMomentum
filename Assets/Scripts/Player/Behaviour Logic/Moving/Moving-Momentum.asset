@@ -20,5 +20,10 @@ MonoBehaviour:
   jumpForce: 20
   jumpCooldown: 0.25
   coyoteTime: 0.15
-  readyToJump: 0
+  readyToJump: 1
+  maxJumpTime: 0.5
+  fallMultiplier: 2.5
+  lowJumpMultiplier: 2
+  isJumping: 0
+  airborne: 0
   numBhopFrames: 4

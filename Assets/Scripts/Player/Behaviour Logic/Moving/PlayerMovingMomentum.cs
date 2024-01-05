@@ -28,6 +28,14 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     [SerializeField] private float jumpCooldown = 0.25f;
     [SerializeField] private float coyoteTime = 0.25f;
     public bool readyToJump = true;
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    private float jumpTime = 0f;
+    [SerializeField] private float maxJumpTime = 0.5f;
+    [SerializeField] private float fallMultiplier = 2.5f;
+    [SerializeField] private float lowJumpMultiplier = 2f;
+    [SerializeField] private bool isJumping = false;
+    [SerializeField] private bool airborne = false;
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private bool jumping;
     private bool bhopFrame;
     private int bhopFrames;
@@ -59,14 +67,20 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
 
     public override void DoFixedUpdateState()
     {
+        if(!stateMachine.GroundedCheck())
+        {
+            airborne = true;
+        }
+
+        GetInput();
         Move();
         SpeedControl();
+
         base.DoFixedUpdateState();
     }
 
     public override void DoUpdateState()
     {
-        GetInput();
         MovementSpeedHandler();
 
         //Disables gravity while on slopes
@@ -124,18 +138,62 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
         jumping = playerInputActions.Player.Jump.ReadValue<float>() == 1f;
 
 
-        if (stateMachine.timeOfLastJump + jumpCooldown < Time.time)
+        if(airborne)
+            {
+                if(stateMachine.GroundedCheck())
+                {
+                    readyToJump = false;
+                    airborne = false;
+                }
+            }
+
+        if (stateMachine.timeOfLastJump + jumpCooldown < Time.time && playerInputActions.Player.Jump.ReadValue<float>() == 0f && stateMachine.GroundedCheck())
         {
             ResetJump();
         }
 
-        if (jumping)
+
+        if(readyToJump)
         {
-            Jump();
+            if (jumping && !isJumping)
+            {
+                isJumping = true;
+                jumpTime = 0f;
+                rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
+            }
+
+            if (jumping && isJumping)
+            {
+                if (jumpTime < maxJumpTime)
+                {
+                    jumpTime += Time.fixedDeltaTime;
+                    rb.AddForce(Vector3.up * jumpForce * Time.fixedDeltaTime, ForceMode.Impulse);
+                }
+            }
+
+            if (jumping)
+            {
+                isJumping = false;
+
+                // Apply additional gravity to create variable jump height
+                if (rb.velocity.y > 0)
+                {
+                    rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y * (1f / fallMultiplier), rb.velocity.z);
+                }
+            }
+
+            // Apply increased gravity during the fall to make the jump feel more natural
+            if (rb.velocity.y < 0)
+            {
+                rb.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
+            }
+            else if (rb.velocity.y > 0 && !jumping)
+            {
+                rb.velocity += Vector3.up * Physics.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;
+            }
         }
-
-
     }
+
     private void Jump()
     {
         if(readyToJump)
@@ -246,4 +304,5 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     }
 
     #endregion
+
 }
