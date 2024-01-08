@@ -29,6 +29,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     [SerializeField] private float coyoteTime = 0.25f;
     public bool readyToJump = true;
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //variables for variable jump and no auto jump
     private float jumpTime = 0f;
     [SerializeField] private float maxJumpTime = 0.5f;
     [SerializeField] private float fallMultiplier = 2.5f;
@@ -138,7 +139,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
         sprinting = playerInputActions.Player.Sprint.ReadValue<float>() == 1f;
         jumping = playerInputActions.Player.Jump.ReadValue<float>() == 1f;
 
-
+        
         if(airborne)
             {
                 if(stateMachine.GroundedCheck())
@@ -148,6 +149,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
                 }
             }
 
+        //prevents auto jump
         if (stateMachine.timeOfLastJump + jumpCooldown < Time.time && playerInputActions.Player.Jump.ReadValue<float>() == 0f && stateMachine.GroundedCheck())
         {
             ResetJump();
@@ -156,6 +158,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
 
         if(readyToJump)
         {
+            //start of jump
             if (jumping && !isJumping)
             {
                 isJumping = true;
@@ -163,6 +166,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
                 rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
             }
 
+            //if holding jump, add more force
             if (jumping && isJumping)
             {
                 if (jumpTime < maxJumpTime)
