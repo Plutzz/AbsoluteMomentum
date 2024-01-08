@@ -61,8 +61,9 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
 
     public override void DoExitLogic()
     {
-        base.DoExitLogic();
         playerInputActions.Player.Crouch.performed -= TryStartSlide;
+        readyToJump = true;
+        base.DoExitLogic();
     }
 
     public override void DoFixedUpdateState()
