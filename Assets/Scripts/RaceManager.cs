@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using UnityEditor.EditorTools;
 using UnityEngine;
 
 public class RaceManager : NetworkBehaviour
@@ -34,6 +35,10 @@ public class RaceManager : NetworkBehaviour
     [Tooltip("If True, lines up players by Z axis, else lines up by X axis")]
     private bool lineUpOnZ;
 
+    [SerializeField]
+    [Tooltip("Countdown till race starts")]
+    private float countdown = 3f;
+
     private void Awake()
     {
         // if (IsServer)
@@ -65,6 +70,8 @@ public class RaceManager : NetworkBehaviour
 
             // Moves camera with player but not the player itself
             RepositionPlayers();
+
+            StartCoroutine(StartCountdown());
         }
     }
     void Update()
@@ -123,31 +130,49 @@ public class RaceManager : NetworkBehaviour
         // Takes list of players and repositions them to a specific point on spawn
         for (int i = 0; i < playerList.Length; i++)
         {
-            GameObject currPlayer = playerList[i].transform.Find("Player").gameObject;
+            Transform playerTransform = playerList[i].transform.Find("Player");
 
-            Vector3 currPos = startingPlayer;
-
-            if (lineUpOnZ)
+            if (playerTransform != null)
             {
-                Vector3 currSpace = new Vector3(row * gap, 0, col * gap);
-                currPos += currSpace;
-            }
-            else 
-            {
-                Vector3 currSpace = new Vector3(col * gap, 0, row * gap);
-                currPos += currSpace;
-            }
+                GameObject currPlayer = playerTransform.gameObject;
 
-            currPlayer.transform.position = currPos;
+                Vector3 currPos = startingPlayer;
+
+                if (lineUpOnZ)
+                {
+                    Vector3 currSpace = new Vector3(row * gap, 0, col * gap);
+                    currPos += currSpace;
+                }
+                else 
+                {
+                    Vector3 currSpace = new Vector3(col * gap, 0, row * gap);
+                    currPos += currSpace;
+                }
+
+                currPlayer.transform.position = currPos;
+
+                currPlayer.GetComponent<PlayerStateMachine>().enabled = false;
+            }
+            else
+            {
+                // Handle the case when the Player object doesn't exist
+                Debug.LogWarning("Player object not found for playerList[" + i + "]");
+                // You can add more error handling or skip the iteration as needed
+            }
+            
         }
     }
 
     // Possibly a couroutine?
-    private void StartCountdown()
+    IEnumerator StartCountdown()
     {
         // Count down from 3
         // Unfreeze players
         // Start timer
+
+        yield return new WaitForSeconds(countdown);
+
+        Debug.Log("Timer has finished");
     }
 
     // Call when player reaches end of map (collider/trigger)
