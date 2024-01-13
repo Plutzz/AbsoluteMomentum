@@ -12,7 +12,8 @@ public class RaceManager : NetworkBehaviour
     };
 
     // Keep array of all active players in the race
-    private NetworkObject[] playerList;
+    private NetworkObject[] networkObjList;
+    private List<GameObject> playerList;
 
     [Header("Player Spawner System")]
     // Number of players per row
@@ -41,6 +42,7 @@ public class RaceManager : NetworkBehaviour
 
     private void Awake()
     {
+        playerList = new List<GameObject>();
         // if (IsServer)
         // {
         //     Debug.Log("IS in server");
@@ -66,7 +68,7 @@ public class RaceManager : NetworkBehaviour
         {
             Debug.Log("IS in server");
 
-            playerList = FindObjectsOfType<NetworkObject>();
+            networkObjList = FindObjectsOfType<NetworkObject>();
 
             // Moves camera with player but not the player itself
             RepositionPlayers();
@@ -128,13 +130,14 @@ public class RaceManager : NetworkBehaviour
         // }
 
         // Takes list of players and repositions them to a specific point on spawn
-        for (int i = 0; i < playerList.Length; i++)
+        for (int i = 0; i < networkObjList.Length; i++)
         {
-            Transform playerTransform = playerList[i].transform.Find("Player");
+
+            Transform playerTransform = networkObjList[i].transform.Find("Player");
 
             if (playerTransform != null)
             {
-                GameObject currPlayer = playerTransform.gameObject;
+                GameObject player = playerTransform.gameObject;
 
                 Vector3 currPos = startingPlayer;
 
@@ -149,9 +152,11 @@ public class RaceManager : NetworkBehaviour
                     currPos += currSpace;
                 }
 
-                currPlayer.transform.position = currPos;
+                player.transform.position = currPos;
 
-                currPlayer.GetComponent<PlayerStateMachine>().enabled = false;
+                player.GetComponent<PlayerStateMachine>().enabled = false;
+
+                playerList.Add(player);
             }
             else
             {
@@ -173,6 +178,12 @@ public class RaceManager : NetworkBehaviour
         yield return new WaitForSeconds(countdown);
 
         Debug.Log("Timer has finished");
+
+        for (int i = 0; i < playerList.Count; i++)
+        {
+            GameObject currPlayer = playerList[i];
+            currPlayer.GetComponent<PlayerStateMachine>().enabled = true;
+        }
     }
 
     // Call when player reaches end of map (collider/trigger)
