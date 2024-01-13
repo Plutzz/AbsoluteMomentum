@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/MapRaceTestScene.unity
     guid: 73cc9be2e75828c48bdce26534695bce
+  - enabled: 1
+    path: Assets/Scenes/LobbyTestScene.unity
+    guid: 81953735a7091dc4d86d93f142ade8ef
   m_configObjects: {}
