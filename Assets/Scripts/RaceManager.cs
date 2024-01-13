@@ -123,7 +123,7 @@ public class RaceManager : NetworkBehaviour
         // Takes list of players and repositions them to a specific point on spawn
         for (int i = 0; i < playerList.Length; i++)
         {
-            NetworkObject currPlayer = playerList[i];
+            GameObject currPlayer = playerList[i].transform.Find("Player").gameObject;
 
             Vector3 currPos = startingPlayer;
 
