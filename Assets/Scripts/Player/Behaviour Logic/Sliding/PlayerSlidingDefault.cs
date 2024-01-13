@@ -174,10 +174,6 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
 
     private void SpeedControl()
     {
-        //exitingGround = timeOfLastJump + exitingGroundTimer > Time.time;
-
-
-
         // If the player is mid jump don't limit velocity
         // if (!readyToJump) return;
 

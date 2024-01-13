@@ -127,6 +127,7 @@ public class PlayerWallrunDefault : PlayerWallrunSOBase
     private void ResetJump()
     {
         readyToJump = true;
+        stateMachine.timeOfLastJump = Time.time;
     }
 
     private void SpeedControl()

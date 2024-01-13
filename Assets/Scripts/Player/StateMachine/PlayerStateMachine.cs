@@ -14,7 +14,7 @@ public class PlayerStateMachine : NetworkBehaviour
 {
     #region States Variables
 
-    private PlayerState currentState; // State that player is currently in
+    public PlayerState currentState { get; private set; } // State that player is currently in
     private PlayerState initialState; // State that player starts as
     public PlayerState previousState { get; private set; } // State that player starts as
 
@@ -46,6 +46,7 @@ public class PlayerStateMachine : NetworkBehaviour
     #region Player Variables
     public PlayerInputActions playerInputActions { get; private set; }
     public Rigidbody rb { get; private set; }
+    public JumpHandler jumpHandler { get; private set; }
 
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask wallLayer;
@@ -56,17 +57,11 @@ public class PlayerStateMachine : NetworkBehaviour
     public float desiredMoveSpeed;
     public float lastDesiredMoveSpeed;
 
-
-
-    [HideInInspector] public float timeOfLastJump;
-    public bool exitingGround;
-
     [SerializeField] private float slopeIncreaseMultiplier;
     [SerializeField] public float maxSpeed = 100f;
 
 
-
-
+    [HideInInspector] public float timeOfLastJump;
     public Transform orientation;
     public Transform player;
     public Transform playerObj;
@@ -82,7 +77,6 @@ public class PlayerStateMachine : NetworkBehaviour
 
     [Header("WallRun Handling")] //added by David
     [SerializeField] private float wallCheckDistance = 0.7f;
-    [SerializeField] private float groundCheckDistance = 10f;
     [SerializeField] private float minHeight = 1f;
     [SerializeField] private float wallrunCooldown = 0.25f;
     [HideInInspector] public float timeOfLastWallrun;
@@ -143,11 +137,13 @@ public class PlayerStateMachine : NetworkBehaviour
         initialState = IdleState;
         startYScale = gameObject.transform.localScale.y;
     }
-    private void Start()
+    public override void OnNetworkSpawn()
     {
         // Set up client side objects (Camera, debug menu)
         if (IsOwner)
         {
+            jumpHandler = GetComponent<JumpHandler>();
+
             CinemachineFreeLook playerCamera = Instantiate(playerCameraPrefab).GetComponent<CinemachineFreeLook>();
             playerCamera.m_LookAt = transform;
             playerCamera.m_Follow = transform;
@@ -158,15 +154,18 @@ public class PlayerStateMachine : NetworkBehaviour
             camSetup.player = player;
             camSetup.playerInputActions = playerInputActions;
 
+            //Debug Stuff
             CurrentStateText = DebugMenu.Instance.PlayerStateText;
             GroundedText = DebugMenu.Instance.GroundedCheckText;
             WallrunText = DebugMenu.Instance.WallrunCheckText;
             VelocityText = DebugMenu.Instance.VelocityText;
             SpeedText = DebugMenu.Instance.SpeedText;
+
+            currentState = initialState;
+            currentState.EnterLogic();
         }
 
-        currentState = initialState;
-        currentState.EnterLogic();
+
     }
 
     private void Update()

@@ -145,6 +145,7 @@ GameObject:
   - component: {fileID: 329382092195142965}
   - component: {fileID: 2083876072485818274}
   - component: {fileID: -7207503874121396772}
+  - component: {fileID: 5972204853772336244}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -217,17 +218,15 @@ MonoBehaviour:
   moveSpeed: 0
   desiredMoveSpeed: 0
   lastDesiredMoveSpeed: 0
-  timeOfLastJump: 0
-  exitingGround: 0
   slopeIncreaseMultiplier: 4
   maxSpeed: 50
+  timeOfLastJump: 0
   orientation: {fileID: 8671897353048501037}
   player: {fileID: 5911603449596199529}
   playerObj: {fileID: 176134913370103247}
   crouchYScale: 0.5
   maxSlopeAngle: 40
   wallCheckDistance: 0.7
-  groundCheckDistance: 10
   minHeight: 1
   wallrunCooldown: 1
   timeOfLastWallrun: 0
@@ -298,6 +297,20 @@ MonoBehaviour:
   InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &5972204853772336244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4229715765416641438}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bc100039aef77146a11594110947a7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  jumpForce: 20
+  canJump: 1
 --- !u!1 &4646233139212467516
 GameObject:
   m_ObjectHideFlags: 0
