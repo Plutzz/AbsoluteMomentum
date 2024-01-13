@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class RaceManager : MonoBehaviour
+public class RaceManager : NetworkBehaviour
 {
     public struct PlayerStats
     {
@@ -10,7 +11,7 @@ public class RaceManager : MonoBehaviour
     };
 
     // Keep array of all active players in the race
-    private GameObject[] playerList;
+    private NetworkObject[] playerList;
 
     [Header("Player Spawner System")]
     // Number of players per row
@@ -35,17 +36,36 @@ public class RaceManager : MonoBehaviour
 
     private void Awake()
     {
-        // Get all active players
-        playerList = GameObject.FindGameObjectsWithTag("Player");
+        // if (IsServer)
+        // {
+        //     Debug.Log("IS in server");
 
-        // Freeze player movement and teleport them to starting positions
-        // Loop through players Spawn player each row and column to fit in system
-        RepositionPlayers();
+        //     playerList = FindObjectsOfType<NetworkObject>();
+
+        //     RepositionPlayers();
+        // }
+
+
+        // // Get all active players
+        // playerList = GameObject.FindGameObjectsWithTag("Player");
+
+        // // Freeze player movement and teleport them to starting positions
+        // // Loop through players Spawn player each row and column to fit in system
+        // RepositionPlayers();
     }
 
     void Start()
     {
+        // Function works if in start instead of awake
+        if (IsServer)
+        {
+            Debug.Log("IS in server");
 
+            playerList = FindObjectsOfType<NetworkObject>();
+
+            // Moves camera with player but not the player itself
+            RepositionPlayers();
+        }
     }
     void Update()
     {
@@ -60,10 +80,50 @@ public class RaceManager : MonoBehaviour
         int row = 0;
         int col = 0;
 
+        // foreach (NetworkObject player in playerList)
+        // {
+        //     Vector3 currPos = startingPlayer;
+
+        //     if (lineUpOnZ)
+        //     {
+        //         Vector3 currSpace = new Vector3(row * gap, 0, col * gap);
+        //         currPos += currSpace;
+        //     }
+        //     else
+        //     {
+        //         Vector3 currSpace = new Vector3(col * gap, 0, row * gap);
+        //         currPos += currSpace;
+        //     }
+
+        //     // Set the initial position on the server
+        //     player.transform.position = currPos;
+        //     // player.GetComponentInChildren<GameObject>().transform.position = currPos;
+
+        //     // Update row and col for the next player
+        //     if (lineUpOnZ)
+        //     {
+        //         col++;
+        //         if (col >= playersPerRow)
+        //         {
+        //             col = 0;
+        //             row++;
+        //         }
+        //     }
+        //     else
+        //     {
+        //         row++;
+        //         if (row >= playersPerRow)
+        //         {
+        //             row = 0;
+        //             col++;
+        //         }
+        //     }
+        // }
+
         // Takes list of players and repositions them to a specific point on spawn
         for (int i = 0; i < playerList.Length; i++)
         {
-            GameObject currPlayer = playerList[i];
+            NetworkObject currPlayer = playerList[i];
 
             Vector3 currPos = startingPlayer;
 
