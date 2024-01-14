@@ -91,11 +91,16 @@ public class PlayerStateMachine : NetworkBehaviour
     #endregion
 
     #region Debug Variables
-    public TextMeshProUGUI CurrentStateText;
+    private List<TextMeshProUGUI> debugMenuList = new List<TextMeshProUGUI>();
+    public GameObject debugMenuParent;
+    public TextMeshProUGUI debugMenuItemprefab;
+
+
+/*    public TextMeshProUGUI CurrentStateText;
     public TextMeshProUGUI GroundedText;
     public TextMeshProUGUI WallrunText;
     public TextMeshProUGUI VelocityText;
-    public TextMeshProUGUI SpeedText;
+    public TextMeshProUGUI SpeedText;*/
     public Vector3 RespawnPos;
     public float teleportAmount;
     #endregion
@@ -136,7 +141,11 @@ public class PlayerStateMachine : NetworkBehaviour
 
         initialState = IdleState;
         startYScale = gameObject.transform.localScale.y;
+        InitDebugMenu();
     }
+
+    
+
     public override void OnNetworkSpawn()
     {
         // Set up client side objects (Camera, debug menu)
@@ -155,11 +164,11 @@ public class PlayerStateMachine : NetworkBehaviour
             camSetup.playerInputActions = playerInputActions;
 
             //Debug Stuff
-            CurrentStateText = DebugMenu.Instance.PlayerStateText;
+            /*CurrentStateText = DebugMenu.Instance.PlayerStateText;
             GroundedText = DebugMenu.Instance.GroundedCheckText;
             WallrunText = DebugMenu.Instance.WallrunCheckText;
             VelocityText = DebugMenu.Instance.VelocityText;
-            SpeedText = DebugMenu.Instance.SpeedText;
+            SpeedText = DebugMenu.Instance.SpeedText;*/
 
             currentState = initialState;
             currentState.EnterLogic();
@@ -177,22 +186,12 @@ public class PlayerStateMachine : NetworkBehaviour
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            StopAllCoroutines();
-            rb.velocity = Vector3.zero;
-            moveSpeed = 0;
-            desiredMoveSpeed = 0;
-            lastDesiredMoveSpeed = 0;
-            transform.position = RespawnPos;
+            ResetPlayer();
         }
 
         if (Input.GetKeyDown(KeyCode.T))
         {
-            StopAllCoroutines();
-            rb.velocity = Vector3.zero;
-            moveSpeed = 0;
-            desiredMoveSpeed = 0;
-            lastDesiredMoveSpeed = 0;
-            transform.position = new Vector3(transform.position.x, transform.position.y + teleportAmount, transform.position.z);
+            TeleportPlayer();
         }
 
 
@@ -213,11 +212,12 @@ public class PlayerStateMachine : NetworkBehaviour
 
         currentState.UpdateState();
 
-        CurrentStateText.text = "Current State: " + currentState.ToString();
-        GroundedText.text = "Grounded: " + GroundedCheck();
-        WallrunText.text = "Wallrun: " + WallCheck();
+        UpdateDebugMenu();
+        //CurrentStateText.text = "Current State: " + currentState.ToString();
+        //GroundedText.text = "Grounded: " + GroundedCheck();
+        //WallrunText.text = "Wallrun: " + WallCheck();
         //VelocityText.text = "Input: " + playerInputActions.Player.Movement.ReadValue<Vector2>().x + "," + playerInputActions.Player.Movement.ReadValue<Vector2>().y;
-        VelocityText.text = "Vertical Speed: " + rb.velocity.y;
+        //VelocityText.text = "Vertical Speed: " + rb.velocity.y;
         //WallCheck();
         //Debug.Log(wallRight);
         //Debug.Log(wallLeft);
@@ -230,18 +230,20 @@ public class PlayerStateMachine : NetworkBehaviour
 
     }
 
+    
+
     private void FixedUpdate()
     {
         if (!IsOwner) return;
 
         currentState.FixedUpdateState();
 
-        SpeedText.text = "Speed: " + rb.velocity.magnitude.ToString("F1");
+        //SpeedText.text = "Speed: " + rb.velocity.magnitude.ToString("F1");
     }
 
     public void ChangeState(PlayerState newState)
     {
-        Debug.Log("Changing to: " + newState);
+        //Debug.Log("Changing to: " + newState);
         currentState.ExitLogic();
         previousState = currentState;
         currentState = newState;
@@ -368,8 +370,50 @@ public class PlayerStateMachine : NetworkBehaviour
 
     #endregion
 
+    #region Debug Functions
 
+    private void TeleportPlayer()
+    {
+        StopAllCoroutines();
+        rb.velocity = Vector3.zero;
+        moveSpeed = 0;
+        desiredMoveSpeed = 0;
+        lastDesiredMoveSpeed = 0;
+        transform.position = new Vector3(transform.position.x, transform.position.y + teleportAmount, transform.position.z);
+    }
 
+    private void ResetPlayer()
+    {
+        StopAllCoroutines();
+        rb.velocity = Vector3.zero;
+        moveSpeed = 0;
+        desiredMoveSpeed = 0;
+        lastDesiredMoveSpeed = 0;
+        transform.position = RespawnPos;
+    }
 
+    private void InitDebugMenu()
+    {
+        int debugMenuSize = 6;
+        for (int i = 0; i < debugMenuSize; i++)
+        {
+            TextMeshProUGUI newText = Instantiate(debugMenuItemprefab);
+            newText.transform.SetParent(DebugMenu.Instance.transform);
+            debugMenuList.Add(newText);
+        }
+    }
+
+    //MAKE SURE TO HARD CODE IN THE VARIABLE FOR DEBUG MENU SIZE ABOVE
+    private void UpdateDebugMenu() {
+        debugMenuList[0].text = "Current State: " + currentState.ToString();
+        debugMenuList[1].text = "Grounded: " + GroundedCheck();
+        debugMenuList[2].text = "Wallrun: " + WallCheck();
+        //VelocityText.text = "Input: " + playerInputActions.Player.Movement.ReadValue<Vector2>().x + "," + playerInputActions.Player.Movement.ReadValue<Vector2>().y;
+        debugMenuList[3].text = "Vertical Speed: " + rb.velocity.y.ToString("F2");
+        debugMenuList[4].text = "Horizontal Speed: " + new Vector2(rb.velocity.x, rb.velocity.z).magnitude.ToString("F2");
+        debugMenuList[5].text = "Speed: " + rb.velocity.magnitude.ToString("F2");
+    }
+
+    #endregion
 
 }

@@ -82,6 +82,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
         if (sprinting && !stateMachine.crouching)
         {
             stateMachine.desiredMoveSpeed = sprintSpeed;
+            //Debug.Log("The sprint speed is " + sprintSpeed);
         }
         // Type - Crouching
         else if (stateMachine.crouching)
@@ -97,7 +98,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
 
         if (Mathf.Abs(stateMachine.desiredMoveSpeed - stateMachine.lastDesiredMoveSpeed) > 1f && stateMachine.moveSpeed != 0)
         {
-            Debug.Log("START COROUTINE");
+            //Debug.Log("START COROUTINE");
             stateMachine.StopCoroutine(stateMachine.SmoothlyLerpMoveSpeed(acceleration));
             stateMachine.StartCoroutine(stateMachine.SmoothlyLerpMoveSpeed(acceleration));
         }
@@ -164,6 +165,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     // Limits the speed of the player to speed
     private void SpeedControl()
     {
+        
         // If the player is landing don't limit velocity
         if (bhopFrames > 0)
         {
@@ -176,6 +178,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
         // limit velocity on slope if player is not leaving the slope
         if (stateMachine.SlopeCheck())
         {
+
             if (rb.velocity.magnitude > stateMachine.moveSpeed)
                 rb.velocity = rb.velocity.normalized * stateMachine.moveSpeed;
         }
@@ -190,7 +193,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
             }
         }
 
-        
+       
     }
 
     #endregion
