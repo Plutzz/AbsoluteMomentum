@@ -32,13 +32,13 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
         rb.drag = drag;
         speedOnEnter = stateMachine.moveSpeed;
 
-        //rb.useGravity = false;
+        rb.useGravity = false;
         quickFalling = false;
     }
 
     public override void DoExitLogic()
     {
-        //rb.useGravity = true;
+        rb.useGravity = true;
         base.DoExitLogic();
     }
 

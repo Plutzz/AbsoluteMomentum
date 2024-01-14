@@ -16,7 +16,7 @@ MonoBehaviour:
   acceleration: 10
   wallrunGravity: 20
   wallstickStrength: 200
-  wallJumpVerticalForce: 20
-  wallJumpSpeedBoost: 5
-  jumpCooldown: 0.25
   maxWallrunTime: 2
+  wallJumpVerticalForce: 20
+  wallJumpSpeedBoost: 3
+  jumpCooldown: 0.25

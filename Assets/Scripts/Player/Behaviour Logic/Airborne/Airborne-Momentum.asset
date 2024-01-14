@@ -15,8 +15,8 @@ MonoBehaviour:
   acceleration: 25
   drag: 0
   minimumSlideVelocity: 10
-  upwardGravityAcceleration: 10
-  downwardGravityAcceleration: 30
+  upwardGravityAcceleration: 25
+  downwardGravityAcceleration: 50
   quickFallGravityIncrease: 20
   sprintMovementMultiplier: 2
   apexMovementMultiplier: 2
