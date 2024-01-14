@@ -315,6 +315,9 @@ MonoBehaviour:
   jumpCooldown: 0.25
   coyoteTime: 0.25
   canJump: 1
+  maxJumpTime: 0.25
+  endJumpEarlyMultiplier: 5
+  jumpBufferTime: 0.2
 --- !u!1 &4646233139212467516
 GameObject:
   m_ObjectHideFlags: 0

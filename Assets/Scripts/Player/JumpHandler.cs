@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Bson;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -17,9 +18,11 @@ public class JumpHandler : NetworkBehaviour
     private float coyoteTimer;
 
     public bool canJump = true;
-    //private float jumpTime = 0f;
-    //[SerializeField] private float maxJumpTime = 0.5f;
-    //[SerializeField] private float endJumpEarlyMultiplier = 2f;
+
+    [SerializeField] private float maxJumpTime = 0.5f;
+    [SerializeField] private float endJumpEarlyMultiplier = 2f;
+    [SerializeField] private float jumpBufferTime = 0.2f;
+    private float jumpTimer = 0f;
 
     private float lastJumpPressed;
 
@@ -31,7 +34,7 @@ public class JumpHandler : NetworkBehaviour
         rb = stateMachine.rb;
         playerInputActions = stateMachine.playerInputActions;
 
-        playerInputActions.Player.Jump.performed += Jump;
+        playerInputActions.Player.Jump.performed += JumpPressed;
         canJump = true;
     }
 
@@ -46,27 +49,45 @@ public class JumpHandler : NetworkBehaviour
         HandleTimers();
 
 
-
         // Returns if the player is not in a state where they can jump
-        if (!(currentState == stateMachine.MovingState || currentState == stateMachine.IdleState)) return;
+        if (currentState == stateMachine.AirborneState || currentState == stateMachine.WallrunState) return;
+
+
+        // Jump Buffering
+
+        if (canJump && lastJumpPressed + jumpBufferTime >= Time.time)
+        {
+            GroundedJump();
+        }
     }
 
-    private void Jump(InputAction.CallbackContext context)
+    private void JumpPressed(InputAction.CallbackContext context)
     {
         lastJumpPressed = Time.time;
 
-        if (coyoteTimer <= 0 && !(currentState == stateMachine.MovingState || currentState == stateMachine.IdleState)) return;
+        if (coyoteTimer <= 0 && (currentState == stateMachine.AirborneState || currentState == stateMachine.WallrunState)) return;
 
         if (canJump)
         {
-
-            canJump = false;
-
-            rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-
-            stateMachine.timeOfLastJump = Time.time;
+            GroundedJump();
         }
+    }
+
+    private void GroundedJump()
+    {
+        canJump = false;
+        jumpTimer = maxJumpTime;
+
+        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+
+        stateMachine.timeOfLastJump = Time.time;
+    }
+
+    private void EndJumpEarly()
+    {
+        rb.AddForce(Vector3.down * endJumpEarlyMultiplier, ForceMode.Impulse);
+        jumpTimer = 0f;
     }
 
     private void ResetJump()
@@ -84,6 +105,16 @@ public class JumpHandler : NetworkBehaviour
         if(coyoteTimer > 0)
         {
             coyoteTimer -= Time.deltaTime;
+        }
+
+        // Time Left in Jump
+        if(jumpTimer > 0)
+        {
+            jumpTimer -= Time.deltaTime;
+            if (playerInputActions.Player.Jump.ReadValue<float>() == 0f)
+            {
+                EndJumpEarly();
+            }
         }
     }
 }
