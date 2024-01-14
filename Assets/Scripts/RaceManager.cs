@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
-using UnityEditor.EditorTools;
 using UnityEngine;
 
 public class RaceManager : NetworkBehaviour
@@ -79,7 +78,6 @@ public class RaceManager : NetworkBehaviour
     void Update()
     {
         // Check if all players are loaded into scene
-        StartCountdown();
 
         // Make a timer
     }
@@ -88,46 +86,6 @@ public class RaceManager : NetworkBehaviour
     {
         int row = 0;
         int col = 0;
-
-        // foreach (NetworkObject player in playerList)
-        // {
-        //     Vector3 currPos = startingPlayer;
-
-        //     if (lineUpOnZ)
-        //     {
-        //         Vector3 currSpace = new Vector3(row * gap, 0, col * gap);
-        //         currPos += currSpace;
-        //     }
-        //     else
-        //     {
-        //         Vector3 currSpace = new Vector3(col * gap, 0, row * gap);
-        //         currPos += currSpace;
-        //     }
-
-        //     // Set the initial position on the server
-        //     player.transform.position = currPos;
-        //     // player.GetComponentInChildren<GameObject>().transform.position = currPos;
-
-        //     // Update row and col for the next player
-        //     if (lineUpOnZ)
-        //     {
-        //         col++;
-        //         if (col >= playersPerRow)
-        //         {
-        //             col = 0;
-        //             row++;
-        //         }
-        //     }
-        //     else
-        //     {
-        //         row++;
-        //         if (row >= playersPerRow)
-        //         {
-        //             row = 0;
-        //             col++;
-        //         }
-        //     }
-        // }
 
         // Takes list of players and repositions them to a specific point on spawn
         for (int i = 0; i < networkObjList.Length; i++)
@@ -154,8 +112,10 @@ public class RaceManager : NetworkBehaviour
 
                 player.transform.position = currPos;
 
+                // Disables player movement
                 player.GetComponent<PlayerStateMachine>().enabled = false;
 
+                // Adds player to list
                 playerList.Add(player);
             }
             else
