@@ -27,6 +27,11 @@ public class RaceManager : NetworkBehaviour
 
     // Starting Vector
     [SerializeField]
+    [Tooltip("Gameobject of start point")]
+    private Transform startingPoint;
+
+    // Starting Vector
+    [SerializeField]
     [Tooltip("Starting position of first player")]
     private Vector3 startingPlayer;
 
@@ -38,6 +43,9 @@ public class RaceManager : NetworkBehaviour
     [SerializeField]
     [Tooltip("Countdown till race starts")]
     private float countdown = 3f;
+
+    private bool raceStarted = false;
+    private bool raceEnded = false;
 
     private void Awake()
     {
@@ -77,6 +85,10 @@ public class RaceManager : NetworkBehaviour
     }
     void Update()
     {
+        // if (!raceStarted) 
+        // {
+        //     StartCoroutine(StartCountdown());
+        // }
         // Check if all players are loaded into scene
 
         // Make a timer
@@ -97,7 +109,8 @@ public class RaceManager : NetworkBehaviour
             {
                 GameObject player = playerTransform.gameObject;
 
-                Vector3 currPos = startingPlayer;
+                // Vector3 currPos = startingPlayer;
+                Vector3 currPos = startingPoint.position;
 
                 if (lineUpOnZ)
                 {
@@ -138,6 +151,7 @@ public class RaceManager : NetworkBehaviour
         yield return new WaitForSeconds(countdown);
 
         Debug.Log("Timer has finished");
+        raceStarted = true;
 
         for (int i = 0; i < playerList.Count; i++)
         {

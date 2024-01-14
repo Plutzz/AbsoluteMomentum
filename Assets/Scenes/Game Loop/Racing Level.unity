@@ -170,8 +170,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playersPerRow: 2
   gap: 1
+  startingPoint: {fileID: 364151892}
   startingPlayer: {x: -34, y: 5, z: 5}
   lineUpOnZ: 0
+  countdown: 3
 --- !u!114 &6242420
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -291,7 +293,7 @@ Transform:
   m_GameObject: {fileID: 364151888}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -34.24, y: 1.51, z: 4.58}
+  m_LocalPosition: {x: -32.61, y: 1.51, z: 2.46}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
