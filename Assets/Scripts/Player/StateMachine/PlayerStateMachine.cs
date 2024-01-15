@@ -48,6 +48,8 @@ public class PlayerStateMachine : NetworkBehaviour
     public Rigidbody rb { get; private set; }
     public JumpHandler jumpHandler { get; private set; }
 
+    public Animator animator { get; private set; }
+
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask wallLayer;
     [SerializeField] private float playerHeight;
@@ -62,6 +64,8 @@ public class PlayerStateMachine : NetworkBehaviour
 
 
     [HideInInspector] public float timeOfLastJump;
+
+
     public Transform orientation;
     public Transform player;
     public Transform playerObj;
@@ -152,6 +156,7 @@ public class PlayerStateMachine : NetworkBehaviour
         if (IsOwner)
         {
             jumpHandler = GetComponent<JumpHandler>();
+            animator = GetComponentInChildren<Animator>();
 
             CinemachineFreeLook playerCamera = Instantiate(playerCameraPrefab).GetComponent<CinemachineFreeLook>();
             playerCamera.m_LookAt = transform;
@@ -213,16 +218,8 @@ public class PlayerStateMachine : NetworkBehaviour
         currentState.UpdateState();
 
         UpdateDebugMenu();
-        //CurrentStateText.text = "Current State: " + currentState.ToString();
-        //GroundedText.text = "Grounded: " + GroundedCheck();
-        //WallrunText.text = "Wallrun: " + WallCheck();
-        //VelocityText.text = "Input: " + playerInputActions.Player.Movement.ReadValue<Vector2>().x + "," + playerInputActions.Player.Movement.ReadValue<Vector2>().y;
-        //VelocityText.text = "Vertical Speed: " + rb.velocity.y;
-        //WallCheck();
-        //Debug.Log(wallRight);
-        //Debug.Log(wallLeft);
 
-        if(Time.time > timeOfLastWallrun + wallrunCooldown)
+        if (Time.time > timeOfLastWallrun + wallrunCooldown)
         {
             canWallrun = true;
         }
@@ -247,6 +244,7 @@ public class PlayerStateMachine : NetworkBehaviour
         currentState.ExitLogic();
         previousState = currentState;
         currentState = newState;
+        HandleAnimations();
         currentState.EnterLogic();
     }
 
@@ -325,8 +323,18 @@ public class PlayerStateMachine : NetworkBehaviour
 
     private void StartCrouch(InputAction.CallbackContext context)
     {
-        if (currentState == IdleState || currentState == MovingState)
+
+        if (currentState == IdleState)
+        {
+            animator.SetTrigger("Crouch Idle");
             rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
+        }
+        else if (currentState == MovingState)
+        {
+            animator.SetTrigger("Crouch Walk");
+            rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
+        }
+
     }
 
     #endregion
@@ -416,4 +424,64 @@ public class PlayerStateMachine : NetworkBehaviour
 
     #endregion
 
+    #region Animations
+
+    private void StartSprint(InputAction.CallbackContext context)
+    {
+        if (currentState == MovingState)
+        {
+            animator.SetTrigger("Jogging");
+        }
+
+    }
+
+    private void HandleAnimations()
+    {
+        switch (currentState)
+        {
+            case PlayerIdleState _:
+
+                if (crouching)
+                {
+                    animator.SetTrigger("Crouch Idle");
+                }
+                else
+                {
+                    animator.SetTrigger("Idle");
+                }
+                break;
+
+            case PlayerAirborneState _:
+                animator.SetTrigger("Airborne");
+                break;
+
+            case PlayerSlidingState _:
+
+                animator.SetTrigger("Sliding");
+                break;
+
+            case PlayerWallrunState _:
+
+                animator.SetTrigger("Wallrun");
+                break;
+
+            case PlayerMovingState _:
+
+                if (crouching)
+                {
+                    animator.SetTrigger("Crouch Walk");
+                }
+                else if (playerInputActions.Player.Sprint.ReadValue<float>() == 1)
+                {
+                    animator.SetTrigger("Running");
+                }
+                else
+                {
+                    animator.SetTrigger("Jogging");
+                }
+
+                break;
+        }
+    }
+    #endregion
 }

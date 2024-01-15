@@ -224,7 +224,7 @@ MonoBehaviour:
   orientation: {fileID: 8671897353048501037}
   player: {fileID: 5911603449596199529}
   playerObj: {fileID: 176134913370103247}
-  crouchYScale: 0.5
+  crouchYScale: 1
   maxSlopeAngle: 40
   wallCheckDistance: 0.7
   minHeight: 1
