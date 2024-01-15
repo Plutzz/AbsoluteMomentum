@@ -37,6 +37,10 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
     {
         GetInput();
         MovementSpeedHandler();
+
+        //Disables gravity while on slopes
+        rb.useGravity = !stateMachine.SlopeCheck();
+
         base.DoUpdateState();
     }
 
@@ -89,8 +93,8 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
             // Nathan's abomination (dot product)
             //float magnitude = Mathf.Sqrt((rb.velocity.y * rb.velocity.y) / (1 - (Mathf.Pow(rb.velocity.x + rb.velocity.z, 2) * Mathf.Pow(Mathf.Cos(Vector3.Angle(Vector3.up, stateMachine.slopeHit.normal)), 2))));
             
-            Debug.Log("Vertical Speed: " + rb.velocity.y);
-            Debug.Log("Magnitude: " + magnitude);
+            //Debug.Log("Vertical Speed: " + rb.velocity.y);
+            //Debug.Log("Magnitude: " + magnitude);
             rb.AddForce(stateMachine.GetSlopeMoveDirection(slideDirection) * magnitude, ForceMode.Impulse);
 
             // Animation curve
@@ -135,7 +139,7 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
 
         if (Mathf.Abs(stateMachine.desiredMoveSpeed - stateMachine.lastDesiredMoveSpeed) > 1f && stateMachine.moveSpeed != 0)
         {
-            Debug.Log("Sliding Coroutine: " + acceleration);
+            //Debug.Log("Sliding Coroutine: " + acceleration);
             stateMachine.StopCoroutine(stateMachine.SmoothlyLerpMoveSpeed(acceleration));
             stateMachine.StartCoroutine(stateMachine.SmoothlyLerpMoveSpeed(acceleration));
         }
@@ -170,10 +174,6 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
 
     private void SpeedControl()
     {
-        //exitingGround = timeOfLastJump + exitingGroundTimer > Time.time;
-
-
-
         // If the player is mid jump don't limit velocity
         // if (!readyToJump) return;
 

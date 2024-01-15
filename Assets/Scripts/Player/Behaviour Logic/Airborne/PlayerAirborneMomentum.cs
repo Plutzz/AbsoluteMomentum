@@ -8,6 +8,17 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
     [SerializeField] private float acceleration = 40f; // player is only able to decelerate during this state
     [SerializeField] private float drag = 0f;
     [SerializeField] private float minimumSlideVelocity = 9f;
+
+    [SerializeField] private float upwardGravityAcceleration;   //When the player is moving upward there will be less gravity applied
+    [SerializeField] private float downwardGravityAcceleration; //When the player is moving downward there will be more gravity applied
+    [SerializeField] private float quickFallGravityIncrease;
+
+    [SerializeField] private float sprintMovementMultiplier;
+    [SerializeField] private float apexMovementMultiplier;
+    [SerializeField] private float apexYVelocityThreshold;
+
+    private bool quickFalling;
+
     private bool sprinting;
     private float speedOnEnter; // speed while entering the state
     public override void Initialize(GameObject gameObject, PlayerStateMachine stateMachine, PlayerInputActions playerInputActions)
@@ -20,10 +31,14 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
         stateMachine.StopAllCoroutines();
         rb.drag = drag;
         speedOnEnter = stateMachine.moveSpeed;
+
+        rb.useGravity = false;
+        quickFalling = false;
     }
 
     public override void DoExitLogic()
     {
+        rb.useGravity = true;
         base.DoExitLogic();
     }
 
@@ -32,12 +47,22 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
         base.DoFixedUpdateState();
         Move();
         SpeedControl();
-        stateMachine.WallCheck();
+
+        if (rb.velocity.y > 0)
+        {
+            rb.velocity += Vector3.down * upwardGravityAcceleration * Time.fixedDeltaTime;
+        }
+        else {
+            rb.velocity += Vector3.down * downwardGravityAcceleration * Time.fixedDeltaTime;
+        }
+
+        if (quickFalling) {
+            rb.velocity += Vector3.down * quickFallGravityIncrease * Time.fixedDeltaTime;
+        }
     }
 
     public override void DoUpdateState()
     {
-        stateMachine.WallCheck();
         GetInput();
         MovementSpeedHandler();
         base.DoUpdateState();
@@ -53,6 +78,8 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
     {
         inputVector = playerInputActions.Player.Movement.ReadValue<Vector2>();
         sprinting = playerInputActions.Player.Sprint.ReadValue<float>() != 0;
+
+        quickFalling = Input.GetKey(KeyCode.LeftControl);
     }
     private void MovementSpeedHandler()
     {
@@ -68,21 +95,38 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
 
 
         Vector3 _moveDir = stateMachine.orientation.forward * inputVector.y + stateMachine.orientation.right * inputVector.x;
-        if (sprinting)
+        
+        float forceMultiplier = 1;
+
+        if (sprinting) {
+            forceMultiplier *= sprintMovementMultiplier;
+        }
+
+        if (Mathf.Abs(rb.velocity.y) < apexYVelocityThreshold) {
+            forceMultiplier *= apexMovementMultiplier;
+        }
+
+        rb.AddForce(_moveDir.normalized * acceleration * forceMultiplier, ForceMode.Force);
+
+        /*if (sprinting)
         {
             rb.AddForce(_moveDir.normalized * acceleration * 2, ForceMode.Force);
         }
         else
         {
             rb.AddForce(_moveDir.normalized * acceleration, ForceMode.Force);
-        }
+        }*/
     }
 
     public override void CheckTransitions()
     {
+        if (stateMachine.canWallrun && stateMachine.WallCheck())
+        {
+            stateMachine.ChangeState(stateMachine.WallrunState);
+        }
         // Airborne => Sliding
-        if (stateMachine.crouching && playerInputActions.Player.Jump.ReadValue<float>() == 0 
-            && rb.velocity.magnitude > minimumSlideVelocity && stateMachine.SlopeCheck() || stateMachine.GroundedCheck())
+        else if ((stateMachine.SlopeCheck() || stateMachine.GroundedCheck()) && stateMachine.crouching && playerInputActions.Player.Jump.ReadValue<float>() == 0 
+            && rb.velocity.magnitude > minimumSlideVelocity)
         {
             stateMachine.ChangeState(stateMachine.SlidingState);
         }
@@ -98,10 +142,7 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
         } 
         // Airborne => Wallrunning
         // Might need to add a check that you are pressing an input key into the wall to "latch on" to the wall
-        else if (stateMachine.WallCheck())
-        {
-            stateMachine.ChangeState(stateMachine.WallrunState);
-        }
+
 
     }
 

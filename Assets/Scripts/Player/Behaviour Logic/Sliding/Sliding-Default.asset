@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7060affba1eb0b545ab1e86c98aaad5f, type: 3}
   m_Name: Sliding-Default
   m_EditorClassIdentifier: 
-  reachedMaxSpeed: 1
+  reachedMaxSpeed: 0
   maxSlideTime: 0.75
-  maxSlideSpeed: 15
+  maxSlideSpeed: 25
   minimumSlideSpeed: 5
-  slideAcceleration: 20
+  slideAcceleration: 50
   slideAccelerationSlope: 10
   slideDeceleration: 10
   verticalMomentumBoostAmount: 1

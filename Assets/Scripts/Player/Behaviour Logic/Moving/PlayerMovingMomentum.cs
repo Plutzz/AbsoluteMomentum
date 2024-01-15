@@ -14,7 +14,6 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     [Header("Movement Variables")]
     [SerializeField] private float walkSpeed = 7f;
     [SerializeField] private float sprintSpeed = 15f;
-
     [SerializeField] private float acceleration = 1f;
     [SerializeField] private float groundDrag = 1f;
     private bool sprinting = false;
@@ -23,12 +22,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     [Header("Crouching Variables")]
     [SerializeField] private float crouchSpeed = 3.5f;
 
-    [Header("Jump Variables")]
-    [SerializeField] private float jumpForce = 5f;
-    [SerializeField] private float jumpCooldown = 0.25f;
-    [SerializeField] private float coyoteTime = 0.25f;
-    public bool readyToJump = true;
-    private bool jumping;
+
     private bool bhopFrame;
     private int bhopFrames;
     [SerializeField] private int numBhopFrames;
@@ -37,8 +31,6 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     public override void Initialize(GameObject gameObject, PlayerStateMachine stateMachine, PlayerInputActions playerInputActions)
     {
         base.Initialize(gameObject, stateMachine, playerInputActions);
-        readyToJump = true;
-        jumping = false;
     }
     public override void DoEnterLogic()
     {
@@ -53,21 +45,26 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
 
     public override void DoExitLogic()
     {
-        base.DoExitLogic();
         playerInputActions.Player.Crouch.performed -= TryStartSlide;
+        base.DoExitLogic();
     }
 
     public override void DoFixedUpdateState()
     {
+        GetInput();
         Move();
         SpeedControl();
+
         base.DoFixedUpdateState();
     }
 
     public override void DoUpdateState()
     {
-        GetInput();
         MovementSpeedHandler();
+
+        //Disables gravity while on slopes
+        rb.useGravity = !stateMachine.SlopeCheck();
+
         base.DoUpdateState();
     }
 
@@ -85,6 +82,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
         if (sprinting && !stateMachine.crouching)
         {
             stateMachine.desiredMoveSpeed = sprintSpeed;
+            //Debug.Log("The sprint speed is " + sprintSpeed);
         }
         // Type - Crouching
         else if (stateMachine.crouching)
@@ -100,7 +98,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
 
         if (Mathf.Abs(stateMachine.desiredMoveSpeed - stateMachine.lastDesiredMoveSpeed) > 1f && stateMachine.moveSpeed != 0)
         {
-            Debug.Log("START COROUTINE");
+            //Debug.Log("START COROUTINE");
             stateMachine.StopCoroutine(stateMachine.SmoothlyLerpMoveSpeed(acceleration));
             stateMachine.StartCoroutine(stateMachine.SmoothlyLerpMoveSpeed(acceleration));
         }
@@ -117,41 +115,6 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     {
         inputVector = playerInputActions.Player.Movement.ReadValue<Vector2>();
         sprinting = playerInputActions.Player.Sprint.ReadValue<float>() == 1f;
-        jumping = playerInputActions.Player.Jump.ReadValue<float>() == 1f;
-
-
-        if (stateMachine.timeOfLastJump + jumpCooldown < Time.time)
-        {
-            ResetJump();
-        }
-
-        if (jumping)
-        {
-            Jump();
-        }
-
-
-    }
-    private void Jump()
-    {
-        if(readyToJump)
-        {
-            
-            readyToJump = false;
-
-            rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-
-            stateMachine.timeOfLastJump = Time.time;
-            stateMachine.exitingGround = true;
-
-        }
-    }
-
-    private void ResetJump()
-    {
-        stateMachine.exitingGround = false;
-        readyToJump = true;
     }
 
     // moves the player by adding a force
@@ -184,35 +147,26 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
         // Moving => Airborne
         if (!stateMachine.GroundedCheck() && !stateMachine.SlopeCheck())
         {
-            if(readyToJump)
+            if(stateMachine.jumpHandler.canJump)
             {
-                // Coyote Frames
-                stateMachine.StartCoroutine(stateMachine.CoyoteFrames(coyoteTime));
-            }
-            else
-            {
-                stateMachine.ChangeState(stateMachine.AirborneState);
+                stateMachine.jumpHandler.StartCoyoteTime();
             }
 
+            stateMachine.ChangeState(stateMachine.AirborneState);
         }
         // Moving => Idle
         else if (playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.zero)
         {
             stateMachine.ChangeState(stateMachine.IdleState);
         }
-        // Moving => Wallrun
-        else if (stateMachine.WallCheck() && jumping && !stateMachine.GroundedCheck())
-            stateMachine.ChangeState(stateMachine.WallrunState);
+      
     }
 
     // Limits the speed of the player to speed
     private void SpeedControl()
     {
-        //exitingGround = timeOfLastJump + exitingGroundTimer > Time.time;
-
-
-
-        // If the player is mid jump don't limit velocity
+        
+        // If the player is landing don't limit velocity
         if (bhopFrames > 0)
         {
             bhopFrames--;
@@ -224,6 +178,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
         // limit velocity on slope if player is not leaving the slope
         if (stateMachine.SlopeCheck())
         {
+
             if (rb.velocity.magnitude > stateMachine.moveSpeed)
                 rb.velocity = rb.velocity.normalized * stateMachine.moveSpeed;
         }
@@ -238,8 +193,9 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
             }
         }
 
-        
+       
     }
 
     #endregion
+
 }
