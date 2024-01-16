@@ -845,6 +845,7 @@ GameObject:
   - component: {fileID: 1431414685}
   - component: {fileID: 1431414684}
   - component: {fileID: 1431414683}
+  - component: {fileID: 1431414687}
   m_Layer: 0
   m_Name: EndCube
   m_TagString: Untagged
@@ -867,11 +868,11 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 50, y: 10, z: 10}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1431414684
 MeshRenderer:
@@ -932,12 +933,25 @@ Transform:
   m_GameObject: {fileID: 1431414682}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.78, y: 1.38, z: -42.57}
+  m_LocalPosition: {x: -11.9, y: 1.38, z: -42.57}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1431414687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1431414682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 594022932c5a61a428f3ca8fdf7b4897, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerCount: 0
 --- !u!43 &1643707562
 Mesh:
   m_ObjectHideFlags: 0

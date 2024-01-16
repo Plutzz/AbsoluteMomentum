@@ -7,6 +7,8 @@ public class StopwatchController : MonoBehaviour
     private float elapsedTime;
     private bool isRunning;
 
+    private string stopwatchText;
+
     void Start()
     {
         elapsedTime = 0f;
@@ -23,13 +25,15 @@ public class StopwatchController : MonoBehaviour
         }
     }
 
-    public void FormatTime(float currTime)
+    public string FormatTime(float currTime)
     {
         int minutes = Mathf.FloorToInt(currTime / 60f);
         int seconds = Mathf.FloorToInt(currTime % 60f);
         int milliseconds = Mathf.FloorToInt((currTime * 1000f) % 1000f);
 
-        // timerText.text = string.Format("{0:00}:{1:00}.{2:000}", minutes, seconds, milliseconds);
+        stopwatchText = string.Format("{0:00}:{1:00}.{2:000}", minutes, seconds, milliseconds);
+
+        return stopwatchText;
     }
 
     public void StartStopwatch()
