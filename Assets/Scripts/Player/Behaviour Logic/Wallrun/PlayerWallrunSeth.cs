@@ -20,9 +20,6 @@ public class PlayerWallrunSeth : PlayerWallrunSOBase
     [SerializeField] private float minimumVelocityToWallRun;
     [SerializeField] private float slowTimeBeforeDropping;
 
-    [SerializeField] private float jumpLagTime;
-    private float jumpLagTimer;
-
     [Header("Upward Wall Jump")]
     [SerializeField] private float maximumDotToTrigger_UWJ;
     [SerializeField] private float outwardMultiplier_UWJ;
@@ -64,17 +61,8 @@ public class PlayerWallrunSeth : PlayerWallrunSOBase
     {
         GetInput();
         WallDirection();
-
+        
         base.DoUpdateState();
-
-        if (jumped == true) {
-            jumpLagTimer += Time.deltaTime;
-            if (jumpLagTimer > jumpLagTime) {
-                WallJump();
-                jumpLagTimer = 0;
-            }
-
-        }
     }
 
     public override void DoFixedUpdateState()
@@ -87,9 +75,7 @@ public class PlayerWallrunSeth : PlayerWallrunSOBase
         {
             
             readyToJump = false;
-            jumped = true;
-            //WallJump();
-            
+            WallJump();
             stateMachine.timeOfLastJump = Time.time;
             return;
         }
@@ -161,7 +147,6 @@ public class PlayerWallrunSeth : PlayerWallrunSOBase
     {
         initialVelocity = rb.velocity;
         jumped = false;
-        jumpLagTimer = 0;
         dropTimer = 0;
 
         WallDirection();
@@ -190,36 +175,7 @@ public class PlayerWallrunSeth : PlayerWallrunSOBase
 
     private void WallJump()
     {
-
-        //I am very sorry for this but it was the best way I could think of
-
-        //Essentially checking if the key being pressed in the direction of the wall, and if so jump up
-
-        //Else if a key is being pressed jump out
-
-        //else jump forward
-
-        if ((Input.GetKey(KeyCode.A) && activeWall.point == wallLeft.point) || (Input.GetKey(KeyCode.D) && activeWall.point == wallRight.point))
-        {
-            //Upward Wall Jump
-            rb.velocity = (activeWall.normal * outwardMultiplier_UWJ + Vector3.up * upwardMultiplier_UWJ) * (1 + (rb.velocity.magnitude * previousVelocityOverallMultiplier_UWJ));
-            return;
-        }
-        else if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
-        {
-            //Outward Wall Jump
-            rb.velocity = (activeWall.normal * outwardMultiplier_OWJ + Vector3.up * upwardMultiplier_OWJ) * (1 + (rb.velocity.magnitude * previousVelocityOverallMultiplier_OWJ));
-            return;
-        }
-        else {
-            //Forward Wall Jump
-            rb.velocity = rb.velocity * previousVelocityOverallMultiplier_FWJ + activeWall.normal * outwardMultiplier_FWJ + Vector3.up * upwardMultiplier_FWJ;
-            return;
-        }
-
-
-        
-/*
+        jumped = true;
 
         //Temp values, will probably include current speed to allow for good speed tech
 
@@ -243,16 +199,10 @@ public class PlayerWallrunSeth : PlayerWallrunSOBase
         //Player is looking forward - Give them a boost in their current direction and away from wall
         Debug.Log("Wall jump forward");
         rb.velocity = rb.velocity * previousVelocityOverallMultiplier_FWJ + activeWall.normal * outwardMultiplier_FWJ + Vector3.up * upwardMultiplier_FWJ;
-        */
+        
 
     }
 
-    IEnumerator WallJumpDelay() {
-        Vector3 storedVelocity = rb.velocity;
-        rb.velocity = Vector3.zero;
-        yield return new WaitForSeconds(jumpLagTime);
-        WallJump();
-    }
    
 
     private bool WallDirection()

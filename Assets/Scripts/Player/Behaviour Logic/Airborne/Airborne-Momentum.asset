@@ -12,12 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45c2b2231733df14aaf257d866946c82, type: 3}
   m_Name: Airborne-Momentum
   m_EditorClassIdentifier: 
-  acceleration: 25
+  airSpeed: 10
+  acceleration: 10
   drag: 0
   minimumSlideVelocity: 10
-  upwardGravityAcceleration: 25
-  downwardGravityAcceleration: 50
-  quickFallGravityIncrease: 20
-  sprintMovementMultiplier: 2
-  apexMovementMultiplier: 2
-  apexYVelocityThreshold: 5

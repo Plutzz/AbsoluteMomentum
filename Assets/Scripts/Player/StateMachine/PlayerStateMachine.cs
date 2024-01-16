@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
 using Unity.VisualScripting;
-using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -14,7 +13,7 @@ public class PlayerStateMachine : NetworkBehaviour
 {
     #region States Variables
 
-    public PlayerState currentState { get; private set; } // State that player is currently in
+    private PlayerState currentState; // State that player is currently in
     private PlayerState initialState; // State that player starts as
     public PlayerState previousState { get; private set; } // State that player starts as
 
@@ -46,7 +45,6 @@ public class PlayerStateMachine : NetworkBehaviour
     #region Player Variables
     public PlayerInputActions playerInputActions { get; private set; }
     public Rigidbody rb { get; private set; }
-    public JumpHandler jumpHandler { get; private set; }
 
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask wallLayer;
@@ -57,11 +55,17 @@ public class PlayerStateMachine : NetworkBehaviour
     public float desiredMoveSpeed;
     public float lastDesiredMoveSpeed;
 
+
+
+    [HideInInspector] public float timeOfLastJump;
+    public bool exitingGround;
+
     [SerializeField] private float slopeIncreaseMultiplier;
     [SerializeField] public float maxSpeed = 100f;
 
 
-    [HideInInspector] public float timeOfLastJump;
+
+
     public Transform orientation;
     public Transform player;
     public Transform playerObj;
@@ -77,50 +81,43 @@ public class PlayerStateMachine : NetworkBehaviour
 
     [Header("WallRun Handling")] //added by David
     [SerializeField] private float wallCheckDistance = 0.7f;
+    [SerializeField] private float groundCheckDistance = 10f;
     [SerializeField] private float minHeight = 1f;
-    [SerializeField] private float wallrunCooldown = 0.25f;
-    [HideInInspector] public float timeOfLastWallrun;
-    public bool canWallrun;
-    public RaycastHit wallLeft;
-    public RaycastHit wallRight;
-    public RaycastHit activeWall;
+    public RaycastHit leftSideWall;
+    public RaycastHit rightSideWall;
     public RaycastHit aboveGroundRay;
-    public bool isWallLeft;
-    public bool isWallRight;
+    public bool wallLeft;
+    public bool wallRight;
 
     #endregion
 
     #region Debug Variables
-    private List<TextMeshProUGUI> debugMenuList = new List<TextMeshProUGUI>();
-    public GameObject debugMenuParent;
-    public TextMeshProUGUI debugMenuItemprefab;
-
-
-/*    public TextMeshProUGUI CurrentStateText;
+    public TextMeshProUGUI CurrentStateText;
     public TextMeshProUGUI GroundedText;
     public TextMeshProUGUI WallrunText;
     public TextMeshProUGUI VelocityText;
-    public TextMeshProUGUI SpeedText;*/
+    public TextMeshProUGUI SpeedText;
     public Vector3 RespawnPos;
     public float teleportAmount;
     #endregion
 
     private void Awake()
     {
+
         rb = GetComponentInChildren<Rigidbody>();
 
         //TEMP CODE TO TEST MOVEMENT
-        PlayerIdleBaseInstance = playerIdleBase;
-        PlayerMovingBaseInstance = playerMovingBase;
-        PlayerAirborneBaseInstance = playerAirborneBase;
-        PlayerSlidingBaseInstance = playerSlidingBase;
-        PlayerWallrunBaseInstance = playerWallrunBase;
+        //PlayerIdleBaseInstance = playerIdleBase;
+        //PlayerMovingBaseInstance = playerMovingBase;
+        //PlayerAirborneBaseInstance = playerAirborneBase;
+        //PlayerSlidingBaseInstance = playerSlidingBase;
+        //PlayerWallrunBaseInstance = playerWallrunBase;
         //COMMENT CODE TO TEST MOVEMENT VALUES WITHOUT HAVING TO RESTART PLAY MODE
-        //PlayerIdleBaseInstance = Instantiate(playerIdleBase);
-        //PlayerMovingBaseInstance = Instantiate(playerMovingBase);
-        //PlayerAirborneBaseInstance = Instantiate(playerAirborneBase);
-        //PlayerSlidingBaseInstance = Instantiate(playerSlidingBase);
-        //PlayerWallrunBaseInstance = Instantiate(playerWallrunBase);
+        PlayerIdleBaseInstance = Instantiate(playerIdleBase);
+        PlayerMovingBaseInstance = Instantiate(playerMovingBase);
+        PlayerAirborneBaseInstance = Instantiate(playerAirborneBase);
+        PlayerSlidingBaseInstance = Instantiate(playerSlidingBase);
+        PlayerWallrunBaseInstance = Instantiate(playerWallrunBase);
 
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
@@ -141,19 +138,14 @@ public class PlayerStateMachine : NetworkBehaviour
 
         initialState = IdleState;
         startYScale = gameObject.transform.localScale.y;
-        InitDebugMenu();
     }
-
-    
-
-    public override void OnNetworkSpawn()
+    private void Start()
     {
         // Set up client side objects (Camera, debug menu)
         if (IsOwner)
         {
-            jumpHandler = GetComponent<JumpHandler>();
-
-            CinemachineFreeLook playerCamera = Instantiate(playerCameraPrefab).GetComponent<CinemachineFreeLook>();
+            //CinemachineFreeLook playerCamera = Instantiate(playerCameraPrefab).GetComponent<CinemachineFreeLook>();
+            CinemachineFreeLook playerCamera = playerCameraPrefab.GetComponent<CinemachineFreeLook>();
             playerCamera.m_LookAt = transform;
             playerCamera.m_Follow = transform;
 
@@ -163,15 +155,22 @@ public class PlayerStateMachine : NetworkBehaviour
             camSetup.player = player;
             camSetup.playerInputActions = playerInputActions;
 
-            //Debug Stuff
-            /*CurrentStateText = DebugMenu.Instance.PlayerStateText;
-            GroundedText = DebugMenu.Instance.GroundedCheckText;
-            WallrunText = DebugMenu.Instance.WallrunCheckText;
-            VelocityText = DebugMenu.Instance.VelocityText;
-            SpeedText = DebugMenu.Instance.SpeedText;*/
+            if(DebugMenu.Instance != null)
+            {
+                CurrentStateText = DebugMenu.Instance.PlayerStateText;
+                GroundedText = DebugMenu.Instance.GroundedCheckText;
+                WallrunText = DebugMenu.Instance.WallrunCheckText;
+                VelocityText = DebugMenu.Instance.VelocityText;
+                SpeedText = DebugMenu.Instance.SpeedText;
+            }
 
             currentState = initialState;
             currentState.EnterLogic();
+        }
+        else
+        {
+            Destroy(playerCameraPrefab);
+            Destroy(this);
         }
 
 
@@ -179,22 +178,30 @@ public class PlayerStateMachine : NetworkBehaviour
 
     private void Update()
     {
-        if (!IsOwner) return;
-
         if (Input.GetKeyDown(KeyCode.P))
             player.position = new Vector3(0, 10, 0);
 
-        if (Input.GetKeyDown(KeyCode.R))
+        if (!IsOwner) return;
+
+        if(Input.GetKeyDown(KeyCode.R))
         {
-            ResetPlayer();
+            StopAllCoroutines();
+            rb.velocity = Vector3.zero;
+            moveSpeed = 0;
+            desiredMoveSpeed = 0;
+            lastDesiredMoveSpeed = 0;
+            transform.position = RespawnPos;
         }
 
         if (Input.GetKeyDown(KeyCode.T))
         {
-            TeleportPlayer();
+            StopAllCoroutines();
+            rb.velocity = Vector3.zero;
+            moveSpeed = 0;
+            desiredMoveSpeed = 0;
+            lastDesiredMoveSpeed = 0;
+            transform.position = new Vector3(transform.position.x, transform.position.y + teleportAmount, transform.position.z);
         }
-
-
 
         //rb.velocity = new Vector3(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -10f, 100f), rb.velocity.z);
 
@@ -210,27 +217,29 @@ public class PlayerStateMachine : NetworkBehaviour
             gameObject.transform.localScale = new Vector3(gameObject.transform.localScale.x, startYScale, gameObject.transform.localScale.z);
         }
 
+        //Disables gravity while on slopes
+        rb.useGravity = !SlopeCheck();
+
         currentState.UpdateState();
 
-        UpdateDebugMenu();
-        //CurrentStateText.text = "Current State: " + currentState.ToString();
-        //GroundedText.text = "Grounded: " + GroundedCheck();
-        //WallrunText.text = "Wallrun: " + WallCheck();
-        //VelocityText.text = "Input: " + playerInputActions.Player.Movement.ReadValue<Vector2>().x + "," + playerInputActions.Player.Movement.ReadValue<Vector2>().y;
-        //VelocityText.text = "Vertical Speed: " + rb.velocity.y;
+        if(CurrentStateText != null )
+        {
+            CurrentStateText.text = "Current State: " + currentState.ToString();
+            GroundedText.text = "Grounded: " + GroundedCheck();
+            WallrunText.text = "Wallrun: " + WallCheck();
+            //VelocityText.text = "Input: " + playerInputActions.Player.Movement.ReadValue<Vector2>().x + "," + playerInputActions.Player.Movement.ReadValue<Vector2>().y;
+            VelocityText.text = "Vertical Speed: " + rb.velocity.y;
+        }
+
+
+        Debug.DrawRay(player.position, playerObj.right * 0.7f, Color.red);
+        Debug.DrawRay(player.position, -playerObj.right * 0.7f, Color.red);
         //WallCheck();
         //Debug.Log(wallRight);
         //Debug.Log(wallLeft);
 
-        if(Time.time > timeOfLastWallrun + wallrunCooldown)
-        {
-            canWallrun = true;
-        }
-
 
     }
-
-    
 
     private void FixedUpdate()
     {
@@ -238,19 +247,18 @@ public class PlayerStateMachine : NetworkBehaviour
 
         currentState.FixedUpdateState();
 
-        //SpeedText.text = "Speed: " + rb.velocity.magnitude.ToString("F1");
+        if(SpeedText != null )
+            SpeedText.text = "Speed: " + rb.velocity.magnitude.ToString("F1");
     }
 
     public void ChangeState(PlayerState newState)
     {
-        //Debug.Log("Changing to: " + newState);
+        Debug.Log("Changing to: " + newState);
         currentState.ExitLogic();
         previousState = currentState;
         currentState = newState;
         currentState.EnterLogic();
     }
-
-    #region Logic Checks
 
     //Consider adding core functionalities here
     // Ex: GroundedCheck
@@ -263,36 +271,13 @@ public class PlayerStateMachine : NetworkBehaviour
     public bool WallCheck()
     {
         // Debugging rays
-        float raycastDistance = 1.5f; // Adjust this distance based on your needs
-        float raycastAngle = 10f;   // Adjust the angle of rotation based on your needs
-
-        // Rotate right ray direction
-        Vector3 rightRayDirection = Quaternion.Euler(0, -raycastAngle, 0) * playerObj.right;
-        isWallRight = Physics.Raycast(player.position, rightRayDirection, out wallRight, raycastDistance, wallLayer);
-
-        // Rotate left ray direction
-        Vector3 leftRayDirection = Quaternion.Euler(0, raycastAngle, 0) * -playerObj.right;
-        isWallLeft = Physics.Raycast(player.position, leftRayDirection, out wallLeft, raycastDistance, wallLayer);
-
-        Debug.DrawRay(player.position, leftRayDirection * raycastDistance, Color.blue);
-        Debug.DrawRay(player.position, rightRayDirection * raycastDistance, Color.blue);
-
-
-        if (isWallRight == true)
-        {
-            activeWall = wallRight;
-        }
-        else if (isWallLeft == true)
-        {
-            activeWall = wallLeft;
-        }
-        else
-        {
-            //activeWall = null;
-        }
-
-        return (isWallRight || isWallLeft);
+        Debug.DrawRay(player.position, -playerObj.right * 2f, Color.red);
+        Debug.DrawRay(player.position, playerObj.right * 2f, Color.red);
+        wallRight = Physics.Raycast(player.position, -orientation.right, out rightSideWall, wallCheckDistance, LayerMask.GetMask("Wall"));
+        wallLeft = Physics.Raycast(player.position, orientation.right, out leftSideWall, wallCheckDistance, LayerMask.GetMask("Wall"));
+        return wallLeft || wallRight;
     }
+
     public bool SlopeCheck()
     {
         if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f * gameObject.transform.localScale.y + 0.5f, groundLayer))
@@ -305,10 +290,16 @@ public class PlayerStateMachine : NetworkBehaviour
         return false;
     }
 
+    public bool AboveGround()
+    {
+        //added by David, wondering if needed along with groundedcheck
+        return !Physics.Raycast(player.position, -playerObj.up, out aboveGroundRay, groundCheckDistance, LayerMask.GetMask("Ground"));; //groundLayer named whatIsGround in video
+    }
+
     public bool WallRunning()
     {
         //added by David
-        if(WallCheck() && Input.GetKey(KeyCode.W) /*&& AboveGround()*/)
+        if((wallLeft || wallRight) && Input.GetKey(KeyCode.W) /*&& AboveGround()*/)
         {
             //Debug.Log("Wallrunning");
             return true;
@@ -323,13 +314,12 @@ public class PlayerStateMachine : NetworkBehaviour
         return Vector3.ProjectOnPlane(_direction, slopeHit.normal).normalized;
     }
 
+
     private void StartCrouch(InputAction.CallbackContext context)
     {
         if (currentState == IdleState || currentState == MovingState)
             rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
     }
-
-    #endregion
 
     #region Speed Control
 
@@ -370,50 +360,8 @@ public class PlayerStateMachine : NetworkBehaviour
 
     #endregion
 
-    #region Debug Functions
 
-    private void TeleportPlayer()
-    {
-        StopAllCoroutines();
-        rb.velocity = Vector3.zero;
-        moveSpeed = 0;
-        desiredMoveSpeed = 0;
-        lastDesiredMoveSpeed = 0;
-        transform.position = new Vector3(transform.position.x, transform.position.y + teleportAmount, transform.position.z);
-    }
 
-    private void ResetPlayer()
-    {
-        StopAllCoroutines();
-        rb.velocity = Vector3.zero;
-        moveSpeed = 0;
-        desiredMoveSpeed = 0;
-        lastDesiredMoveSpeed = 0;
-        transform.position = RespawnPos;
-    }
 
-    private void InitDebugMenu()
-    {
-        int debugMenuSize = 6;
-        for (int i = 0; i < debugMenuSize; i++)
-        {
-            TextMeshProUGUI newText = Instantiate(debugMenuItemprefab);
-            newText.transform.SetParent(DebugMenu.Instance.transform);
-            debugMenuList.Add(newText);
-        }
-    }
-
-    //MAKE SURE TO HARD CODE IN THE VARIABLE FOR DEBUG MENU SIZE ABOVE
-    private void UpdateDebugMenu() {
-        debugMenuList[0].text = "Current State: " + currentState.ToString();
-        debugMenuList[1].text = "Grounded: " + GroundedCheck();
-        debugMenuList[2].text = "Wallrun: " + WallCheck();
-        //VelocityText.text = "Input: " + playerInputActions.Player.Movement.ReadValue<Vector2>().x + "," + playerInputActions.Player.Movement.ReadValue<Vector2>().y;
-        debugMenuList[3].text = "Vertical Speed: " + rb.velocity.y.ToString("F2");
-        debugMenuList[4].text = "Horizontal Speed: " + new Vector2(rb.velocity.x, rb.velocity.z).magnitude.ToString("F2");
-        debugMenuList[5].text = "Speed: " + rb.velocity.magnitude.ToString("F2");
-    }
-
-    #endregion
 
 }

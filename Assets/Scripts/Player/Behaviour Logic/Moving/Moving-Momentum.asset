@@ -12,18 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1ef6418756d0c344a304a84800e8ad4, type: 3}
   m_Name: Moving-Momentum
   m_EditorClassIdentifier: 
-  walkSpeed: 10
-  sprintSpeed: 20
+  walkSpeed: 7
+  sprintSpeed: 10
   acceleration: 100
   groundDrag: 4
   crouchSpeed: 3.5
-  jumpForce: 30
+  jumpForce: 20
   jumpCooldown: 0.25
   coyoteTime: 0.15
-  readyToJump: 1
-  maxJumpTime: 0.5
-  fallMultiplier: 2.5
-  lowJumpMultiplier: 2
-  isJumping: 0
-  airborne: 1
+  readyToJump: 0
   numBhopFrames: 4
