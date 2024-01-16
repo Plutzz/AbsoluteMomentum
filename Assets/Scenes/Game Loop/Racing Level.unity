@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 6242418}
   - component: {fileID: 6242420}
   - component: {fileID: 6242419}
+  - component: {fileID: 6242421}
   m_Layer: 0
   m_Name: RaceManager
   m_TagString: Untagged
@@ -194,6 +195,18 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &6242421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6242417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d4776ee227b9064e973089b36c75f61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &364151888
 GameObject:
   m_ObjectHideFlags: 0
@@ -951,7 +964,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 594022932c5a61a428f3ca8fdf7b4897, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerCount: 0
+  swTime: {fileID: 6242421}
+  playerCount: 4
 --- !u!43 &1643707562
 Mesh:
   m_ObjectHideFlags: 0
