@@ -129,6 +129,10 @@ public class PlayerStateMachine : NetworkBehaviour
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
         playerInputActions.Player.Crouch.performed += StartCrouch;
+        playerInputActions.Player.Crouch.canceled += StopCrouch;
+        playerInputActions.Player.Sprint.performed += StartSprint;
+        playerInputActions.Player.Sprint.canceled += StopSprint;
+
 
         IdleState = new PlayerIdleState(this);
         MovingState = new PlayerMovingState(this);
@@ -430,9 +434,28 @@ public class PlayerStateMachine : NetworkBehaviour
     {
         if (currentState == MovingState)
         {
-            animator.SetTrigger("Jogging");
+            animator.SetTrigger("Running");
         }
 
+    }
+
+    private void StopSprint(InputAction.CallbackContext context)
+    {
+        if (currentState == MovingState)
+        {
+            animator.SetTrigger("Jogging");
+        }
+    }
+    private void StopCrouch(InputAction.CallbackContext context)
+    {
+        if (currentState == MovingState)
+        {
+            animator.SetTrigger("Jogging");
+        }
+        else if (currentState == IdleState)
+        {
+            animator.SetTrigger("Idle");
+        }
     }
 
     private void HandleAnimations()
