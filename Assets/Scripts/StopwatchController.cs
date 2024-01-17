@@ -1,9 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class StopwatchController : MonoBehaviour
 {
+    [SerializeField]
+    [Tooltip("UI for the stopwatch")]
+    private TextMeshProUGUI stopwatchUI;
+
     private float elapsedTime;
     private bool isRunning;
 
@@ -21,8 +26,13 @@ public class StopwatchController : MonoBehaviour
         if (isRunning)
         {
             elapsedTime += Time.deltaTime;
-            FormatTime(elapsedTime);
+            UpdateUI();
         }
+    }
+
+    private void UpdateUI()
+    {
+        stopwatchUI.text = FormatTime(elapsedTime);
     }
 
     public string FormatTime(float currTime)
