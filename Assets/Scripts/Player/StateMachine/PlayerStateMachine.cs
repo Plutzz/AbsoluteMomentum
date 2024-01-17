@@ -75,18 +75,20 @@ public class PlayerStateMachine : NetworkBehaviour
     [SerializeField] private float maxSlopeAngle;
     public RaycastHit slopeHit;
 
-    [Header("WallRun Handling")] //added by David
+    [Header("Wallrun Handling")] //added by David
     [SerializeField] private float wallCheckDistance = 0.7f;
-    [SerializeField] private float minHeight = 1f;
     [SerializeField] private float wallrunCooldown = 0.25f;
     [HideInInspector] public float timeOfLastWallrun;
     public bool canWallrun;
     public RaycastHit wallLeft;
     public RaycastHit wallRight;
-    public RaycastHit activeWall;
-    public RaycastHit aboveGroundRay;
     public bool isWallLeft;
     public bool isWallRight;
+
+    [Header("Sliding Handling")]
+    [SerializeField] private float slideCooldown = 0.5f;
+    [HideInInspector] public float timeOfLastSlide;
+    public bool canSlide;
 
     #endregion
 
@@ -227,6 +229,11 @@ public class PlayerStateMachine : NetworkBehaviour
             canWallrun = true;
         }
 
+        if(Time.time > timeOfLastSlide + slideCooldown)
+        {
+            canSlide = true;
+        }
+
 
     }
 
@@ -276,20 +283,6 @@ public class PlayerStateMachine : NetworkBehaviour
 
         Debug.DrawRay(player.position, leftRayDirection * raycastDistance, Color.blue);
         Debug.DrawRay(player.position, rightRayDirection * raycastDistance, Color.blue);
-
-
-        if (isWallRight == true)
-        {
-            activeWall = wallRight;
-        }
-        else if (isWallLeft == true)
-        {
-            activeWall = wallLeft;
-        }
-        else
-        {
-            //activeWall = null;
-        }
 
         return (isWallRight || isWallLeft);
     }

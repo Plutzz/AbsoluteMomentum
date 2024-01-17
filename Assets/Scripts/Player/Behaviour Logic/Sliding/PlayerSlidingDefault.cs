@@ -23,6 +23,7 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
     public override void DoEnterLogic()
     {
         base.DoEnterLogic();
+        stateMachine.canSlide = false;
         inputVector = playerInputActions.Player.Movement.ReadValue<Vector2>();
         rb.drag = 0;
         StartSlide();
@@ -30,6 +31,8 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
 
     public override void DoExitLogic()
     {
+        stateMachine.canSlide = false;
+        stateMachine.timeOfLastSlide = Time.time;
         base.DoExitLogic();
     }
 

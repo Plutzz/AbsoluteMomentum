@@ -136,7 +136,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     
     private void TryStartSlide(InputAction.CallbackContext context)
     {
-        if (sprinting || stateMachine.SlopeCheck())
+        if (stateMachine.canSlide && (sprinting || stateMachine.SlopeCheck()))
         {
             stateMachine.ChangeState(stateMachine.SlidingState);
         }
