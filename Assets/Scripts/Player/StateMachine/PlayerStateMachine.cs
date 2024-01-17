@@ -432,7 +432,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
     private void StartSprint(InputAction.CallbackContext context)
     {
-        if (currentState == MovingState)
+        if (currentState == MovingState && !crouching)
         {
             animator.SetTrigger("Running");
         }
