@@ -26,8 +26,8 @@ public class RaceManager : NetworkBehaviour
     private StopwatchController swControl;
 
     // Keep array of all active players in the race
-    private NetworkObject[] networkObjList;
-    public List<GameObject> playerList;
+    // private NetworkObject[] networkObjList;
+    public List<GameObject> playerList = new List<GameObject>();
 
     [Header("Player Spawner System")]
     // Number of players per row
@@ -58,7 +58,7 @@ public class RaceManager : NetworkBehaviour
 
     private void Awake()
     {
-        playerList = new List<GameObject>();
+
     }
 
     public override void OnNetworkSpawn()
@@ -69,7 +69,7 @@ public class RaceManager : NetworkBehaviour
             Debug.Log("IS in server");
 
             // Network objects are not players, players are a separate list
-            networkObjList = FindObjectsOfType<NetworkObject>();
+            // networkObjList = FindObjectsOfType<NetworkObject>();
 
             RepositionPlayers();
 
@@ -84,46 +84,72 @@ public class RaceManager : NetworkBehaviour
         int row = 0;
         int col = 0;
 
-        // Takes list of players and repositions them to a specific point on spawn
-        for (int i = 0; i < networkObjList.Length; i++)
+        for (int i = 0; i < playerList.Count; i++)
         {
-            // Finds the network objects that are players
-            Transform playerTransform = networkObjList[i].transform.Find("Player");
+            GameObject player = playerList[i];
 
-            if (playerTransform != null)
+            // Vector3 currPos = startingPlayer;
+            Vector3 currPos = startingPoint.position;
+
+            // Lines up players on X or Z axis
+            if (lineUpOnZ)
             {
-                GameObject player = playerTransform.gameObject;
-
-                // Vector3 currPos = startingPlayer;
-                Vector3 currPos = startingPoint.position;
-
-                // Lines up players on X or Z axis
-                if (lineUpOnZ)
-                {
-                    Vector3 currSpace = new Vector3(row * gap, 0, col * gap);
-                    currPos += currSpace;
-                }
-                else 
-                {
-                    Vector3 currSpace = new Vector3(col * gap, 0, row * gap);
-                    currPos += currSpace;
-                }
-
-                player.transform.position = currPos;
-
-                // Disables player movement
-                player.GetComponent<PlayerStateMachine>().enabled = false;
-
-                // Adds player to list
-                playerList.Add(player);
+                Vector3 currSpace = new Vector3(row * gap, 0, col * gap);
+                currPos += currSpace;
             }
-            else
+            else 
             {
-                // Handle the case when the Player object doesn't exist
-                Debug.LogWarning("Player object not found for playerList[" + i + "]");
+                Vector3 currSpace = new Vector3(col * gap, 0, row * gap);
+                currPos += currSpace;
             }
-            
+
+            player.transform.position = currPos;
+
+            // Disables player movement
+            player.GetComponent<PlayerStateMachine>().enabled = false;
         }
+
+        // Old version NOT USE
+        // // Takes list of players and repositions them to a specific point on spawn
+        // for (int i = 0; i < networkObjList.Length; i++)
+        // {
+        //     // Finds the network objects that are players
+        //     Transform playerTransform = networkObjList[i].transform.Find("Player");
+
+        //     if (playerTransform != null)
+        //     {
+        //         GameObject player = playerTransform.gameObject;
+
+        //         // Vector3 currPos = startingPlayer;
+        //         Vector3 currPos = startingPoint.position;
+
+        //         // Lines up players on X or Z axis
+        //         if (lineUpOnZ)
+        //         {
+        //             Vector3 currSpace = new Vector3(row * gap, 0, col * gap);
+        //             currPos += currSpace;
+        //         }
+        //         else 
+        //         {
+        //             Vector3 currSpace = new Vector3(col * gap, 0, row * gap);
+        //             currPos += currSpace;
+        //         }
+
+        //         player.transform.position = currPos;
+
+        //         // Disables player movement
+        //         player.GetComponent<PlayerStateMachine>().enabled = false;
+
+        //         // Adds player to list
+        //         playerList.Add(player);
+        //     }
+        //     else
+        //     {
+        //         // Handle the case when the Player object doesn't exist
+        //         Debug.LogWarning("Player object not found for playerList[" + i + "]");
+        //     }
+            
+        // }
     }
 
     // Possibly a couroutine?
