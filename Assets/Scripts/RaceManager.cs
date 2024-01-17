@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine;
+using TMPro;
 
 public class RaceManager : NetworkBehaviour
 {
@@ -16,13 +16,18 @@ public class RaceManager : NetworkBehaviour
     // Queue for race finishes
     public Queue<PlayerStats> raceResults = new Queue<PlayerStats>();
 
+    [Header("UI Elements")]
+    public TextMeshProUGUI playerListUI;
+    public TextMeshProUGUI playerRankUI;
+
+
     [SerializeField]
     [Tooltip("Stopwatch for the race")]
     private StopwatchController swControl;
 
     // Keep array of all active players in the race
     private NetworkObject[] networkObjList;
-    private List<GameObject> playerList;
+    public List<GameObject> playerList;
 
     [Header("Player Spawner System")]
     // Number of players per row
@@ -67,6 +72,8 @@ public class RaceManager : NetworkBehaviour
             networkObjList = FindObjectsOfType<NetworkObject>();
 
             RepositionPlayers();
+
+            UpdatePlayerListText();
 
             StartCoroutine(StartCountdown());
         }
@@ -144,13 +151,21 @@ public class RaceManager : NetworkBehaviour
         Debug.Log("Finished Race");
         swControl.StopStopwatch();
 
+        string playerRankText = "";
+
         // Just dequeue the players to rank each one
         int rank = 1;
         while (raceResults.Count > 0)
         {
             PlayerStats playerstats = raceResults.Dequeue();
             Debug.Log(string.Format("Rank {0}: {1} {2}", rank, playerstats.player, playerstats.raceTimeFormatted));
+            playerRankText += $"{rank}. {playerstats.player} - {playerstats.raceTimeFormatted}\n";
+
+            rank++;
         }
+
+        playerRankUI.text = playerRankText;
+
     }
 
     // On colliding with finish line
@@ -211,6 +226,18 @@ public class RaceManager : NetworkBehaviour
             Gizmos.DrawCube(transform.position, boxCollider.size);
             Gizmos.DrawWireCube(transform.position, boxCollider.size);
         }
+    }
+
+    private void UpdatePlayerListText() 
+    {
+        string playerListText = "";
+
+        for (int i = 0; i < playerList.Count; i++)
+        {
+            playerListText += $"- {playerList[i].name}\n";
+        }
+
+        playerListUI.text = playerListText;
     }
 
     // If player tries to exit the field, they reset to center of finish line
