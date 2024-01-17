@@ -223,7 +223,7 @@ GameObject:
   - component: {fileID: 4348319775296917802}
   m_Layer: 0
   m_Name: PlayerWithCamera
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -257,7 +257,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1915593961
+  GlobalObjectIdHash: 962646434
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -339,6 +339,7 @@ MonoBehaviour:
   crouchYScale: 0.5
   maxSlopeAngle: 40
   wallCheckDistance: 0.7
+  groundCheckDistance: 10
   minHeight: 1
   wallLeft: 0
   wallRight: 0

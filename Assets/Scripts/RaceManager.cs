@@ -56,7 +56,7 @@ public class RaceManager : NetworkBehaviour
         playerList = new List<GameObject>();
     }
 
-    void Start()
+    public override void OnNetworkSpawn()
     {
         // Function works if in start instead of awake
         if (IsServer)
