@@ -143,7 +143,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
         initialState = IdleState;
         startYScale = gameObject.transform.localScale.y;
-        InitDebugMenu();
+        // InitDebugMenu();
     }
 
     
@@ -175,7 +175,10 @@ public class PlayerStateMachine : NetworkBehaviour
             currentState = initialState;
             currentState.EnterLogic();
 
-            RaceManager.Instance.playerList.Add(this.gameObject);
+            if (RaceManager.Instance != null)
+            {
+                RaceManager.Instance.playerList.Add(this.gameObject);
+            }
         }
 
 
@@ -216,7 +219,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
         currentState.UpdateState();
 
-        UpdateDebugMenu();
+        // UpdateDebugMenu();
         //CurrentStateText.text = "Current State: " + currentState.ToString();
         //GroundedText.text = "Grounded: " + GroundedCheck();
         //WallrunText.text = "Wallrun: " + WallCheck();
