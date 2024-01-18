@@ -174,6 +174,8 @@ public class PlayerStateMachine : NetworkBehaviour
 
             currentState = initialState;
             currentState.EnterLogic();
+
+            RaceManager.Instance.playerList.Add(this.gameObject);
         }
 
 
