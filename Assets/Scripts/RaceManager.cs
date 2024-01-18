@@ -6,6 +6,15 @@ using TMPro;
 
 public class RaceManager : NetworkBehaviour
 {
+
+    public static RaceManager Instance { get; private set; }
+
+    protected virtual void OnApplicationQuit()
+    {
+        Instance = null;
+        Destroy(gameObject);
+    }
+
     public struct PlayerStats
     {
         public string player;
@@ -58,7 +67,10 @@ public class RaceManager : NetworkBehaviour
 
     private void Awake()
     {
+        if (Instance != null)
+            Destroy(gameObject);
 
+        DontDestroyOnLoad(gameObject);
     }
 
     public override void OnNetworkSpawn()
