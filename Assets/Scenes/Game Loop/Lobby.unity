@@ -1632,7 +1632,7 @@ PrefabInstance:
     - target: {fileID: 8444224017169412384, guid: 4c750a3ffb9992b45aec5121c719031e, type: 3}
       propertyPath: NetworkConfig.PlayerPrefab
       value: 
-      objectReference: {fileID: 2822271724086237246, guid: 1ebdf97abf23164478dca8ff2c8d4029, type: 3}
+      objectReference: {fileID: 4229715765416641438, guid: c1bd04c520fec1340bdfd51f5403fae4, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
