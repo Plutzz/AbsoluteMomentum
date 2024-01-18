@@ -70,7 +70,7 @@ public class RaceManager : NetworkBehaviour
         if (Instance != null)
             Destroy(gameObject);
 
-        DontDestroyOnLoad(gameObject);
+        // DontDestroyOnLoad(gameObject);
     }
 
     public override void OnNetworkSpawn()

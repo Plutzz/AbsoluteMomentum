@@ -155,7 +155,7 @@ public class PlayerStateMachine : NetworkBehaviour
         {
             jumpHandler = GetComponent<JumpHandler>();
 
-            CinemachineFreeLook playerCamera = Instantiate(playerCameraPrefab).GetComponent<CinemachineFreeLook>();
+            CinemachineFreeLook playerCamera = playerCameraPrefab.GetComponent<CinemachineFreeLook>();
             playerCamera.m_LookAt = transform;
             playerCamera.m_Follow = transform;
 
