@@ -76,7 +76,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     #region Helper Methods
     private void MovementSpeedHandler()
     {
-        if (bhopFrame) return;
+        if (bhopFrame || stateMachine.Boosting) return;
 
         // Type - Sprinting
         if (sprinting && !stateMachine.crouching)

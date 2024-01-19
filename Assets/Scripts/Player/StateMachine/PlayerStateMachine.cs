@@ -3,12 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
-using Unity.VisualScripting;
-using UnityEditorInternal;
 using UnityEngine;
-using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
+using Unity.VisualScripting;
+using System;
 
 public class PlayerStateMachine : NetworkBehaviour
 {
@@ -78,6 +77,7 @@ public class PlayerStateMachine : NetworkBehaviour
     [Header("Slope Handling")]
     [SerializeField] private float maxSlopeAngle;
     public RaycastHit slopeHit;
+    public bool Boosting;
 
     [Header("Wallrun Handling")] //added by David
     [SerializeField] private float wallCheckDistance = 0.7f;
@@ -151,10 +151,14 @@ public class PlayerStateMachine : NetworkBehaviour
 
         initialState = IdleState;
         startYScale = gameObject.transform.localScale.y;
-        // InitDebugMenu();
+        InitDebugMenu();
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    
+    private void OnSceneLoaded(Scene scene, LoadSceneMode loadMode)
+    {
+        InitDebugMenu();
+    }
 
     public override void OnNetworkSpawn()
     {
@@ -174,6 +178,9 @@ public class PlayerStateMachine : NetworkBehaviour
             camSetup.player = player;
             camSetup.playerInputActions = playerInputActions;
 
+
+            Boosting = false;
+
             //Debug Stuff
             /*CurrentStateText = DebugMenu.Instance.PlayerStateText;
             GroundedText = DebugMenu.Instance.GroundedCheckText;
@@ -192,7 +199,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
 
     }
-
+    
     private void Update()
     {
         if (!IsOwner) return;
@@ -228,7 +235,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
         currentState.UpdateState();
 
-        // UpdateDebugMenu();
+        UpdateDebugMenu();
         //CurrentStateText.text = "Current State: " + currentState.ToString();
         //GroundedText.text = "Grounded: " + GroundedCheck();
         //WallrunText.text = "Wallrun: " + WallCheck();
@@ -412,6 +419,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
     private void InitDebugMenu()
     {
+        debugMenuList.Clear();
         int debugMenuSize = 6;
         for (int i = 0; i < debugMenuSize; i++)
         {
