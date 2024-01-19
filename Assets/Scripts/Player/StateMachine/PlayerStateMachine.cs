@@ -48,6 +48,8 @@ public class PlayerStateMachine : NetworkBehaviour
     public Rigidbody rb { get; private set; }
     public JumpHandler jumpHandler { get; private set; }
 
+    public Animator animator { get; private set; }
+
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask wallLayer;
     [SerializeField] private float playerHeight;
@@ -62,6 +64,8 @@ public class PlayerStateMachine : NetworkBehaviour
 
 
     [HideInInspector] public float timeOfLastJump;
+
+
     public Transform orientation;
     public Transform player;
     public Transform playerObj;
@@ -75,18 +79,20 @@ public class PlayerStateMachine : NetworkBehaviour
     [SerializeField] private float maxSlopeAngle;
     public RaycastHit slopeHit;
 
-    [Header("WallRun Handling")] //added by David
+    [Header("Wallrun Handling")] //added by David
     [SerializeField] private float wallCheckDistance = 0.7f;
-    [SerializeField] private float minHeight = 1f;
     [SerializeField] private float wallrunCooldown = 0.25f;
     [HideInInspector] public float timeOfLastWallrun;
     public bool canWallrun;
     public RaycastHit wallLeft;
     public RaycastHit wallRight;
-    public RaycastHit activeWall;
-    public RaycastHit aboveGroundRay;
     public bool isWallLeft;
     public bool isWallRight;
+
+    [Header("Sliding Handling")]
+    [SerializeField] private float slideCooldown = 0.5f;
+    [HideInInspector] public float timeOfLastSlide;
+    public bool canSlide;
 
     #endregion
 
@@ -125,6 +131,10 @@ public class PlayerStateMachine : NetworkBehaviour
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
         playerInputActions.Player.Crouch.performed += StartCrouch;
+        playerInputActions.Player.Crouch.canceled += StopCrouch;
+        playerInputActions.Player.Sprint.performed += StartSprint;
+        playerInputActions.Player.Sprint.canceled += StopSprint;
+
 
         IdleState = new PlayerIdleState(this);
         MovingState = new PlayerMovingState(this);
@@ -141,7 +151,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
         initialState = IdleState;
         startYScale = gameObject.transform.localScale.y;
-        InitDebugMenu();
+        // InitDebugMenu();
     }
 
     
@@ -152,8 +162,9 @@ public class PlayerStateMachine : NetworkBehaviour
         if (IsOwner)
         {
             jumpHandler = GetComponent<JumpHandler>();
+            animator = GetComponentInChildren<Animator>();
 
-            CinemachineFreeLook playerCamera = Instantiate(playerCameraPrefab).GetComponent<CinemachineFreeLook>();
+            CinemachineFreeLook playerCamera = Instantiate(playerCameraPrefab.GetComponent<CinemachineFreeLook>(), transform);
             playerCamera.m_LookAt = transform;
             playerCamera.m_Follow = transform;
 
@@ -172,6 +183,11 @@ public class PlayerStateMachine : NetworkBehaviour
 
             currentState = initialState;
             currentState.EnterLogic();
+
+            if (RaceManager.Instance != null)
+            {
+                RaceManager.Instance.playerList.Add(this.gameObject);
+            }
         }
 
 
@@ -212,7 +228,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
         currentState.UpdateState();
 
-        UpdateDebugMenu();
+        // UpdateDebugMenu();
         //CurrentStateText.text = "Current State: " + currentState.ToString();
         //GroundedText.text = "Grounded: " + GroundedCheck();
         //WallrunText.text = "Wallrun: " + WallCheck();
@@ -222,9 +238,14 @@ public class PlayerStateMachine : NetworkBehaviour
         //Debug.Log(wallRight);
         //Debug.Log(wallLeft);
 
-        if(Time.time > timeOfLastWallrun + wallrunCooldown)
+        if (Time.time > timeOfLastWallrun + wallrunCooldown)
         {
             canWallrun = true;
+        }
+
+        if(Time.time > timeOfLastSlide + slideCooldown)
+        {
+            canSlide = true;
         }
 
 
@@ -247,6 +268,7 @@ public class PlayerStateMachine : NetworkBehaviour
         currentState.ExitLogic();
         previousState = currentState;
         currentState = newState;
+        HandleAnimations();
         currentState.EnterLogic();
     }
 
@@ -276,20 +298,6 @@ public class PlayerStateMachine : NetworkBehaviour
 
         Debug.DrawRay(player.position, leftRayDirection * raycastDistance, Color.blue);
         Debug.DrawRay(player.position, rightRayDirection * raycastDistance, Color.blue);
-
-
-        if (isWallRight == true)
-        {
-            activeWall = wallRight;
-        }
-        else if (isWallLeft == true)
-        {
-            activeWall = wallLeft;
-        }
-        else
-        {
-            //activeWall = null;
-        }
 
         return (isWallRight || isWallLeft);
     }
@@ -325,8 +333,18 @@ public class PlayerStateMachine : NetworkBehaviour
 
     private void StartCrouch(InputAction.CallbackContext context)
     {
-        if (currentState == IdleState || currentState == MovingState)
+
+        if (currentState == IdleState)
+        {
+            animator.SetTrigger("Crouch Idle");
             rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
+        }
+        else if (currentState == MovingState)
+        {
+            animator.SetTrigger("Crouch Walk");
+            rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
+        }
+
     }
 
     #endregion
@@ -416,4 +434,83 @@ public class PlayerStateMachine : NetworkBehaviour
 
     #endregion
 
+    #region Animations
+
+    private void StartSprint(InputAction.CallbackContext context)
+    {
+        if (currentState == MovingState && !crouching)
+        {
+            animator.SetTrigger("Running");
+        }
+
+    }
+
+    private void StopSprint(InputAction.CallbackContext context)
+    {
+        if (currentState == MovingState)
+        {
+            animator.SetTrigger("Jogging");
+        }
+    }
+    private void StopCrouch(InputAction.CallbackContext context)
+    {
+        if (currentState == MovingState)
+        {
+            animator.SetTrigger("Jogging");
+        }
+        else if (currentState == IdleState)
+        {
+            animator.SetTrigger("Idle");
+        }
+    }
+
+    private void HandleAnimations()
+    {
+        switch (currentState)
+        {
+            case PlayerIdleState _:
+
+                if (crouching)
+                {
+                    animator.SetTrigger("Crouch Idle");
+                }
+                else
+                {
+                    animator.SetTrigger("Idle");
+                }
+                break;
+
+            case PlayerAirborneState _:
+                animator.SetTrigger("Airborne");
+                break;
+
+            case PlayerSlidingState _:
+
+                animator.SetTrigger("Sliding");
+                break;
+
+            case PlayerWallrunState _:
+
+                animator.SetTrigger("Wallrun");
+                break;
+
+            case PlayerMovingState _:
+
+                if (crouching)
+                {
+                    animator.SetTrigger("Crouch Walk");
+                }
+                else if (playerInputActions.Player.Sprint.ReadValue<float>() == 1)
+                {
+                    animator.SetTrigger("Running");
+                }
+                else
+                {
+                    animator.SetTrigger("Jogging");
+                }
+
+                break;
+        }
+    }
+    #endregion
 }
