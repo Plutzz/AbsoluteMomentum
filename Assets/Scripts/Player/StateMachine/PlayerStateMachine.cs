@@ -393,6 +393,12 @@ public class PlayerStateMachine : NetworkBehaviour
         ChangeState(AirborneState);
     }
 
+    public void addHorizontalVelocity() { 
+    }
+
+    public void increaseAcceleration() { 
+    }
+
     #endregion
 
     #region Debug Functions
@@ -521,4 +527,12 @@ public class PlayerStateMachine : NetworkBehaviour
         }
     }
     #endregion
+}
+
+[System.Serializable]
+public class VariableAccelerationVariables {
+    public float currentAcceleration;
+    public float maxAcceleration;
+    public float currentHorizontalVelocity;
+    public float maxHorizontalVelocity;
 }

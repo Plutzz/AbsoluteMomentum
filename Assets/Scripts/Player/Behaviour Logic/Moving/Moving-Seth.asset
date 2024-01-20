@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52791554037aa0b438ada61cadc2bc9c, type: 3}
+  m_Name: Moving-Seth
+  m_EditorClassIdentifier: 
+  walkMaxSpeed: 0
+  sprintMaxSpeed: 0
+  defaultAcceleration: 0
+  maxAcceleration: 0
+  accelerationGrowthRate: 0
+  crouchSpeed: 3.5

@@ -203,7 +203,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerIdleBase: {fileID: 11400000, guid: e556b29af0cea6d43bd28a4a2c624ab8, type: 2}
-  playerMovingBase: {fileID: 11400000, guid: e21860848c0736f4ea183a101b263ba3, type: 2}
+  playerMovingBase: {fileID: 11400000, guid: e85a6ffb866aef64eabaffcd3b46594a, type: 2}
   playerAirborneBase: {fileID: 11400000, guid: 109712c1514316b46bc965911185995a, type: 2}
   playerSlidingBase: {fileID: 11400000, guid: f06437ceae2fd64469ea5d99c0f0dd5f, type: 2}
   playerWallrunBase: {fileID: 11400000, guid: 94101bc732a33964980b581bca0e153e, type: 2}
@@ -226,6 +226,7 @@ MonoBehaviour:
   playerObj: {fileID: 176134913370103247}
   crouchYScale: 1
   maxSlopeAngle: 40
+  Boosting: 0
   wallCheckDistance: 0.7
   wallrunCooldown: 1
   timeOfLastWallrun: 0
