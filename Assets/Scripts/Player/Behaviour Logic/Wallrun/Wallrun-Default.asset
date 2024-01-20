@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   wallrunSpeed: 35
   acceleration: 10
-  wallrunGravity: 20
+  wallrunGravity: 15
+  initialYVelocity: 5
   wallstickStrength: 200
   maxWallrunTime: 2
   wallJumpVerticalForce: 20

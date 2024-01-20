@@ -35,7 +35,7 @@ public class PlayerWallrunDavid : PlayerWallrunSOBase
     {
         stateMachine.WallCheck();
 
-        if(!stateMachine.WallRunning())
+        //if(!stateMachine.WallRunning())
         {
             stateMachine.ChangeState(stateMachine.MovingState);
         }

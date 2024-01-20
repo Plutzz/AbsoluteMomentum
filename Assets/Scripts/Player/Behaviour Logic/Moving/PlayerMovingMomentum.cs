@@ -55,6 +55,11 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
         Move();
         SpeedControl();
 
+        if (stateMachine.CollisionCheck())
+        {
+
+        }
+
         base.DoFixedUpdateState();
     }
 

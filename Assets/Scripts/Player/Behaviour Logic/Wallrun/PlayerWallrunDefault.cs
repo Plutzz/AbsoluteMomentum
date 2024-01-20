@@ -11,6 +11,7 @@ public class PlayerWallrunDefault : PlayerWallrunSOBase
     [SerializeField] private float wallrunSpeed = 35f;
     [SerializeField] private float acceleration = 10f;
     [SerializeField] private float wallrunGravity = 10f;
+    [SerializeField] private float initialYVelocity = 10f;
     [SerializeField] private float wallstickStrength = 10f;
     [SerializeField] private float maxWallrunTime;
     private float dropTimer;
@@ -26,6 +27,7 @@ public class PlayerWallrunDefault : PlayerWallrunSOBase
     {
         base.DoEnterLogic();
         rb.useGravity = false;
+        rb.velocity = new Vector3(rb.velocity.x, initialYVelocity, rb.velocity.z);
         stateMachine.canWallrun = false;
         dropTimer = maxWallrunTime;
         playerInputActions.Player.Jump.performed += WallJump;

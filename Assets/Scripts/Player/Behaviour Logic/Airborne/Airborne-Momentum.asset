@@ -21,3 +21,6 @@ MonoBehaviour:
   sprintMovementMultiplier: 2
   apexMovementMultiplier: 2
   apexYVelocityThreshold: 5
+  collisionAcceleration: 100
+  collisionSpeed: 20
+  collisionTimer: 0

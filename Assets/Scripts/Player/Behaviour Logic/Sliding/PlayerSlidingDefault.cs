@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.EventSystems;
@@ -49,9 +50,12 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
 
     public override void DoFixedUpdateState()
     {
-
-        SlidingMovement();
         SpeedControl();
+        SlidingMovement();
+        if (stateMachine.CollisionCheck())
+        {
+            StopSlide();
+        }
 
 
         base.DoFixedUpdateState();
@@ -59,7 +63,9 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
 
     private void GetInput()
     {
-        if(!stateMachine.crouching)
+        inputVector = playerInputActions.Player.Movement.ReadValue<Vector2>();
+
+        if (!stateMachine.crouching)
         {
             StopSlide();
         }
@@ -79,9 +85,10 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
         {
             float magnitude = verticalBoostCurve.Evaluate(rb.velocity.y);
 
+            //Debug.Log(magnitude);
+
             stateMachine.desiredMoveSpeed = stateMachine.maxSpeed;
-            stateMachine.moveSpeed = stateMachine.maxSpeed;
-            stateMachine.lastDesiredMoveSpeed = stateMachine.maxSpeed;
+            stateMachine.moveSpeed += magnitude;
 
             //Get direction DOWN the slope
             slideDirection = Vector3.Cross(stateMachine.slopeHit.normal, Vector3.up) ;
@@ -91,6 +98,17 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
 
             rb.AddForce(stateMachine.GetSlopeMoveDirection(slideDirection) * magnitude, ForceMode.Impulse);
 
+            if (stateMachine.moveSpeed < stateMachine.desiredMoveSpeed)
+            {
+                acceleration = slideAccelerationSlope;
+                
+                stateMachine.StopCoroutine(stateMachine.SmoothlyLerpMoveSpeed(acceleration));
+                stateMachine.StartCoroutine(stateMachine.SmoothlyLerpMoveSpeed(acceleration));
+            }
+
+
+
+            stateMachine.lastDesiredMoveSpeed = stateMachine.maxSpeed;
             // Animation curve
         }
     }
@@ -98,13 +116,10 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
     private void MovementSpeedHandler()
     {
 
-        //if (stateMachine.Boosting) return;
+        if (stateMachine.Boosting) return;
 
         if (rb.velocity.magnitude >= maxSlideSpeed)
             reachedMaxSpeed = true;
-
-        if (SlopeLastFrame)
-            //stateMachine.moveSpeed = rb.velocity.magnitude;
 
 
         //Debug.Log("Sliding Velocity: " + rb.velocity.magnitude);
@@ -123,12 +138,17 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
         // max speed hasn't been reached yet
         else if (!reachedMaxSpeed)
         {
+            if (SlopeLastFrame)
+                stateMachine.moveSpeed = rb.velocity.magnitude;
+
             SlopeLastFrame = false;
             stateMachine.desiredMoveSpeed = maxSlideSpeed;
             acceleration = slideAcceleration;
         }
         else
         {
+            if (SlopeLastFrame)
+                stateMachine.moveSpeed = rb.velocity.magnitude;
 
             SlopeLastFrame = false;
             stateMachine.desiredMoveSpeed = minimumSlideSpeed;
@@ -153,13 +173,13 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
         //Sliding on flat ground or up slope
         if (!stateMachine.SlopeCheck() || rb.velocity.y > -0.1f)
         {
-            rb.AddForce(slideDirection.normalized * slideAcceleration, ForceMode.Force);
+            rb.AddForce(slideDirection.normalized * 100f, ForceMode.Force);
         }
         
         //Sliding down a slope
         else
         {
-            rb.AddForce(stateMachine.GetSlopeMoveDirection(slideDirection) * slideAccelerationSlope, ForceMode.Force);
+            rb.AddForce(stateMachine.GetSlopeMoveDirection(slideDirection) * 100f, ForceMode.Force);
         }
 
 
@@ -209,7 +229,7 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
 
     public override void CheckTransitions()
     {
-        if(!stateMachine.GroundedCheck())
+        if(!stateMachine.GroundedCheck() && !stateMachine.SlopeCheck())
         {
             reachedMaxSpeed = false;
             stateMachine.ChangeState(stateMachine.AirborneState);

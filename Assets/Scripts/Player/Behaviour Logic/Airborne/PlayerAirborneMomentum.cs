@@ -17,6 +17,13 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
     [SerializeField] private float apexMovementMultiplier;
     [SerializeField] private float apexYVelocityThreshold;
 
+    [Header("Collision Variables")]
+    [SerializeField] private float collisionAcceleration;
+    [SerializeField] private float collisionSpeed;
+    [Tooltip("Time Before collisions start slowing down the player")]
+    [SerializeField] private float collisionTimer = 0.5f;
+    private float collisionTime = 0f;
+
     private bool quickFalling;
 
     private bool sprinting;
@@ -35,6 +42,7 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
         stateMachine.Boosting = false;
         rb.useGravity = false;
         quickFalling = false;
+        collisionTime = collisionTimer;
     }
 
     public override void DoExitLogic()
@@ -66,6 +74,9 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
     {
         GetInput();
         MovementSpeedHandler();
+
+        collisionTime -= Time.deltaTime;
+
         base.DoUpdateState();
     }
 
@@ -84,10 +95,23 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
     }
     private void MovementSpeedHandler()
     {
-        stateMachine.desiredMoveSpeed = speedOnEnter;
+        if(collisionTime < 0 && stateMachine.CollisionCheck())
+        {
+            stateMachine.desiredMoveSpeed = collisionSpeed;
 
-        stateMachine.moveSpeed = stateMachine.desiredMoveSpeed;
+            stateMachine.StopCoroutine(stateMachine.SmoothlyLerpMoveSpeed(collisionAcceleration));
+            stateMachine.StartCoroutine(stateMachine.SmoothlyLerpMoveSpeed(collisionAcceleration));
 
+            speedOnEnter = stateMachine.desiredMoveSpeed;
+        }
+        else
+        {
+            stateMachine.StopCoroutine(stateMachine.SmoothlyLerpMoveSpeed(collisionAcceleration));
+
+            stateMachine.desiredMoveSpeed = speedOnEnter;
+
+            stateMachine.moveSpeed = stateMachine.desiredMoveSpeed;
+        }
         stateMachine.lastDesiredMoveSpeed = stateMachine.desiredMoveSpeed;
     }
     private void Move()

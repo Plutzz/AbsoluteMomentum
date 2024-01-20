@@ -79,8 +79,7 @@ public class PlayerStateMachine : NetworkBehaviour
     public RaycastHit slopeHit;
     public bool Boosting;
 
-    [Header("Wallrun Handling")] //added by David
-    [SerializeField] private float wallCheckDistance = 0.7f;
+    [Header("Wallrun Handling")]
     [SerializeField] private float wallrunCooldown = 0.25f;
     [HideInInspector] public float timeOfLastWallrun;
     public bool canWallrun;
@@ -88,6 +87,10 @@ public class PlayerStateMachine : NetworkBehaviour
     public RaycastHit wallRight;
     public bool isWallLeft;
     public bool isWallRight;
+
+    [Header("Collision Handling")]
+    [SerializeField] private float sphereCastRadius;
+    [SerializeField] private float maxHardCollisionAngle = 45f;
 
     [Header("Sliding Handling")]
     [SerializeField] private float slideCooldown = 0.5f;
@@ -306,8 +309,48 @@ public class PlayerStateMachine : NetworkBehaviour
         Debug.DrawRay(player.position, leftRayDirection * raycastDistance, Color.blue);
         Debug.DrawRay(player.position, rightRayDirection * raycastDistance, Color.blue);
 
+        if(isWallLeft)
+        {
+            float _angle = Vector3.Angle(wallLeft.normal, rb.velocity);
+        }
+        else if(isWallRight)
+        {
+            float _angle = Vector3.Angle(wallRight.normal, rb.velocity);
+        }
+
         return (isWallRight || isWallLeft);
     }
+
+    public bool CollisionCheck()
+    {
+        // Debugging rays
+        float raycastDistance = 1.5f; // Adjust this distance based on your needs
+        float raycastAngle = 10f;   // Adjust the angle of rotation based on your needs
+
+        // Rotate right ray direction
+        Vector3 rightRayDirection = Quaternion.Euler(0, -raycastAngle, 0) * playerObj.right;
+        isWallRight = Physics.Raycast(player.position, rightRayDirection, out wallRight, raycastDistance);
+
+        // Rotate left ray direction
+        Vector3 leftRayDirection = Quaternion.Euler(0, raycastAngle, 0) * -playerObj.right;
+        isWallLeft = Physics.Raycast(player.position, leftRayDirection, out wallLeft, raycastDistance);
+
+        float _angle = 90f;
+
+        if (isWallLeft)
+        {
+            _angle = Vector3.Angle(rb.velocity, -wallLeft.normal);
+        }
+        else if (isWallRight)
+        {
+            _angle = Vector3.Angle(rb.velocity, -wallRight.normal);
+        }
+
+        Debug.Log(_angle < maxHardCollisionAngle);
+
+        return _angle < maxHardCollisionAngle;
+    }
+
     public bool SlopeCheck()
     {
         if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f * gameObject.transform.localScale.y + 0.5f, groundLayer))
@@ -318,19 +361,6 @@ public class PlayerStateMachine : NetworkBehaviour
         }
 
         return false;
-    }
-
-    public bool WallRunning()
-    {
-        //added by David
-        if(WallCheck() && Input.GetKey(KeyCode.W) /*&& AboveGround()*/)
-        {
-            //Debug.Log("Wallrunning");
-            return true;
-        } else {
-            //Debug.Log("Not Wallrunning");
-            return false;
-        }
     }
 
     public Vector3 GetSlopeMoveDirection(Vector3 _direction)
@@ -438,6 +468,11 @@ public class PlayerStateMachine : NetworkBehaviour
         debugMenuList[3].text = "Vertical Speed: " + rb.velocity.y.ToString("F2");
         debugMenuList[4].text = "Horizontal Speed: " + new Vector2(rb.velocity.x, rb.velocity.z).magnitude.ToString("F2");
         debugMenuList[5].text = "Speed: " + rb.velocity.magnitude.ToString("F2");
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(gameObject.transform.position, sphereCastRadius);
     }
 
     #endregion
