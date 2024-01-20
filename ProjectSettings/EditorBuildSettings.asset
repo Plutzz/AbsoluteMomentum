@@ -20,4 +20,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/BenMap.unity
     guid: 546cd2d26b7bec64ca53f872c478ea51
+  - enabled: 1
+    path: Assets/Scenes/ACTUALMapRaceTestScene.unity
+    guid: d8c48869a61af1d49ae11ca44e797709
+  - enabled: 1
+    path: Assets/Scenes/Game Loop/Racing Level.unity
+    guid: ab98ed47b6c057747b1ed1908b14be4d
+  - enabled: 1
+    path: Assets/Scenes/Game Loop/Lobby.unity
+    guid: d57a2160de47d3949b94fd7496a53379
   m_configObjects: {}

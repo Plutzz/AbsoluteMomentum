@@ -146,7 +146,6 @@ public class PlayerWallrunDefault : PlayerWallrunSOBase
 
         if (Mathf.Abs(stateMachine.desiredMoveSpeed - stateMachine.lastDesiredMoveSpeed) > 1f && stateMachine.moveSpeed != 0)
         {
-            Debug.Log("START COROUTINE");
             stateMachine.StopCoroutine(stateMachine.SmoothlyLerpMoveSpeed(acceleration));
             stateMachine.StartCoroutine(stateMachine.SmoothlyLerpMoveSpeed(acceleration));
         }

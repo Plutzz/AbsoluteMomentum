@@ -224,18 +224,20 @@ MonoBehaviour:
   orientation: {fileID: 8671897353048501037}
   player: {fileID: 5911603449596199529}
   playerObj: {fileID: 176134913370103247}
-  crouchYScale: 0.5
+  crouchYScale: 1
   maxSlopeAngle: 40
   wallCheckDistance: 0.7
-  minHeight: 1
   wallrunCooldown: 1
   timeOfLastWallrun: 0
   canWallrun: 0
   isWallLeft: 0
   isWallRight: 0
+  slideCooldown: 1
+  timeOfLastSlide: 0
+  canSlide: 0
   debugMenuParent: {fileID: 0}
   debugMenuItemprefab: {fileID: 980138208532883943, guid: c18ef8ee519d55c46a034ed1eccaa4f8, type: 3}
-  RespawnPos: {x: 20, y: 50, z: -20}
+  RespawnPos: {x: 41.33687, y: 22.357487, z: -27.607147}
   teleportAmount: 0
 --- !u!54 &2083876072485818274
 Rigidbody:
@@ -310,7 +312,7 @@ MonoBehaviour:
   jumpCooldown: 0.25
   coyoteTime: 0.25
   canJump: 1
-  maxJumpTime: 0.15
+  maxJumpTime: 0
   endJumpEarlyMultiplier: 10
   jumpBufferTime: 0.2
 --- !u!1 &4646233139212467516

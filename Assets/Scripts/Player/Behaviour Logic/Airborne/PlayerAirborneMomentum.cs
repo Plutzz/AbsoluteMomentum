@@ -32,6 +32,7 @@ public class PlayerAirborneMomentum : PlayerAirborneSOBase
         rb.drag = drag;
         speedOnEnter = stateMachine.moveSpeed;
 
+        stateMachine.Boosting = false;
         rb.useGravity = false;
         quickFalling = false;
     }

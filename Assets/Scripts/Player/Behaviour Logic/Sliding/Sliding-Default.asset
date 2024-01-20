@@ -17,7 +17,7 @@ MonoBehaviour:
   maxSlideSpeed: 25
   minimumSlideSpeed: 5
   slideAcceleration: 50
-  slideAccelerationSlope: 10
+  slideAccelerationSlope: 70
   slideDeceleration: 10
   verticalMomentumBoostAmount: 1
   verticalBoostCurve:
