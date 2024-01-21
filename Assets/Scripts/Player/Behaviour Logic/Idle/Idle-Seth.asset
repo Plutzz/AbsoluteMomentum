@@ -9,15 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 52791554037aa0b438ada61cadc2bc9c, type: 3}
-  m_Name: Moving-Seth
+  m_Script: {fileID: 11500000, guid: 722595b16b0fdb1449583f1df0d1baf4, type: 3}
+  m_Name: Idle-Seth
   m_EditorClassIdentifier: 
-  minSpeed: 3
-  maxWalkSpeed: 8
-  maxSprintSpeed: 30
-  defaultAcceleration: 2
-  maxAcceleration: 15
-  accelerationGrowthRate: 2
-  decelerationRate: 3
-  turningDecay: 3
-  crouchSpeed: 3.5
+  decelarationRate: 0

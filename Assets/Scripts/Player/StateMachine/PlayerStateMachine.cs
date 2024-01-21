@@ -58,6 +58,8 @@ public class PlayerStateMachine : NetworkBehaviour
     public float desiredMoveSpeed;
     public float lastDesiredMoveSpeed;
 
+    public KinematicsVariables kinematicsVariables;
+
     [SerializeField] private float slopeIncreaseMultiplier;
     [SerializeField] public float maxSpeed = 100f;
 
@@ -426,7 +428,7 @@ public class PlayerStateMachine : NetworkBehaviour
     private void InitDebugMenu()
     {
         debugMenuList.Clear();
-        int debugMenuSize = 6;
+        int debugMenuSize = 8;
         for (int i = 0; i < debugMenuSize; i++)
         {
             TextMeshProUGUI newText = Instantiate(debugMenuItemprefab);
@@ -444,6 +446,8 @@ public class PlayerStateMachine : NetworkBehaviour
         debugMenuList[3].text = "Vertical Speed: " + rb.velocity.y.ToString("F2");
         debugMenuList[4].text = "Horizontal Speed: " + new Vector2(rb.velocity.x, rb.velocity.z).magnitude.ToString("F2");
         debugMenuList[5].text = "Speed: " + rb.velocity.magnitude.ToString("F2");
+        debugMenuList[6].text = "Current Speed: " + kinematicsVariables.currentSpeed.ToString("F2");
+        debugMenuList[7].text = "Current Acceleration: " + kinematicsVariables.currentAcceleration.ToString("F2");
     }
 
     #endregion
@@ -530,9 +534,8 @@ public class PlayerStateMachine : NetworkBehaviour
 }
 
 [System.Serializable]
-public class VariableAccelerationVariables {
+public class KinematicsVariables {
+    //Horizontal only atm
+    public float currentSpeed;
     public float currentAcceleration;
-    public float maxAcceleration;
-    public float currentHorizontalVelocity;
-    public float maxHorizontalVelocity;
 }

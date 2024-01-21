@@ -15,10 +15,10 @@ public class PlayerMovingSeth : PlayerMovingSOBase
     [SerializeField] private float minSpeed;
     [SerializeField] private float maxWalkSpeed;
     [SerializeField] private float maxSprintSpeed;
-    private float currentSpeed;
+    //private float currentSpeed;
 
     [SerializeField] private float defaultAcceleration;
-    private float currentAcceleration;
+    //private float currentAcceleration;
     [SerializeField] private float maxAcceleration;
     [SerializeField] private float accelerationGrowthRate;
     [SerializeField] private float decelerationRate;
@@ -41,8 +41,8 @@ public class PlayerMovingSeth : PlayerMovingSOBase
     {
         moveDirection = Vector3.zero;
         rb.drag = 0;
-        currentAcceleration = defaultAcceleration;
-        currentSpeed = minSpeed;
+        //stateMachine.kinematicsVariables.currentAcceleration = defaultAcceleration;
+        //stateMachine.kinematicsVariables.currentSpeed = minSpeed;
         playerInputActions.Player.Crouch.performed += TryStartSlide;
         stateMachine.StopAllCoroutines();
         base.DoEnterLogic();
@@ -101,18 +101,24 @@ public class PlayerMovingSeth : PlayerMovingSOBase
         base.ResetValues();
     }
 
+    private void GetInput()
+    {
+        inputVector = playerInputActions.Player.Movement.ReadValue<Vector2>();
+        sprinting = playerInputActions.Player.Sprint.ReadValue<float>() == 1f;
+    }
+
     #region Helper Methods
     private void UpdateAcceleration(float tick)
     {
         if (sprinting == false) {
-            currentAcceleration = defaultAcceleration;
+            stateMachine.kinematicsVariables.currentAcceleration = defaultAcceleration;
             return;
         }
 
-        currentAcceleration += (accelerationGrowthRate * tick);
+        stateMachine.kinematicsVariables.currentAcceleration += (accelerationGrowthRate * tick);
 
-        if (currentAcceleration > maxAcceleration) {
-            currentAcceleration = maxAcceleration;
+        if (stateMachine.kinematicsVariables.currentAcceleration > maxAcceleration) {
+            stateMachine.kinematicsVariables.currentAcceleration = maxAcceleration;
         }
     }
 
@@ -125,11 +131,11 @@ public class PlayerMovingSeth : PlayerMovingSOBase
 
 
         if (worldInput == Vector3.zero) {       //Player passively slows to stop
-            currentSpeed -= decelerationRate * 2 * tick;
+            stateMachine.kinematicsVariables.currentSpeed -= decelerationRate * 2 * tick;
         }
-        else if (currentSpeed < minSpeed) {     //Player moving slowly has little happen
+        else if (stateMachine.kinematicsVariables.currentSpeed < minSpeed) {     //Player moving slowly has little happen
             //Pass
-            currentSpeed += currentAcceleration * tick;
+            stateMachine.kinematicsVariables.currentSpeed += stateMachine.kinematicsVariables.currentAcceleration * tick;
         }
 
         
@@ -141,39 +147,27 @@ public class PlayerMovingSeth : PlayerMovingSOBase
                 maxSpeed = maxSprintSpeed;
             }
             
-            if (currentSpeed > maxSpeed)
+            if (stateMachine.kinematicsVariables.currentSpeed > maxSpeed)
             {
-                currentSpeed = Mathf.Max(maxSpeed, currentSpeed - decelerationRate * tick);
+                stateMachine.kinematicsVariables.currentSpeed = Mathf.Max(maxSpeed, stateMachine.kinematicsVariables.currentSpeed - decelerationRate * tick);
             }
             else {
-                currentSpeed += currentAcceleration * tick;
+                stateMachine.kinematicsVariables.currentSpeed += stateMachine.kinematicsVariables.currentAcceleration * tick;
             }
 
             
             //Help make tight turns while still building acceleration 
             float angleOfChange = Vector3.Angle(horizontalVelocity, worldInput);
             angleOfChange /= 180;
-            currentSpeed *= 1 - (angleOfChange * turningDecay * tick);
+            stateMachine.kinematicsVariables.currentSpeed *= 1 - (angleOfChange * turningDecay * tick);
 
         }
 
         horizontalVelocity += worldInput;
 
-        horizontalVelocity = horizontalVelocity.normalized * currentSpeed;
+        horizontalVelocity = horizontalVelocity.normalized * stateMachine.kinematicsVariables.currentSpeed;
 
         rb.velocity = new Vector3(horizontalVelocity.x, rb.velocity.y, horizontalVelocity.z);
-    }
-
-    private void GetInput()
-    {
-        inputVector = playerInputActions.Player.Movement.ReadValue<Vector2>();
-        sprinting = playerInputActions.Player.Sprint.ReadValue<float>() == 1f;
-    }
-
-    // moves the player by adding a force
-    private void Move()
-    {
-        
     }
 
     
@@ -185,17 +179,20 @@ public class PlayerMovingSeth : PlayerMovingSOBase
         }
     }
 
+
+
+
+    #endregion
+
+    #region Debug Functions
     private void DebugVelocity() {
-        Debug.Log("Current Speed" + currentSpeed + "\nIs Sprinting: " + sprinting);
+        Debug.Log("Current Speed" + stateMachine.kinematicsVariables.currentSpeed + "\nIs Sprinting: " + sprinting);
     }
 
     private void DebugAcceleration()
     {
-        Debug.Log("Current Acceleration" + currentAcceleration + "\nIs Sprinting: " + sprinting);
+        Debug.Log("Current Acceleration" + stateMachine.kinematicsVariables.currentAcceleration + "\nIs Sprinting: " + sprinting);
     }
-
-    // Limits the speed of the player to speed
-
 
     #endregion
 

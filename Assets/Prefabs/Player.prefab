@@ -202,9 +202,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76c55bc5a5e90ef44a334597762bc4db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerIdleBase: {fileID: 11400000, guid: e556b29af0cea6d43bd28a4a2c624ab8, type: 2}
+  playerIdleBase: {fileID: 11400000, guid: 58bedd434a77fe74caf005d250064cdb, type: 2}
   playerMovingBase: {fileID: 11400000, guid: e85a6ffb866aef64eabaffcd3b46594a, type: 2}
-  playerAirborneBase: {fileID: 11400000, guid: 109712c1514316b46bc965911185995a, type: 2}
+  playerAirborneBase: {fileID: 11400000, guid: d85b1a96be7a21f4f9632ccaf1678adc, type: 2}
   playerSlidingBase: {fileID: 11400000, guid: f06437ceae2fd64469ea5d99c0f0dd5f, type: 2}
   playerWallrunBase: {fileID: 11400000, guid: 94101bc732a33964980b581bca0e153e, type: 2}
   groundLayer:
@@ -218,6 +218,9 @@ MonoBehaviour:
   moveSpeed: 0
   desiredMoveSpeed: 0
   lastDesiredMoveSpeed: 0
+  kinematicsVariables:
+    currentSpeed: 0
+    currentAcceleration: 0
   slopeIncreaseMultiplier: 4
   maxSpeed: 50
   timeOfLastJump: 0

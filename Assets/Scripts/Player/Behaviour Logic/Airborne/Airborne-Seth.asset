@@ -9,15 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 52791554037aa0b438ada61cadc2bc9c, type: 3}
-  m_Name: Moving-Seth
+  m_Script: {fileID: 11500000, guid: 419c8841e46597c4fbadc030e8bfaa33, type: 3}
+  m_Name: Airborne-Seth
   m_EditorClassIdentifier: 
-  minSpeed: 3
-  maxWalkSpeed: 8
-  maxSprintSpeed: 30
-  defaultAcceleration: 2
-  maxAcceleration: 15
-  accelerationGrowthRate: 2
-  decelerationRate: 3
-  turningDecay: 3
-  crouchSpeed: 3.5
+  minimumSlideVelocity: 9
+  upwardGravityAcceleration: 0
+  downwardGravityAcceleration: 0
+  quickFallGravityIncrease: 0
+  inputVelocityControl: 0
+  decelerationRate: 0

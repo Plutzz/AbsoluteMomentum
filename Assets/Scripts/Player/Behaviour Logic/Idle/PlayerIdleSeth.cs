@@ -6,13 +6,13 @@ using UnityEngine.InputSystem;
 [CreateAssetMenu(fileName = "Idle-Seth", menuName = "Player Logic/Idle Logic/Seth")]
 public class PlayerIdleSeth : PlayerIdleSOBase
 {
-    [SerializeField] private float groundDrag;
-    private Vector2 inputVector;
+    [SerializeField] private float decelarationRate;
+    
 
     public override void DoEnterLogic()
     {
         base.DoEnterLogic();
-        //rb.drag = groundDrag;
+        rb.drag = 0;
         stateMachine.StopAllCoroutines();
     }
 
@@ -24,6 +24,9 @@ public class PlayerIdleSeth : PlayerIdleSOBase
     public override void DoFixedUpdateState()
     {
         base.DoFixedUpdateState();
+        stateMachine.kinematicsVariables.currentAcceleration = Mathf.Max(0, stateMachine.kinematicsVariables.currentAcceleration - decelarationRate * Time.fixedDeltaTime);//-= decelarationRate * Time.fixedDeltaTime;
+        stateMachine.kinematicsVariables.currentSpeed = Mathf.Max(0, stateMachine.kinematicsVariables.currentSpeed - decelarationRate * Time.fixedDeltaTime);
+        rb.velocity = rb.velocity.normalized * stateMachine.kinematicsVariables.currentSpeed;
     }
 
     public override void DoUpdateState()
@@ -48,7 +51,7 @@ public class PlayerIdleSeth : PlayerIdleSOBase
 
     private void GetInput()
     {
-        inputVector = playerInputActions.Player.Movement.ReadValue<Vector2>();
+        //inputVector = playerInputActions.Player.Movement.ReadValue<Vector2>();
 
     }
 }
