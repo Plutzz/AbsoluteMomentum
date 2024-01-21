@@ -135,7 +135,7 @@ public class PlayerMovingSeth : PlayerMovingSOBase
         }
         else if (stateMachine.kinematicsVariables.currentSpeed < minSpeed) {     //Player moving slowly has little happen
             //Pass
-            stateMachine.kinematicsVariables.currentSpeed += stateMachine.kinematicsVariables.currentAcceleration * tick;
+            stateMachine.kinematicsVariables.currentSpeed = minSpeed;
         }
 
         
