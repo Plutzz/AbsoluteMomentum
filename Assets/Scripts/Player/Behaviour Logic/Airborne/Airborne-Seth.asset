@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 419c8841e46597c4fbadc030e8bfaa33, type: 3}
   m_Name: Airborne-Seth
   m_EditorClassIdentifier: 
-  minimumSlideVelocity: 9
-  upwardGravityAcceleration: 0
-  downwardGravityAcceleration: 0
-  quickFallGravityIncrease: 0
-  inputVelocityControl: 0
-  decelerationRate: 0
+  minimumSlideVelocity: 10
+  upwardGravityAcceleration: 25
+  downwardGravityAcceleration: 50
+  quickFallGravityIncrease: 20
+  inputVelocityControl: 1
+  decelerationRate: 1
+  minAirspeed: 2

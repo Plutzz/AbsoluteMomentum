@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 722595b16b0fdb1449583f1df0d1baf4, type: 3}
   m_Name: Idle-Seth
   m_EditorClassIdentifier: 
-  decelarationRate: 0
+  decelarationRate: 5
