@@ -16,8 +16,8 @@ MonoBehaviour:
   maxWalkSpeed: 8
   maxSprintSpeed: 30
   defaultAcceleration: 2
-  maxAcceleration: 15
-  accelerationGrowthRate: 2
+  maxAcceleration: 60
+  accelerationGrowthRate: 5
   decelerationRate: 3
   turningDecay: 3
   crouchSpeed: 3.5
