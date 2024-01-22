@@ -218,6 +218,9 @@ MonoBehaviour:
   moveSpeed: 0
   desiredMoveSpeed: 0
   lastDesiredMoveSpeed: 0
+  kinematicsVariables:
+    currentSpeed: 0
+    currentAcceleration: 0
   slopeIncreaseMultiplier: 4
   maxSpeed: 50
   timeOfLastJump: 0
