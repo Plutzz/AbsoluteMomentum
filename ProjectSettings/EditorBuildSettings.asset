@@ -5,7 +5,7 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/MovementDemo.unity
     guid: 7f44ac4045d6de249bae4362b6b9e32f
   - enabled: 0
@@ -14,19 +14,22 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/MapRaceTestScene.unity
     guid: 73cc9be2e75828c48bdce26534695bce
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/LobbyTestScene.unity
     guid: 81953735a7091dc4d86d93f142ade8ef
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/BenMap.unity
     guid: 546cd2d26b7bec64ca53f872c478ea51
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/ACTUALMapRaceTestScene.unity
     guid: d8c48869a61af1d49ae11ca44e797709
   - enabled: 1
-    path: Assets/Scenes/Game Loop/Racing Level.unity
-    guid: ab98ed47b6c057747b1ed1908b14be4d
-  - enabled: 1
     path: Assets/Scenes/Game Loop/Lobby.unity
     guid: d57a2160de47d3949b94fd7496a53379
+  - enabled: 1
+    path: Assets/Scenes/Game Loop/Racing Level.unity
+    guid: ab98ed47b6c057747b1ed1908b14be4d
+  - enabled: 0
+    path: Assets/Scenes/BenMapRaceTestScene.unity
+    guid: 43908af3043a007468a84ff0ef8214f5
   m_configObjects: {}

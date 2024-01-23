@@ -67,12 +67,10 @@ public class RaceManager : NetworkBehaviour
 
     private void Awake()
     {
-        if (Instance != null)
-            Destroy(gameObject);
-
+        Instance = this;
+        Debug.Log("RaceManager Instance created");
         // DontDestroyOnLoad(gameObject);
     }
-
     public override void OnNetworkSpawn()
     {
         // Function works if in start instead of awake
@@ -95,6 +93,8 @@ public class RaceManager : NetworkBehaviour
     {
         int row = 0;
         int col = 0;
+
+        Debug.Log("Player List Size: " + playerList.Count);
 
         for (int i = 0; i < playerList.Count; i++)
         {

@@ -41,6 +41,8 @@ public class JumpHandler : NetworkBehaviour
 
     void Update()
     {
+        if (!IsOwner) return;
+
         currentState = stateMachine.currentState;
         if (stateMachine.timeOfLastJump + jumpCooldown <= Time.time)
         {
@@ -63,6 +65,8 @@ public class JumpHandler : NetworkBehaviour
 
     private void JumpPressed(InputAction.CallbackContext context)
     {
+        if (!IsOwner) return;
+
         lastJumpPressed = Time.time;
 
         if (coyoteTimer <= 0 && (currentState == stateMachine.AirborneState || currentState == stateMachine.WallrunState)) return;

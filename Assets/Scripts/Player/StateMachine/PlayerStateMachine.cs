@@ -119,17 +119,17 @@ public class PlayerStateMachine : NetworkBehaviour
         rb = GetComponentInChildren<Rigidbody>();
 
         //TEMP CODE TO TEST MOVEMENT
-        PlayerIdleBaseInstance = playerIdleBase;
-        PlayerMovingBaseInstance = playerMovingBase;
-        PlayerAirborneBaseInstance = playerAirborneBase;
-        PlayerSlidingBaseInstance = playerSlidingBase;
-        PlayerWallrunBaseInstance = playerWallrunBase;
+        //PlayerIdleBaseInstance = playerIdleBase;
+        //PlayerMovingBaseInstance = playerMovingBase;
+        //PlayerAirborneBaseInstance = playerAirborneBase;
+        //PlayerSlidingBaseInstance = playerSlidingBase;
+        //PlayerWallrunBaseInstance = playerWallrunBase;
         //COMMENT CODE TO TEST MOVEMENT VALUES WITHOUT HAVING TO RESTART PLAY MODE
-        //PlayerIdleBaseInstance = Instantiate(playerIdleBase);
-        //PlayerMovingBaseInstance = Instantiate(playerMovingBase);
-        //PlayerAirborneBaseInstance = Instantiate(playerAirborneBase);
-        //PlayerSlidingBaseInstance = Instantiate(playerSlidingBase);
-        //PlayerWallrunBaseInstance = Instantiate(playerWallrunBase);
+        PlayerIdleBaseInstance = Instantiate(playerIdleBase);
+        PlayerMovingBaseInstance = Instantiate(playerMovingBase);
+        PlayerAirborneBaseInstance = Instantiate(playerAirborneBase);
+        PlayerSlidingBaseInstance = Instantiate(playerSlidingBase);
+        PlayerWallrunBaseInstance = Instantiate(playerWallrunBase);
 
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
@@ -161,6 +161,12 @@ public class PlayerStateMachine : NetworkBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode loadMode)
     {
         InitDebugMenu();
+
+        if (RaceManager.Instance != null)
+        {
+            RaceManager.Instance.playerList.Add(gameObject);
+            Debug.Log(gameObject + "Added to player list");
+        }
     }
 
     public override void OnNetworkSpawn()
@@ -196,7 +202,8 @@ public class PlayerStateMachine : NetworkBehaviour
 
             if (RaceManager.Instance != null)
             {
-                RaceManager.Instance.playerList.Add(this.gameObject);
+                RaceManager.Instance.playerList.Add(gameObject);
+                Debug.Log(gameObject + "Added to player list");
             }
         }
 
@@ -346,7 +353,7 @@ public class PlayerStateMachine : NetworkBehaviour
             _angle = Vector3.Angle(rb.velocity, -wallRight.normal);
         }
 
-        Debug.Log(_angle < maxHardCollisionAngle);
+        //Debug.Log(_angle < maxHardCollisionAngle);
 
         return _angle < maxHardCollisionAngle;
     }
@@ -450,6 +457,8 @@ public class PlayerStateMachine : NetworkBehaviour
     private void InitDebugMenu()
     {
         debugMenuList.Clear();
+        if (DebugMenu.Instance == null) return;
+
         int debugMenuSize = 6;
         for (int i = 0; i < debugMenuSize; i++)
         {
@@ -461,6 +470,8 @@ public class PlayerStateMachine : NetworkBehaviour
 
     //MAKE SURE TO HARD CODE IN THE VARIABLE FOR DEBUG MENU SIZE ABOVE
     private void UpdateDebugMenu() {
+        if (DebugMenu.Instance == null) return;
+
         debugMenuList[0].text = "Current State: " + currentState.ToString();
         debugMenuList[1].text = "Grounded: " + GroundedCheck();
         debugMenuList[2].text = "Wallrun: " + WallCheck();
