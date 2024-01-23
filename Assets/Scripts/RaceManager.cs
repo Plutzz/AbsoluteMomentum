@@ -9,6 +9,7 @@ public class RaceManager : NetworkBehaviour
 
     public static RaceManager Instance { get; private set; }
 
+    public GameObject testPlayer;
     protected virtual void OnApplicationQuit()
     {
         Instance = null;
@@ -67,7 +68,14 @@ public class RaceManager : NetworkBehaviour
 
     private void Awake()
     {
+        if(Instance != null)
+        {
+            Destroy(this);
+        }
+
         Instance = this;
+
+        //playerList.Add(testPlayer);
         Debug.Log("RaceManager Instance created");
         // DontDestroyOnLoad(gameObject);
     }
@@ -81,16 +89,18 @@ public class RaceManager : NetworkBehaviour
             // Network objects are not players, players are a separate list
             // networkObjList = FindObjectsOfType<NetworkObject>();
 
-            RepositionPlayers();
+            RepositionPlayersClientRpc();
 
-            UpdatePlayerListText();
+            UpdatePlayerListTextClientRpc();
 
-            StartCoroutine(StartCountdown());
+            StartCountdownClientRpc();
         }
     }
 
-    private void RepositionPlayers() 
+    [ClientRpc]
+    private void RepositionPlayersClientRpc() 
     {
+
         int row = 0;
         int col = 0;
 
@@ -98,6 +108,8 @@ public class RaceManager : NetworkBehaviour
 
         for (int i = 0; i < playerList.Count; i++)
         {
+           
+
             GameObject player = playerList[i];
 
             // Vector3 currPos = startingPlayer;
@@ -114,6 +126,8 @@ public class RaceManager : NetworkBehaviour
                 Vector3 currSpace = new Vector3(col * gap, 0, row * gap);
                 currPos += currSpace;
             }
+
+            Debug.Log("Moving player: " + i + " to: " + currPos + " ...");
 
             player.transform.position = currPos;
 
@@ -164,6 +178,11 @@ public class RaceManager : NetworkBehaviour
         // }
     }
 
+    [ClientRpc]
+    private void StartCountdownClientRpc()
+    {
+        StartCoroutine(StartCountdown());
+    }
     // Possibly a couroutine?
     IEnumerator StartCountdown()
     {
@@ -184,7 +203,8 @@ public class RaceManager : NetworkBehaviour
         swControl.StartStopwatch();
     }
 
-    private void EndRace()
+    [ClientRpc]
+    private void EndRaceClientRpc()
     {
         Debug.Log("Finished Race");
         swControl.StopStopwatch();
@@ -209,7 +229,7 @@ public class RaceManager : NetworkBehaviour
     // On colliding with finish line
     private void OnTriggerEnter( Collider col ) 
     {
-        Debug.Log("Touched");
+
         PlayerStats playerStats = new PlayerStats();
 
         // Saves player object name
@@ -232,7 +252,7 @@ public class RaceManager : NetworkBehaviour
 
         if (raceResults.Count >= playerList.Count)
         {
-            EndRace();
+            EndRaceClientRpc();
         }
 
         // if (col.CompareTag("Player"))
@@ -266,7 +286,8 @@ public class RaceManager : NetworkBehaviour
         }
     }
 
-    private void UpdatePlayerListText() 
+    [ClientRpc]
+    private void UpdatePlayerListTextClientRpc() 
     {
         string playerListText = "";
 

@@ -29,5 +29,11 @@ public class ThirdPersonCam : MonoBehaviour
         {
             playerObj.forward = Vector3.Slerp(playerObj.forward, _inputDir.normalized, Time.deltaTime * rotationSpeed);
         }
+        
+
+        if(Input.GetKeyDown(KeyCode.Escape)) 
+        {
+            Cursor.lockState = CursorLockMode.Confined;
+        }
     }
 }
