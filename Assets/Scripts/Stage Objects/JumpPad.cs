@@ -28,7 +28,7 @@ public class JumpPad : MonoBehaviour
         {
             if (kvp.Value.ContactTime >= thresholdTime)
             {
-                Launch(kvp.Key, kvp.Value.ContactVelocity);
+                BenLaunch(kvp.Key, kvp.Value.ContactVelocity);
                 TargetsToClear.Add(kvp.Key);
             }
         }
@@ -53,13 +53,12 @@ public class JumpPad : MonoBehaviour
     {
 
     }
-
     void Launch(Rigidbody targetRB, Vector3 contactVelocity)
     {
         Vector3 launchVector = transform.up;
 
         Vector3 distortionVector = transform.forward * Vector3.Dot(contactVelocity, transform.forward) +
-                                   transform.right * Vector3.Dot(contactVelocity, transform.right);
+        transform.right * Vector3.Dot(contactVelocity, transform.right);
 
         launchVector = (launchVector + MaxDistortionWeight * distortionVector.normalized).normalized;
 
@@ -72,5 +71,20 @@ public class JumpPad : MonoBehaviour
             launchVector *= PlayerLaunchForceMultiplier;
 
         targetRB.AddForce(transform.up * LaunchForce, LaunchMode);
+    }
+
+    void BenLaunch(Rigidbody targetRB, Vector3 contactVelocity)
+    {
+        //Gives normal of jump pad face
+        Vector3 playerHorizontalVelocity = new Vector3(targetRB.velocity.x, 0, targetRB.velocity.z);
+
+        //Vertical Handling
+        targetRB.velocity = playerHorizontalVelocity; // Reset Vertical Velocity
+        targetRB.AddForce(Vector3.up * LaunchForce, LaunchMode); // Apply Force
+
+        //Horizontal Handling
+        Vector3 launchVector = transform.up;
+        launchVector = new Vector3(launchVector.x, 0, launchVector.z);
+        targetRB.velocity = launchVector * playerHorizontalVelocity.magnitude;
     }
 }
