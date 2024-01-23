@@ -40047,6 +40047,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 877566a29c10c8d4eb80bcb7362f7acb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  testPlayer: {fileID: 0}
   playerListUI: {fileID: 160621237}
   playerRankUI: {fileID: 1342544492}
   swControl: {fileID: 1512081382}
@@ -42224,7 +42225,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1569958392
 RectTransform:
   m_ObjectHideFlags: 0

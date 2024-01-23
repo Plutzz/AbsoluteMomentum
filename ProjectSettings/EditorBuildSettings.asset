@@ -26,10 +26,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Game Loop/Lobby.unity
     guid: d57a2160de47d3949b94fd7496a53379
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Game Loop/Racing Level.unity
     guid: ab98ed47b6c057747b1ed1908b14be4d
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/BenMapRaceTestScene.unity
     guid: 43908af3043a007468a84ff0ef8214f5
   m_configObjects: {}
