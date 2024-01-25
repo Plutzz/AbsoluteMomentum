@@ -2557,7 +2557,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1f6726bc35ec9d45b398b53f03c1170, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bounce: 20
+  LaunchDelay: 0.1
+  LaunchForce: 100
+  PlayerLaunchForceMultiplier: 5
+  LaunchMode: 1
+  ImpactVelocityScale: 0.05
+  MaxImpactVelocityScale: 2
+  MaxDistortionWeight: 0.25
 --- !u!1 &189569308
 GameObject:
   m_ObjectHideFlags: 0
