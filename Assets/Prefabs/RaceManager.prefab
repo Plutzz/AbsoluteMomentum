@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 932660557
+  GlobalObjectIdHash: 3694921263
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -73,7 +73,7 @@ MonoBehaviour:
   swControl: {fileID: 8642449265902519680}
   playerList: []
   playersPerRow: 4
-  gap: 1
+  gap: 0
   startingPoint: {fileID: 0}
   lineUpOnZ: 0
   countdown: 3

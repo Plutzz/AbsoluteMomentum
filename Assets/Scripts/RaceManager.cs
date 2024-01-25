@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class RaceManager : NetworkBehaviour
 {
@@ -29,6 +30,8 @@ public class RaceManager : NetworkBehaviour
     [Header("UI Elements")]
     public TextMeshProUGUI playerListUI;
     public TextMeshProUGUI playerRankUI;
+    public Button lobbyButton;
+    public Image resultsBackground;
 
 
     [SerializeField]
@@ -75,10 +78,12 @@ public class RaceManager : NetworkBehaviour
 
         Instance = this;
 
-        //playerList.Add(testPlayer);
+        playerList.Clear();
+
         Debug.Log("RaceManager Instance created");
         // DontDestroyOnLoad(gameObject);
     }
+
     public override void OnNetworkSpawn()
     {
         // Function works if in start instead of awake
@@ -222,6 +227,8 @@ public class RaceManager : NetworkBehaviour
             rank++;
         }
 
+        resultsBackground.gameObject.SetActive(true);
+        lobbyButton.gameObject.SetActive(true);
         playerRankUI.text = playerRankText;
 
     }

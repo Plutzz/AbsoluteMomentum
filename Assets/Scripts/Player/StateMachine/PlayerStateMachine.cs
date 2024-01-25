@@ -206,10 +206,19 @@ public class PlayerStateMachine : NetworkBehaviour
                 Debug.Log(gameObject + "Added to player list");
             }
         }
-
-
     }
-    
+
+    public override void OnNetworkDespawn()
+    {
+        playerInputActions.Player.Crouch.performed -= StartCrouch;
+        playerInputActions.Player.Crouch.canceled -= StopCrouch;
+        playerInputActions.Player.Sprint.performed -= StartSprint;
+        playerInputActions.Player.Sprint.canceled -= StopSprint;
+
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+
     private void Update()
     {
         if (!IsOwner) return;

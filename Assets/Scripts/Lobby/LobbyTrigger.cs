@@ -17,6 +17,7 @@ public class LobbyTrigger : NetworkBehaviour
             
             if(numPlayersInCollider.Value >= 1)
             {
+                collision.gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
                 NetworkManager.Singleton.SceneManager.LoadScene("BenMapRaceTestScene", UnityEngine.SceneManagement.LoadSceneMode.Single);
             }
         }

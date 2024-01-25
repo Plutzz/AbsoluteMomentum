@@ -16,6 +16,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject mainMenu;
     [SerializeField] private GameObject lobbyMenu;
     [SerializeField] private GameObject lobbyHud;
+    [SerializeField] private GameObject lobbyStartTrigger;
     [SerializeField] private TextMeshProUGUI lobbyCodeText;
     [SerializeField] private TMP_InputField joinCodeTextInput;
 
@@ -24,11 +25,21 @@ public class MainMenu : MonoBehaviour
     {
         await UnityServices.InitializeAsync();
 
-        AuthenticationService.Instance.SignedIn += () =>
+        if (AuthenticationService.Instance.IsSignedIn == false)
         {
-            Debug.Log("Signed in " + AuthenticationService.Instance.PlayerId);
-        };
-        await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            AuthenticationService.Instance.SignedIn += () =>
+            {
+                Debug.Log("Signed in " + AuthenticationService.Instance.PlayerId);
+            };
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        }
+        else
+        {
+            Debug.Log("Disconnected Client");
+            NetworkManager.Singleton.GetComponent<UnityTransport>().Shutdown(); 
+            NetworkManager.Singleton.DisconnectClient(NetworkManager.Singleton.LocalClientId);
+            NetworkManager.Singleton.Shutdown();
+        }
     }
 
     public void OpenLobbyMenu()

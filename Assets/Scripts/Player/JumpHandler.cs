@@ -1,6 +1,7 @@
 using Newtonsoft.Json.Bson;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -36,6 +37,10 @@ public class JumpHandler : NetworkBehaviour
 
         playerInputActions.Player.Jump.performed += JumpPressed;
         canJump = true;
+    }
+    public override void OnNetworkDespawn()
+    {
+        playerInputActions.Player.Jump.performed -= JumpPressed;
     }
 
 
