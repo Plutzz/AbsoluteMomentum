@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Unity.IO.LowLevel.Unsafe;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -55,10 +56,7 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
         Move();
         SpeedControl();
 
-        if (stateMachine.CollisionCheck())
-        {
-
-        }
+        stateMachine.CollisionCheck();
 
         base.DoFixedUpdateState();
     }
@@ -76,6 +74,25 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
     public override void ResetValues()
     {
         base.ResetValues();
+    }
+    public override void CheckTransitions()
+    {
+        // Moving => Airborne
+        if (!stateMachine.GroundedCheck() && !stateMachine.SlopeCheck())
+        {
+            if (stateMachine.jumpHandler.canJump)
+            {
+                stateMachine.jumpHandler.StartCoyoteTime();
+            }
+
+            stateMachine.ChangeState(stateMachine.AirborneState);
+        }
+        // Moving => Idle
+        else if (playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.zero && rb.velocity.magnitude < 3f)
+        {
+            stateMachine.ChangeState(stateMachine.IdleState);
+        }
+
     }
 
     #region Helper Methods
@@ -145,27 +162,15 @@ public class PlayerMovingMomentum : PlayerMovingSOBase
         {
             stateMachine.ChangeState(stateMachine.SlidingState);
         }
+        //Player does NOT slide
+        else
+        {
+            stateMachine.animator.SetTrigger("Crouch Walk");
+            rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
+        }
     }
 
-    public override void CheckTransitions()
-    {
-        // Moving => Airborne
-        if (!stateMachine.GroundedCheck() && !stateMachine.SlopeCheck())
-        {
-            if(stateMachine.jumpHandler.canJump)
-            {
-                stateMachine.jumpHandler.StartCoyoteTime();
-            }
 
-            stateMachine.ChangeState(stateMachine.AirborneState);
-        }
-        // Moving => Idle
-        else if (playerInputActions.Player.Movement.ReadValue<Vector2>() == Vector2.zero)
-        {
-            stateMachine.ChangeState(stateMachine.IdleState);
-        }
-      
-    }
 
     // Limits the speed of the player to speed
     private void SpeedControl()

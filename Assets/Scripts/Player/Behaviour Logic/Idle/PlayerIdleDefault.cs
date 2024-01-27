@@ -26,10 +26,6 @@ public class PlayerIdleDefault : PlayerIdleSOBase
 
     public override void DoUpdateState()
     {
-        if (playerInputActions.Player.Jump.ReadValue<float>() == 1f)
-        {
-            Jump();
-        }
         base.DoUpdateState();
     }
 
@@ -38,8 +34,17 @@ public class PlayerIdleDefault : PlayerIdleSOBase
         base.ResetValues();
     }
 
-    private void Jump()
+    public override void CheckTransitions()
     {
-        stateMachine.ChangeState(stateMachine.MovingState);
+        // Idle => Airborne
+        if (!stateMachine.SlopeCheck() && !stateMachine.GroundedCheck() && !stateMachine.crouching)
+        {
+            stateMachine.ChangeState(stateMachine.AirborneState);
+        }
+        // Idle => Moving
+        else if (playerInputActions.Player.Movement.ReadValue<Vector2>() != Vector2.zero)
+        {
+            stateMachine.ChangeState(stateMachine.MovingState);
+        }
     }
 }

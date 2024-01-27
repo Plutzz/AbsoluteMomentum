@@ -277,7 +277,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
     public void ChangeState(PlayerState newState)
     {
-        //Debug.Log("Changing to: " + newState);
+        Debug.Log("Changing to: " + newState);
         currentState.ExitLogic();
         previousState = currentState;
         currentState = newState;
@@ -349,7 +349,7 @@ public class PlayerStateMachine : NetworkBehaviour
             _angle = Vector3.Angle(rb.velocity, -wallRight.normal);
         }
 
-        Debug.Log(_angle < maxHardCollisionAngle);
+        //Debug.Log(_angle < maxHardCollisionAngle);
 
         return _angle < maxHardCollisionAngle;
     }
@@ -379,12 +379,6 @@ public class PlayerStateMachine : NetworkBehaviour
             animator.SetTrigger("Crouch Idle");
             rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
         }
-        else if (currentState == MovingState)
-        {
-            animator.SetTrigger("Crouch Walk");
-            rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
-        }
-
     }
 
     #endregion
@@ -496,7 +490,6 @@ public class PlayerStateMachine : NetworkBehaviour
         {
             animator.SetTrigger("Running");
         }
-
     }
 
     private void StopSprint(InputAction.CallbackContext context)
