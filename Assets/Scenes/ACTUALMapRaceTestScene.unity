@@ -29245,7 +29245,7 @@ GameObject:
   - component: {fileID: 1124606201}
   - component: {fileID: 1124606200}
   - component: {fileID: 1124606199}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44709,7 +44709,7 @@ GameObject:
   - component: {fileID: 1750729682}
   - component: {fileID: 1750729681}
   - component: {fileID: 1750729680}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PolyShape
   m_TagString: Untagged
   m_Icon: {fileID: 0}
