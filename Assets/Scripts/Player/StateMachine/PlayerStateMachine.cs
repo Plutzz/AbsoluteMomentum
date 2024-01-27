@@ -58,6 +58,8 @@ public class PlayerStateMachine : NetworkBehaviour
     public float desiredMoveSpeed;
     public float lastDesiredMoveSpeed;
 
+    public KinematicsVariables kinematicsVariables;
+
     [SerializeField] private float slopeIncreaseMultiplier;
     [SerializeField] public float maxSpeed = 100f;
 
@@ -68,6 +70,7 @@ public class PlayerStateMachine : NetworkBehaviour
     public Transform orientation;
     public Transform player;
     public Transform playerObj;
+    public Transform playerHitbox;
 
     [Header("Crouching Variables")]
     [SerializeField] private float crouchYScale = 0.5f;
@@ -245,11 +248,11 @@ public class PlayerStateMachine : NetworkBehaviour
 
         if (crouching)
         {
-            gameObject.transform.localScale = new Vector3(gameObject.transform.localScale.x, crouchYScale, gameObject.transform.localScale.z);
+            playerHitbox.localScale = new Vector3(playerHitbox.localScale.x, crouchYScale, gameObject.transform.localScale.z);
         }
         else
         {
-            gameObject.transform.localScale = new Vector3(gameObject.transform.localScale.x, startYScale, gameObject.transform.localScale.z);
+            playerHitbox.localScale = new Vector3(playerHitbox.localScale.x, startYScale, gameObject.transform.localScale.z);
         }
 
         currentState.UpdateState();
@@ -290,7 +293,7 @@ public class PlayerStateMachine : NetworkBehaviour
 
     public void ChangeState(PlayerState newState)
     {
-        //Debug.Log("Changing to: " + newState);
+        Debug.Log("Changing to: " + newState);
         currentState.ExitLogic();
         previousState = currentState;
         currentState = newState;
@@ -304,8 +307,8 @@ public class PlayerStateMachine : NetworkBehaviour
     // Ex: GroundedCheck
     public bool GroundedCheck()
     {
-        return Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f * gameObject.transform.localScale.y + 0.2f, groundLayer);
-        //return Physics.OverlapBox(GroundCheck.position, GroundCheckSize * 0.5f, Quaternion.identity, groundLayer).Length > 0;
+        Debug.DrawRay(transform.position, Vector3.down * playerHeight * 0.5f + Vector3.down * 0.2f);
+        return Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, groundLayer);
     }
 
     public bool WallCheck()
@@ -392,12 +395,6 @@ public class PlayerStateMachine : NetworkBehaviour
             animator.SetTrigger("Crouch Idle");
             rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
         }
-        else if (currentState == MovingState)
-        {
-            animator.SetTrigger("Crouch Walk");
-            rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
-        }
-
     }
 
     #endregion
@@ -437,6 +434,12 @@ public class PlayerStateMachine : NetworkBehaviour
         rb.useGravity = true;
         yield return new WaitForSeconds(_coyoteTime);
         ChangeState(AirborneState);
+    }
+
+    public void addHorizontalVelocity() { 
+    }
+
+    public void increaseAcceleration() { 
     }
 
     #endregion
@@ -488,6 +491,8 @@ public class PlayerStateMachine : NetworkBehaviour
         debugMenuList[3].text = "Vertical Speed: " + rb.velocity.y.ToString("F2");
         debugMenuList[4].text = "Horizontal Speed: " + new Vector2(rb.velocity.x, rb.velocity.z).magnitude.ToString("F2");
         debugMenuList[5].text = "Speed: " + rb.velocity.magnitude.ToString("F2");
+        debugMenuList[6].text = "Current Speed: " + kinematicsVariables.currentSpeed.ToString("F2");
+        debugMenuList[7].text = "Current Acceleration: " + kinematicsVariables.currentAcceleration.ToString("F2");
     }
 
     private void OnDrawGizmos()
@@ -505,7 +510,6 @@ public class PlayerStateMachine : NetworkBehaviour
         {
             animator.SetTrigger("Running");
         }
-
     }
 
     private void StopSprint(InputAction.CallbackContext context)
@@ -553,8 +557,14 @@ public class PlayerStateMachine : NetworkBehaviour
                 break;
 
             case PlayerWallrunState _:
-
-                animator.SetTrigger("Wallrun");
+                if(isWallLeft)
+                {
+                    animator.SetTrigger("WallrunLeft");
+                }
+                else
+                {
+                    animator.SetTrigger("WallrunRight");
+                }
                 break;
 
             case PlayerMovingState _:
@@ -576,4 +586,11 @@ public class PlayerStateMachine : NetworkBehaviour
         }
     }
     #endregion
+}
+
+[System.Serializable]
+public class KinematicsVariables {
+    //Horizontal only atm
+    public float currentSpeed;
+    public float currentAcceleration;
 }

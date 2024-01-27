@@ -2557,7 +2557,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1f6726bc35ec9d45b398b53f03c1170, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bounce: 20
+  LaunchDelay: 0.1
+  LaunchForce: 100
+  PlayerLaunchForceMultiplier: 5
+  LaunchMode: 1
+  ImpactVelocityScale: 0.05
+  MaxImpactVelocityScale: 2
+  MaxDistortionWeight: 0.25
 --- !u!1 &189569308
 GameObject:
   m_ObjectHideFlags: 0
@@ -4533,8 +4539,8 @@ Transform:
   m_GameObject: {fileID: 231648021}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_LocalPosition: {x: 0, y: -0.1, z: 0}
+  m_LocalScale: {x: 42.65, y: 42.65, z: 42.65}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}

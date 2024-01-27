@@ -69,10 +69,6 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
         {
             StopSlide();
         }
-        if (playerInputActions.Player.Jump.ReadValue<float>() == 1f)
-        {
-            Jump();
-        }
     }
 
     private void StartSlide()
@@ -218,12 +214,6 @@ public class PlayerSlidingDefault : PlayerSlidingSOBase
     private void StopSlide()
     {
         reachedMaxSpeed = false;
-        stateMachine.ChangeState(stateMachine.MovingState);
-    }
-    
-
-    private void Jump()
-    {
         stateMachine.ChangeState(stateMachine.MovingState);
     }
 
