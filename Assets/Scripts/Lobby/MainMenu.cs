@@ -35,10 +35,8 @@ public class MainMenu : MonoBehaviour
         }
         else
         {
-            Debug.Log("Disconnected Client");
-            NetworkManager.Singleton.GetComponent<UnityTransport>().Shutdown(); 
-            NetworkManager.Singleton.DisconnectClient(NetworkManager.Singleton.LocalClientId);
-            NetworkManager.Singleton.Shutdown();
+            mainMenu.transform.parent.gameObject.SetActive(false);
+            //LeaveRelay();
         }
     }
 
@@ -73,7 +71,7 @@ public class MainMenu : MonoBehaviour
 
     #region LobbyMethods
 
-    public async void HostLobby()
+    public async void HostRelay()
     {
         // Lobby Size (not including host)
         try
@@ -99,7 +97,7 @@ public class MainMenu : MonoBehaviour
         lobbyMenu.SetActive(false);
     }
 
-    public async void JoinLobby()
+    public async void JoinRelay()
     {
         try
         {
@@ -122,6 +120,14 @@ public class MainMenu : MonoBehaviour
 
         lobbyHud.SetActive(true);
         lobbyMenu.SetActive(false);
+    }
+
+    public void LeaveRelay()
+    {
+        Debug.Log("Disconnected Client");
+        NetworkManager.Singleton.GetComponent<UnityTransport>().Shutdown();
+        NetworkManager.Singleton.DisconnectClient(NetworkManager.Singleton.LocalClientId);
+        NetworkManager.Singleton.Shutdown();
     }
     #endregion
 

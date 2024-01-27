@@ -102,6 +102,12 @@ public class RaceManager : NetworkBehaviour
         }
     }
 
+    // Allows new race managers to work
+    public override void OnNetworkDespawn()
+    {
+        Instance = null;
+    }
+
     [ClientRpc]
     private void RepositionPlayersClientRpc() 
     {
@@ -137,7 +143,7 @@ public class RaceManager : NetworkBehaviour
             player.transform.position = currPos;
 
             // Disables player movement
-            player.GetComponent<PlayerStateMachine>().enabled = false;
+            player.GetComponent<PlayerStateMachine>().playerInputActions.Disable();
         }
 
         // Old version NOT USE
@@ -202,7 +208,7 @@ public class RaceManager : NetworkBehaviour
         for (int i = 0; i < playerList.Count; i++)
         {
             GameObject currPlayer = playerList[i];
-            currPlayer.GetComponent<PlayerStateMachine>().enabled = true;
+            currPlayer.GetComponent<PlayerStateMachine>().playerInputActions.Enable();
         }
 
         swControl.StartStopwatch();

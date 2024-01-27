@@ -6,7 +6,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-using Unity.VisualScripting;
+using Unity.Netcode.Components;
 using System;
 
 public class PlayerStateMachine : NetworkBehaviour
@@ -47,7 +47,9 @@ public class PlayerStateMachine : NetworkBehaviour
     public Rigidbody rb { get; private set; }
     public JumpHandler jumpHandler { get; private set; }
 
-    public Animator animator { get; private set; }
+    public NetworkAnimator animator { get; private set; }
+
+    [SerializeField] private Vector3 startPos;
 
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask wallLayer;
@@ -170,6 +172,11 @@ public class PlayerStateMachine : NetworkBehaviour
             RaceManager.Instance.playerList.Add(gameObject);
             Debug.Log(gameObject + "Added to player list");
         }
+
+        if(scene.name == "Lobby")
+        {
+            transform.position = startPos;
+        }
     }
 
     public override void OnNetworkSpawn()
@@ -177,8 +184,10 @@ public class PlayerStateMachine : NetworkBehaviour
         // Set up client side objects (Camera, debug menu)
         if (IsOwner)
         {
+            transform.position = startPos;
+
             jumpHandler = GetComponent<JumpHandler>();
-            animator = GetComponentInChildren<Animator>();
+            animator = GetComponentInChildren<NetworkAnimator>();
 
             CinemachineFreeLook playerCamera = Instantiate(playerCameraPrefab.GetComponent<CinemachineFreeLook>(), transform);
             playerCamera.m_LookAt = transform;
