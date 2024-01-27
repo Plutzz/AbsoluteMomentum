@@ -70,6 +70,7 @@ public class PlayerStateMachine : NetworkBehaviour
     public Transform orientation;
     public Transform player;
     public Transform playerObj;
+    public Transform playerHitbox;
 
     [Header("Crouching Variables")]
     [SerializeField] private float crouchYScale = 0.5f;
@@ -231,11 +232,11 @@ public class PlayerStateMachine : NetworkBehaviour
 
         if (crouching)
         {
-            gameObject.transform.localScale = new Vector3(gameObject.transform.localScale.x, crouchYScale, gameObject.transform.localScale.z);
+            playerHitbox.localScale = new Vector3(playerHitbox.localScale.x, crouchYScale, gameObject.transform.localScale.z);
         }
         else
         {
-            gameObject.transform.localScale = new Vector3(gameObject.transform.localScale.x, startYScale, gameObject.transform.localScale.z);
+            playerHitbox.localScale = new Vector3(playerHitbox.localScale.x, startYScale, gameObject.transform.localScale.z);
         }
 
         currentState.UpdateState();
@@ -543,8 +544,14 @@ public class PlayerStateMachine : NetworkBehaviour
                 break;
 
             case PlayerWallrunState _:
-
-                animator.SetTrigger("Wallrun");
+                if(isWallLeft)
+                {
+                    animator.SetTrigger("WallrunLeft");
+                }
+                else
+                {
+                    animator.SetTrigger("WallrunRight");
+                }
                 break;
 
             case PlayerMovingState _:
