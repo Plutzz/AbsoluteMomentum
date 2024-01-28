@@ -40888,9 +40888,9 @@ MonoBehaviour:
   swControl: {fileID: 1512081382}
   playerList: []
   playersPerRow: 1
-  gap: 0
+  gap: 3
   startingPoint: {fileID: 361294461}
-  lineUpOnZ: 0
+  lineUpOnZ: 1
   countdown: 3
 --- !u!114 &1512081384
 MonoBehaviour:
@@ -40908,7 +40908,7 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
+  SceneMigrationSynchronization: 0
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1

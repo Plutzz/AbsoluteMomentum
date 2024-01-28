@@ -8,6 +8,9 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using Unity.Netcode.Components;
 using System;
+using Unity.Multiplayer.Samples.Utilities.ClientAuthority;
+using System.Text;
+using UnityEngine.UIElements;
 
 public class PlayerStateMachine : NetworkBehaviour
 {
@@ -218,6 +221,15 @@ public class PlayerStateMachine : NetworkBehaviour
                 Debug.Log(gameObject + "Added to player list");
             }
         }
+    }
+
+    public void Start()
+    {
+        TeleportPlayer(startPos);
+    }
+    public void TeleportPlayer(Vector3 position)
+    {
+        transform.position = startPos;
     }
 
     public override void OnNetworkDespawn()

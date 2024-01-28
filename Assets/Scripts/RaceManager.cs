@@ -4,6 +4,8 @@ using Unity.Netcode;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using Unity.Services.Lobbies.Models;
+using Unity.Multiplayer.Samples.Utilities.ClientAuthority;
 
 public class RaceManager : NetworkBehaviour
 {
@@ -94,7 +96,7 @@ public class RaceManager : NetworkBehaviour
             // Network objects are not players, players are a separate list
             // networkObjList = FindObjectsOfType<NetworkObject>();
 
-            RepositionPlayersClientRpc();
+            RepositionPlayers();
 
             UpdatePlayerListTextClientRpc();
 
@@ -108,20 +110,19 @@ public class RaceManager : NetworkBehaviour
         Instance = null;
     }
 
-    [ClientRpc]
-    private void RepositionPlayersClientRpc() 
+    private void RepositionPlayers() 
     {
 
         int row = 0;
-        int col = 0;
 
-        Debug.Log("Player List Size: " + playerList.Count);
+        Debug.Log("Player List Size: " + NetworkManager.Singleton.ConnectedClientsIds.Count);
 
-        for (int i = 0; i < playerList.Count; i++)
+        for (int i = 0; i < NetworkManager.Singleton.ConnectedClientsIds.Count; i++)
         {
-           
 
-            GameObject player = playerList[i];
+            Debug.Log("Moving Player " + i + "...");
+
+            var player = NetworkManager.Singleton.ConnectedClientsIds[i];
 
             // Vector3 currPos = startingPlayer;
             Vector3 currPos = startingPoint.position;
@@ -129,21 +130,29 @@ public class RaceManager : NetworkBehaviour
             // Lines up players on X or Z axis
             if (lineUpOnZ)
             {
-                Vector3 currSpace = new Vector3(row * gap, 0, col * gap);
+                Vector3 currSpace = new Vector3(row * gap, 0, 0);
                 currPos += currSpace;
             }
             else 
             {
-                Vector3 currSpace = new Vector3(col * gap, 0, row * gap);
+                Vector3 currSpace = new Vector3(0, 0, row * gap);
                 currPos += currSpace;
             }
+            row++;
 
-            Debug.Log("Moving player: " + i + " to: " + currPos + " ...");
+            //Debug.Log("Moving player: " + i + " to: " + currPos + " ...");
 
-            player.transform.position = currPos;
 
-            // Disables player movement
-            player.GetComponent<PlayerStateMachine>().playerInputActions.Disable();
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[]{player}
+                }
+            };
+
+            teleportPlayersClientRpc(currPos, clientRpcParams);
+
         }
 
         // Old version NOT USE
@@ -187,6 +196,19 @@ public class RaceManager : NetworkBehaviour
         //     }
             
         // }
+    }
+
+    [ClientRpc]
+    private void teleportPlayersClientRpc(Vector3 position, ClientRpcParams clientRpcParams)
+    {
+        Transform player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<Transform>();
+
+        Debug.Log("Teleported Player to : " + position);
+
+        // Disables player movement
+        player.GetComponent<PlayerStateMachine>().playerInputActions.Disable();
+        player.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        player.GetComponent<ClientNetworkTransform>().Teleport(position, Quaternion.identity, transform.localScale);
     }
 
     [ClientRpc]
