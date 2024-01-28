@@ -32,6 +32,9 @@
         },
         {
             "m_Id": "e2603469a4234a1aa8842dc2dea491dd"
+        },
+        {
+            "m_Id": "c5371e76c7bd4444ae443316625b03fd"
         }
     ],
     "m_Keywords": [],
@@ -131,6 +134,12 @@
         },
         {
             "m_Id": "4a57371635a8429c844c9a2b65fc7d9f"
+        },
+        {
+            "m_Id": "ae9e1ead166444fe9554f4761c24db86"
+        },
+        {
+            "m_Id": "23513c3c0b074395a0d175c5b189fd83"
         }
     ],
     "m_GroupDatas": [
@@ -174,6 +183,20 @@
         {
             "m_OutputSlot": {
                 "m_Node": {
+                    "m_Id": "23513c3c0b074395a0d175c5b189fd83"
+                },
+                "m_SlotId": 0
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "ae9e1ead166444fe9554f4761c24db86"
+                },
+                "m_SlotId": 1
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
                     "m_Id": "31b3546d407d4a389d1e02ca248fc4b2"
                 },
                 "m_SlotId": 2
@@ -197,6 +220,20 @@
                     "m_Id": "ff4533b5b6fc4f518e60171854570c1f"
                 },
                 "m_SlotId": 1
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "4a57371635a8429c844c9a2b65fc7d9f"
+                },
+                "m_SlotId": 2
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "ae9e1ead166444fe9554f4761c24db86"
+                },
+                "m_SlotId": 0
             }
         },
         {
@@ -550,7 +587,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector4MaterialSlot",
     "m_ObjectId": "023871357a20402880f8588d2727f17c",
     "m_Id": 0,
-    "m_DisplayName": "Deep Water",
+    "m_DisplayName": "DeepWater",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -634,6 +671,54 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.DynamicValueMaterialSlot",
+    "m_ObjectId": "0929091d5b19478da477bf61324fa75f",
+    "m_Id": 1,
+    "m_DisplayName": "B",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "B",
+    "m_StageCapability": 3,
+    "m_Value": {
+        "e00": 2.0,
+        "e01": 2.0,
+        "e02": 2.0,
+        "e03": 2.0,
+        "e10": 2.0,
+        "e11": 2.0,
+        "e12": 2.0,
+        "e13": 2.0,
+        "e20": 2.0,
+        "e21": 2.0,
+        "e22": 2.0,
+        "e23": 2.0,
+        "e30": 2.0,
+        "e31": 2.0,
+        "e32": 2.0,
+        "e33": 2.0
+    },
+    "m_DefaultValue": {
+        "e00": 1.0,
+        "e01": 0.0,
+        "e02": 0.0,
+        "e03": 0.0,
+        "e10": 0.0,
+        "e11": 1.0,
+        "e12": 0.0,
+        "e13": 0.0,
+        "e20": 0.0,
+        "e21": 0.0,
+        "e22": 1.0,
+        "e23": 0.0,
+        "e30": 0.0,
+        "e31": 0.0,
+        "e32": 0.0,
+        "e33": 1.0
+    }
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.PropertyNode",
     "m_ObjectId": "0a9bdb340d0e436bbe1fb46e962d6eb9",
     "m_Group": {
@@ -675,10 +760,10 @@
     "m_Guid": {
         "m_GuidSerialized": "e1667c07-bc3c-43c3-8265-0b6245ee8474"
     },
-    "m_Name": "Refraction Strength",
+    "m_Name": "RefractionStrength",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Refraction Strength",
-    "m_DefaultReferenceName": "_Refraction_Strength",
+    "m_RefNameGeneratedByDisplayName": "RefractionStrength",
+    "m_DefaultReferenceName": "_RefractionStrength",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -718,10 +803,10 @@
     "m_Guid": {
         "m_GuidSerialized": "4bfeabac-8e6c-4dc8-94f4-29a422a5ab19"
     },
-    "m_Name": "Foam Cutoff",
+    "m_Name": "FoamCutoff",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Foam Cutoff",
-    "m_DefaultReferenceName": "_Foam_Cutoff",
+    "m_RefNameGeneratedByDisplayName": "FoamCutoff",
+    "m_DefaultReferenceName": "_FoamCutoff",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -802,6 +887,67 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector4MaterialSlot",
+    "m_ObjectId": "205108d81d7442dbb7a05efea379eb7b",
+    "m_Id": 0,
+    "m_DisplayName": "FoamColor",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Out",
+    "m_StageCapability": 3,
+    "m_Value": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+    },
+    "m_DefaultValue": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+    },
+    "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.PropertyNode",
+    "m_ObjectId": "23513c3c0b074395a0d175c5b189fd83",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "Property",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": -700.0,
+            "y": 1199.0,
+            "width": 134.0,
+            "height": 34.0
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "205108d81d7442dbb7a05efea379eb7b"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_DismissedVersion": 0,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_Property": {
+        "m_Id": "c5371e76c7bd4444ae443316625b03fd"
+    }
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.CategoryData",
     "m_ObjectId": "2522e7fe2792440285f9faef81ff26c1",
     "m_Name": "",
@@ -835,6 +981,9 @@
         },
         {
             "m_Id": "e2603469a4234a1aa8842dc2dea491dd"
+        },
+        {
+            "m_Id": "c5371e76c7bd4444ae443316625b03fd"
         }
     ]
 }
@@ -909,10 +1058,10 @@
     "m_Guid": {
         "m_GuidSerialized": "6a33955f-3734-43f2-a3b3-c6c8e60f0931"
     },
-    "m_Name": "Water Depth",
+    "m_Name": "WaterDepth",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Water Depth",
-    "m_DefaultReferenceName": "_Water_Depth",
+    "m_RefNameGeneratedByDisplayName": "WaterDepth",
+    "m_DefaultReferenceName": "_WaterDepth",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -1031,7 +1180,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "2fa155f0dad24b10ab4b63712a405805",
     "m_Id": 0,
-    "m_DisplayName": "Foam Amount",
+    "m_DisplayName": "FoamAmount",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -1112,10 +1261,10 @@
     "m_Guid": {
         "m_GuidSerialized": "5510646f-2705-4937-96e6-d44109f89230"
     },
-    "m_Name": "Refraction Scale",
+    "m_Name": "RefractionScale",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Refraction Scale",
-    "m_DefaultReferenceName": "_Refraction_Scale",
+    "m_RefNameGeneratedByDisplayName": "RefractionScale",
+    "m_DefaultReferenceName": "_RefractionScale",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -1247,7 +1396,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "3e49375cd7ba4da2aa0c5b352b88c8f5",
     "m_Id": 0,
-    "m_DisplayName": "Water Depth",
+    "m_DisplayName": "WaterDepth",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -1325,7 +1474,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "4e7852f378404dd2a6a062881fc95f78",
     "m_Id": 0,
-    "m_DisplayName": "Refraction Speed",
+    "m_DisplayName": "RefractionSpeed",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -1566,10 +1715,10 @@
     "m_Guid": {
         "m_GuidSerialized": "2fbc42dd-95a8-422f-bda2-82e189b3626f"
     },
-    "m_Name": "Shallow Water",
+    "m_Name": "ShallowWater",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Shallow Water",
-    "m_DefaultReferenceName": "_Shallow_Water",
+    "m_RefNameGeneratedByDisplayName": "ShallowWater",
+    "m_DefaultReferenceName": "_ShallowWater",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -1594,7 +1743,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "60f75e3db9634fc09b567f88d1721dcc",
     "m_Id": 0,
-    "m_DisplayName": "Foam Scale",
+    "m_DisplayName": "FoamScale",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -1643,7 +1792,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "67e1b942d8d8429aae5d87739e48d49a",
     "m_Id": 0,
-    "m_DisplayName": "Foam Speed",
+    "m_DisplayName": "FoamSpeed",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -1697,7 +1846,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "6f89cc3694c84e3fa80006e13cce1822",
     "m_Id": 0,
-    "m_DisplayName": "Refraction Strength",
+    "m_DisplayName": "RefractionStrength",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -1962,10 +2111,10 @@
     "m_Guid": {
         "m_GuidSerialized": "4f0efa5c-fc5e-4f9d-a70e-c01d5e25cef5"
     },
-    "m_Name": "Foam Amount",
+    "m_Name": "FoamAmount",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Foam Amount",
-    "m_DefaultReferenceName": "_Foam_Amount",
+    "m_RefNameGeneratedByDisplayName": "FoamAmount",
+    "m_DefaultReferenceName": "_FoamAmount",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -2334,6 +2483,54 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.DynamicValueMaterialSlot",
+    "m_ObjectId": "9dab8bc5c7f54bb5b24f3e53e2a88d68",
+    "m_Id": 2,
+    "m_DisplayName": "Out",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Out",
+    "m_StageCapability": 3,
+    "m_Value": {
+        "e00": 0.0,
+        "e01": 0.0,
+        "e02": 0.0,
+        "e03": 0.0,
+        "e10": 0.0,
+        "e11": 0.0,
+        "e12": 0.0,
+        "e13": 0.0,
+        "e20": 0.0,
+        "e21": 0.0,
+        "e22": 0.0,
+        "e23": 0.0,
+        "e30": 0.0,
+        "e31": 0.0,
+        "e32": 0.0,
+        "e33": 0.0
+    },
+    "m_DefaultValue": {
+        "e00": 1.0,
+        "e01": 0.0,
+        "e02": 0.0,
+        "e03": 0.0,
+        "e10": 0.0,
+        "e11": 1.0,
+        "e12": 0.0,
+        "e13": 0.0,
+        "e20": 0.0,
+        "e21": 0.0,
+        "e22": 1.0,
+        "e23": 0.0,
+        "e30": 0.0,
+        "e31": 0.0,
+        "e32": 0.0,
+        "e33": 1.0
+    }
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.BlockNode",
     "m_ObjectId": "9dc911feee1c489e9286cfe21fc47866",
     "m_Group": {
@@ -2373,10 +2570,10 @@
     "m_Guid": {
         "m_GuidSerialized": "7b449300-adae-48bc-9abf-b6f620d98cbe"
     },
-    "m_Name": "Foam Speed",
+    "m_Name": "FoamSpeed",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Foam Speed",
-    "m_DefaultReferenceName": "_Foam_Speed",
+    "m_RefNameGeneratedByDisplayName": "FoamSpeed",
+    "m_DefaultReferenceName": "_FoamSpeed",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -2399,7 +2596,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "a12919f1f4d24c8c8713501ad4c57d7b",
     "m_Id": 0,
-    "m_DisplayName": "Foam Cutoff",
+    "m_DisplayName": "FoamCutoff",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -2521,6 +2718,49 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.MultiplyNode",
+    "m_ObjectId": "ae9e1ead166444fe9554f4761c24db86",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "Multiply",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": -550.0,
+            "y": 897.0000610351563,
+            "width": 208.0,
+            "height": 301.99993896484377
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "bff9e475985648b5911ab1ab8cf435f2"
+        },
+        {
+            "m_Id": "0929091d5b19478da477bf61324fa75f"
+        },
+        {
+            "m_Id": "9dab8bc5c7f54bb5b24f3e53e2a88d68"
+        }
+    ],
+    "synonyms": [
+        "multiplication",
+        "times",
+        "x"
+    ],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_DismissedVersion": 0,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    }
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "b228d112db3f43e59eb5115e96569a65",
     "m_Id": 0,
@@ -2577,7 +2817,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "b4c96c9f0bdf4a8395d6fe30eb516cab",
     "m_Id": 0,
-    "m_DisplayName": "Refraction Scale",
+    "m_DisplayName": "RefractionScale",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -2628,7 +2868,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector4MaterialSlot",
     "m_ObjectId": "b5f66fc708ac4810893f4fab59b3772b",
     "m_Id": 0,
-    "m_DisplayName": "Shallow Water",
+    "m_DisplayName": "ShallowWater",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -2655,10 +2895,10 @@
     "m_Guid": {
         "m_GuidSerialized": "e55c0b93-a7d0-414b-9d80-72150956550c"
     },
-    "m_Name": "Deep Water",
+    "m_Name": "DeepWater",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Deep Water",
-    "m_DefaultReferenceName": "_Deep_Water",
+    "m_RefNameGeneratedByDisplayName": "DeepWater",
+    "m_DefaultReferenceName": "_DeepWater",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -2699,6 +2939,54 @@
         "y": 0.0,
         "z": 0.0,
         "w": 0.0
+    }
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.DynamicValueMaterialSlot",
+    "m_ObjectId": "bff9e475985648b5911ab1ab8cf435f2",
+    "m_Id": 0,
+    "m_DisplayName": "A",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "A",
+    "m_StageCapability": 3,
+    "m_Value": {
+        "e00": 0.0,
+        "e01": 0.0,
+        "e02": 0.0,
+        "e03": 0.0,
+        "e10": 0.0,
+        "e11": 0.0,
+        "e12": 0.0,
+        "e13": 0.0,
+        "e20": 0.0,
+        "e21": 0.0,
+        "e22": 0.0,
+        "e23": 0.0,
+        "e30": 0.0,
+        "e31": 0.0,
+        "e32": 0.0,
+        "e33": 0.0
+    },
+    "m_DefaultValue": {
+        "e00": 1.0,
+        "e01": 0.0,
+        "e02": 0.0,
+        "e03": 0.0,
+        "e10": 0.0,
+        "e11": 1.0,
+        "e12": 0.0,
+        "e13": 0.0,
+        "e20": 0.0,
+        "e21": 0.0,
+        "e22": 1.0,
+        "e23": 0.0,
+        "e30": 0.0,
+        "e31": 0.0,
+        "e32": 0.0,
+        "e33": 1.0
     }
 }
 
@@ -2747,6 +3035,36 @@
         "z": 0.0
     },
     "m_Labels": []
+}
+
+{
+    "m_SGVersion": 3,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.ColorShaderProperty",
+    "m_ObjectId": "c5371e76c7bd4444ae443316625b03fd",
+    "m_Guid": {
+        "m_GuidSerialized": "8b399717-a8dd-46ed-a5be-43b64fe219d5"
+    },
+    "m_Name": "FoamColor",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "FoamColor",
+    "m_DefaultReferenceName": "_FoamColor",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_DismissedVersion": 0,
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": {
+        "r": 0.0,
+        "g": 0.0,
+        "b": 0.0,
+        "a": 0.0
+    },
+    "isMainColor": false,
+    "m_ColorMode": 0
 }
 
 {
@@ -2871,10 +3189,10 @@
     "m_Guid": {
         "m_GuidSerialized": "bf9b0c68-c23c-45bc-91ac-9db3a9baf8ec"
     },
-    "m_Name": "Refraction Speed",
+    "m_Name": "RefractionSpeed",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Refraction Speed",
-    "m_DefaultReferenceName": "_Refraction_Speed",
+    "m_RefNameGeneratedByDisplayName": "RefractionSpeed",
+    "m_DefaultReferenceName": "_RefractionSpeed",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -2899,10 +3217,10 @@
     "m_Guid": {
         "m_GuidSerialized": "e1d88102-9f32-456c-88cc-5e5d4c82275d"
     },
-    "m_Name": "Foam Scale",
+    "m_Name": "FoamScale",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Foam Scale",
-    "m_DefaultReferenceName": "_Foam_Scale",
+    "m_RefNameGeneratedByDisplayName": "FoamScale",
+    "m_DefaultReferenceName": "_FoamScale",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
