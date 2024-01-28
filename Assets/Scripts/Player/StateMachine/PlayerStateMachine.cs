@@ -170,6 +170,8 @@ public class PlayerStateMachine : NetworkBehaviour
     {
         InitDebugMenu();
 
+        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+
         if (RaceManager.Instance != null)
         {
             RaceManager.Instance.playerList.Add(gameObject);

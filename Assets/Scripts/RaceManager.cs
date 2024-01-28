@@ -32,6 +32,7 @@ public class RaceManager : NetworkBehaviour
     [Header("UI Elements")]
     public TextMeshProUGUI playerListUI;
     public TextMeshProUGUI playerRankUI;
+    public TextMeshProUGUI countdownText;
     public Button lobbyButton;
     public Image resultsBackground;
 
@@ -223,7 +224,14 @@ public class RaceManager : NetworkBehaviour
         // Unfreeze players
         // Start timer
 
-        yield return new WaitForSeconds(countdown);
+        yield return new WaitForSeconds(countdown/3);
+        countdownText.text = "2";
+
+        yield return new WaitForSeconds(countdown / 3);
+        countdownText.text = "1";        
+        
+        yield return new WaitForSeconds(countdown / 3);
+        countdownText.text = "GO!";
 
         Debug.Log("Timer has finished");
 
@@ -234,6 +242,9 @@ public class RaceManager : NetworkBehaviour
         }
 
         swControl.StartStopwatch();
+
+        yield return new WaitForSeconds(countdown / 3);
+        countdownText.gameObject.SetActive(false);
     }
 
     [ClientRpc]
@@ -254,11 +265,16 @@ public class RaceManager : NetworkBehaviour
 
             rank++;
         }
+        Cursor.lockState = CursorLockMode.Confined;
 
         resultsBackground.gameObject.SetActive(true);
-        lobbyButton.gameObject.SetActive(true);
+
         playerRankUI.text = playerRankText;
 
+        if(IsHost)
+        {
+            lobbyButton.gameObject.SetActive(true);
+        }
     }
 
     // On colliding with finish line

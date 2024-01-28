@@ -31,9 +31,9 @@ public class ThirdPersonCam : MonoBehaviour
         }
         
 
-        if(Input.GetKeyDown(KeyCode.Escape)) 
-        {
-            Cursor.lockState = CursorLockMode.Confined;
-        }
+        //if(Input.GetKeyDown(KeyCode.Escape)) 
+        //{
+        //    Cursor.lockState = CursorLockMode.Confined;
+        //}
     }
 }

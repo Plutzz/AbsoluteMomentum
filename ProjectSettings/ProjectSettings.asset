@@ -734,7 +734,8 @@ PlayerSettings:
   webGLMemoryGeometricGrowthCap: 96
   webGLPowerPreference: 2
   scriptingDefineSymbols:
-    Standalone: MOREMOUNTAINS_NICEVIBRATIONS_INSTALLED
+    Server: PROBUILDER_EXPERIMENTAL_FEATURES
+    Standalone: MOREMOUNTAINS_NICEVIBRATIONS_INSTALLED;PROBUILDER_EXPERIMENTAL_FEATURES
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend: {}
