@@ -52,6 +52,11 @@ Material:
     m_Floats:
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _Water_Depth: 5
-    m_Colors: []
+    - _Refraction_Scale: 0.5
+    - _Refraction_Speed: 0.5
+    - _Refraction_Strength: 0.01
+    - _Water_Depth: 6
+    m_Colors:
+    - _Deep_Water: {r: 0.31305623, g: 0.44784877, b: 0.990566, a: 0.47058824}
+    - _Shallow_Water: {r: 0.5613208, g: 0.96886796, b: 1, a: 0.47058824}
   m_BuildTextureStacks: []
