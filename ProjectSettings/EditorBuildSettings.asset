@@ -33,6 +33,6 @@ EditorBuildSettings:
     path: Assets/Scenes/City Level.unity
     guid: 04c4937b041baa14ba0decddc893dd31
   - enabled: 1
-    path: Assets/Scenes/BenMapRaceTestScene.unity
+    path: Assets/Scenes/Game Loop/BenMapRaceTestScene.unity
     guid: 43908af3043a007468a84ff0ef8214f5
   m_configObjects: {}
