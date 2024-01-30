@@ -36,6 +36,14 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _Refraction2D:
+        m_Texture: {fileID: 2800000, guid: 2e93e1c59118dc54d83d2f77be1382f2, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RefractionNormal:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -50,24 +58,27 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _FoamAmount: 8
-    - _FoamCutoff: 0.9
-    - _FoamScale: 0.1
-    - _FoamSpeed: 0.5
+    - _Absorbtion_Coefficient: 0
+    - _FoamAlpha: 255
+    - _FoamAmount: 3
+    - _FoamCutoff: 1
+    - _FoamScale: 1
+    - _FoamSpeed: 1
+    - _HeightFrequency: 0.05
+    - _NormalStrength: 1
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _RefractionScale: 0.05
-    - _RefractionSpeed: 0.4
-    - _RefractionStrength: 0.2
-    - _Refraction_Scale: 0.5
-    - _Refraction_Speed: 0.5
-    - _Refraction_Strength: 0.01
+    - _RefractionScale: 6
+    - _RefractionSpeed: 0.1
+    - _RefractionStrength: 2
+    - _Smoothness: 0.357
     - _WaterDepth: 10
-    - _Water_Depth: 6
+    - _WaveAmplitude: 0.2
+    - _WaveSpeed: 2
     m_Colors:
-    - _DeepWater: {r: 0.24056602, g: 0.5416422, b: 1, a: 0.78431374}
-    - _Deep_Water: {r: 0.31305623, g: 0.44784877, b: 0.990566, a: 0.47058824}
-    - _FoamColor: {r: 1, g: 1, b: 1, a: 1}
-    - _ShallowWater: {r: 0.5707547, g: 0.9647195, b: 1, a: 0.78431374}
-    - _Shallow_Water: {r: 0.5613208, g: 0.96886796, b: 1, a: 0.47058824}
+    - _DeepWater: {r: 0.33333334, g: 0.84313726, b: 1, a: 0.69803923}
+    - _FoamColor: {r: 1, g: 0.9947314, b: 0.972, a: 1}
+    - _Foam_Alpha: {r: 1, g: 1, b: 1, a: 0.47058824}
+    - _ShallowWater: {r: 0.09019608, g: 0.7058824, b: 1, a: 0.69803923}
+    - _Water_Color: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
