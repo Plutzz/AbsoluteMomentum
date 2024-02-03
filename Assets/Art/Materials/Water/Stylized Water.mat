@@ -73,11 +73,11 @@ Material:
     - _RefractionSpeed: 0.1
     - _RefractionStrength: 1.48
     - _SingleDirection: 0
-    - _Smoothness: 0.133
+    - _Smoothness: 0
     - _UseNormalTexture: 0
     - _WaterDepth: 10
     - _WaveAmplitude: 0.2
-    - _WaveScale: 0.56
+    - _WaveScale: 1
     - _WaveSpeed: 2
     - _isOneDirection: 0
     m_Colors:
