@@ -139,8 +139,8 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 0.5896226, g: 1, b: 0.65952694, a: 1}
-    - _Color: {r: 0.5896226, g: 1, b: 0.65952694, a: 1}
+    - _BaseColor: {r: 0.38729078, g: 0.9547169, b: 0.4845639, a: 1}
+    - _Color: {r: 0.38729078, g: 0.9547169, b: 0.4845639, a: 1}
     - _DeepWater: {r: 1, g: 1, b: 1, a: 0.78431374}
     - _Deep_Water: {r: 0.31305623, g: 0.44784877, b: 0.990566, a: 0.47058824}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

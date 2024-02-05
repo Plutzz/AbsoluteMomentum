@@ -65,7 +65,7 @@ Material:
     - _FoamScale: 1
     - _FoamSpeed: 1
     - _HeightFrequency: 0.05
-    - _NoiseScale: 0.2
+    - _NoiseScale: 0
     - _NormalStrength: 1
     - _QueueControl: 0
     - _QueueOffset: 0
@@ -77,8 +77,8 @@ Material:
     - _UseNormalTexture: 0
     - _WaterDepth: 10
     - _WaveAmplitude: 0.2
-    - _WaveScale: 1
-    - _WaveSpeed: 2
+    - _WaveScale: 0
+    - _WaveSpeed: 0
     - _isOneDirection: 0
     m_Colors:
     - _DeepWater: {r: 0.33333334, g: 0.84313726, b: 1, a: 0.69803923}
