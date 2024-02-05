@@ -11,6 +11,7 @@ using System;
 using Unity.Multiplayer.Samples.Utilities.ClientAuthority;
 using System.Text;
 using UnityEngine.UIElements;
+using UnityEditor.Animations;
 
 public class PlayerStateMachine : NetworkBehaviour
 {
@@ -104,6 +105,27 @@ public class PlayerStateMachine : NetworkBehaviour
     [SerializeField] private float slideCooldown = 0.5f;
     [HideInInspector] public float timeOfLastSlide;
     public bool canSlide;
+
+    [Header("Switch Characters")]
+    [SerializeField] private Character[] characters;
+    [SerializeField] private CharacterNames currentCharacter;
+
+    [Serializable]
+    public struct Character
+    {
+        [SerializeField] public CharacterNames name;
+        [SerializeField] public Mesh characterMesh;
+        [SerializeField] public AnimatorOverrideController animatorController;
+        [SerializeField] public Material characterMaterial;
+        [SerializeField] public Avatar characterAvatar;
+
+    }
+    [Serializable]
+    public enum CharacterNames
+    {
+        Baku,
+        Sangeo
+    };
 
     #endregion
 
@@ -260,6 +282,18 @@ public class PlayerStateMachine : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.T))
         {
             TeleportPlayer();
+        }
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            if(currentCharacter == CharacterNames.Baku)
+            {
+                currentCharacter = CharacterNames.Sangeo;
+                // Switch character objects
+
+                var character = characters[(int)CharacterNames.Sangeo];
+                character.characterMesh;
+            }
         }
 
 

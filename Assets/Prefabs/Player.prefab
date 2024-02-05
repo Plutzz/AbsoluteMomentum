@@ -992,7 +992,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -382652638819485698, guid: df3ab5a792a93364c82ecfc371fb8969, type: 3}
+  - {fileID: 7860002334081704449, guid: 63d37396056e70d44976f5631340cf68, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1017,7 +1017,7 @@ SkinnedMeshRenderer:
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
   m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: 8996641751091383843, guid: df3ab5a792a93364c82ecfc371fb8969, type: 3}
+  m_Mesh: {fileID: -552449423649928739, guid: 63d37396056e70d44976f5631340cf68, type: 3}
   m_Bones:
   - {fileID: 1307478015682147913}
   - {fileID: 3479810437288723664}
@@ -1384,6 +1384,17 @@ MonoBehaviour:
   slideCooldown: 1
   timeOfLastSlide: 0
   canSlide: 0
+  characters:
+  - name: 0
+    characterMesh: {fileID: -552449423649928739, guid: 63d37396056e70d44976f5631340cf68, type: 3}
+    animatorController: {fileID: 22100000, guid: 50218f823216c95478a458ee9ab689ce, type: 2}
+    characterMaterial: {fileID: 7860002334081704449, guid: 63d37396056e70d44976f5631340cf68, type: 3}
+    characterAvatar: {fileID: 9000000, guid: 63d37396056e70d44976f5631340cf68, type: 3}
+  - name: 1
+    characterMesh: {fileID: 8996641751091383843, guid: df3ab5a792a93364c82ecfc371fb8969, type: 3}
+    animatorController: {fileID: 22100000, guid: 50218f823216c95478a458ee9ab689ce, type: 2}
+    characterMaterial: {fileID: -382652638819485698, guid: df3ab5a792a93364c82ecfc371fb8969, type: 3}
+    characterAvatar: {fileID: 9000000, guid: df3ab5a792a93364c82ecfc371fb8969, type: 3}
   debugMenuParent: {fileID: 0}
   debugMenuItemprefab: {fileID: 980138208532883943, guid: c18ef8ee519d55c46a034ed1eccaa4f8, type: 3}
   RespawnPos: {x: 41.33687, y: 25, z: -27.607147}
@@ -1583,7 +1594,7 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4706970630151028270}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: df3ab5a792a93364c82ecfc371fb8969, type: 3}
+  m_Avatar: {fileID: 9000000, guid: 63d37396056e70d44976f5631340cf68, type: 3}
   m_Controller: {fileID: 22100000, guid: 50218f823216c95478a458ee9ab689ce, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
