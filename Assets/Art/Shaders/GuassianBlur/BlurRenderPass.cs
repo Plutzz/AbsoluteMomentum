@@ -38,6 +38,8 @@ public class BlurRenderPass : ScriptableRenderPass
         blurTex = new RenderTargetHandle();
         blurTex.id = blurTexID;
         cmd.GetTemporaryRT(blurTex.id, cameraTextureDescriptor);
+
+        base.Configure(cmd, cameraTextureDescriptor);
     }
 
     public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
