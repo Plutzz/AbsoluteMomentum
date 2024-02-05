@@ -8,10 +8,6 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using Unity.Netcode.Components;
 using System;
-using Unity.Multiplayer.Samples.Utilities.ClientAuthority;
-using System.Text;
-using UnityEngine.UIElements;
-using UnityEditor.Animations;
 
 public class PlayerStateMachine : NetworkBehaviour
 {
