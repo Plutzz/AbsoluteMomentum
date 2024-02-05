@@ -30,7 +30,7 @@ public class DeathBox : NetworkBehaviour
         player = null;
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red; // End point
 
