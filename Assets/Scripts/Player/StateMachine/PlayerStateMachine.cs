@@ -244,6 +244,9 @@ public class PlayerStateMachine : NetworkBehaviour
                 RaceManager.Instance.playerList.Add(gameObject);
                 Debug.Log(gameObject + "Added to player list");
             }
+
+
+            SwitchCharacters();
         }
     }
 
@@ -284,16 +287,17 @@ public class PlayerStateMachine : NetworkBehaviour
             TeleportPlayer();
         }
 
-        if (Input.GetKeyDown(KeyCode.T))
+        if (Input.GetKeyDown(KeyCode.Y))
         {
-            if(currentCharacter == CharacterNames.Baku)
-            {
-                currentCharacter = CharacterNames.Sangeo;
-                // Switch character objects
+            SwitchCharacters();
 
-                var character = characters[(int)CharacterNames.Sangeo];
-                character.characterMesh;
+            currentCharacter++;
+
+            if((int)currentCharacter >= characters.Length)
+            {
+                currentCharacter = 0;
             }
+
         }
 
 
@@ -641,6 +645,24 @@ public class PlayerStateMachine : NetworkBehaviour
 
                 break;
         }
+    }
+
+    private void SwitchCharacters()
+    {
+        //Switch character objects
+        var _character = characters[(int)currentCharacter];
+
+        //Switch animation controller
+        GetComponentInChildren<Animator>().runtimeAnimatorController = _character.animatorController;
+
+        //Switch Avatars
+        GetComponentInChildren<Animator>().avatar = _character.characterAvatar;
+
+        //Switch Mesh
+        GetComponentInChildren<SkinnedMeshRenderer>().sharedMesh = _character.characterMesh;
+
+        //Switch Material
+        GetComponentInChildren<SkinnedMeshRenderer>().material = _character.characterMaterial;
     }
     #endregion
 }
