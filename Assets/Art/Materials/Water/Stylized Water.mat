@@ -69,9 +69,9 @@ Material:
     - _NormalStrength: 1
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _RefractionScale: 7.15
+    - _RefractionScale: 7
     - _RefractionSpeed: 0.1
-    - _RefractionStrength: 1.48
+    - _RefractionStrength: 1.5
     - _SingleDirection: 0
     - _Smoothness: 0
     - _UseNormalTexture: 0
