@@ -24,7 +24,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseTexture:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 66cc6866adf7a344c869f4d6eb585f2a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -41,12 +41,12 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _DotSize: 1.7
-    - _DotSpace: 10.43
+    - _DotSize: 2.13
+    - _DotSpace: 7.55
     - _QueueControl: 0
     - _QueueOffset: 0
     m_Colors:
-    - _DotColor: {r: 1, g: 1, b: 1, a: 1}
+    - _DotColor: {r: 0.381132, g: 0.381132, b: 0.381132, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &384708344955326361
 MonoBehaviour:
