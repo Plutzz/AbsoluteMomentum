@@ -120,7 +120,8 @@ public class PlayerStateMachine : NetworkBehaviour
     public enum CharacterNames
     {
         Baku,
-        Sangeo
+        Sangeo,
+        Etoile
     };
 
     #endregion
