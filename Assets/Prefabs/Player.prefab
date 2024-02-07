@@ -1388,22 +1388,17 @@ MonoBehaviour:
   - name: 0
     characterMesh: {fileID: -552449423649928739, guid: 63d37396056e70d44976f5631340cf68, type: 3}
     animatorController: {fileID: 22100000, guid: 50218f823216c95478a458ee9ab689ce, type: 2}
-    characterMaterial: {fileID: 7860002334081704449, guid: 63d37396056e70d44976f5631340cf68, type: 3}
+    characterMaterial: {fileID: 2100000, guid: 3c631f509ba49ba4c996c31646cef24e, type: 2}
     characterAvatar: {fileID: 9000000, guid: 63d37396056e70d44976f5631340cf68, type: 3}
   - name: 1
     characterMesh: {fileID: 8996641751091383843, guid: df3ab5a792a93364c82ecfc371fb8969, type: 3}
     animatorController: {fileID: 22100000, guid: 50218f823216c95478a458ee9ab689ce, type: 2}
-    characterMaterial: {fileID: -382652638819485698, guid: df3ab5a792a93364c82ecfc371fb8969, type: 3}
-    characterAvatar: {fileID: 9000000, guid: df3ab5a792a93364c82ecfc371fb8969, type: 3}
-  - name: 1
-    characterMesh: {fileID: 8996641751091383843, guid: df3ab5a792a93364c82ecfc371fb8969, type: 3}
-    animatorController: {fileID: 22100000, guid: 50218f823216c95478a458ee9ab689ce, type: 2}
-    characterMaterial: {fileID: -382652638819485698, guid: df3ab5a792a93364c82ecfc371fb8969, type: 3}
+    characterMaterial: {fileID: 2100000, guid: 928749ea5796d1b4089afd4810d29686, type: 2}
     characterAvatar: {fileID: 9000000, guid: df3ab5a792a93364c82ecfc371fb8969, type: 3}
   - name: 2
     characterMesh: {fileID: 2204816618772369797, guid: 02fd5f5b00bfeee429a33585d46eedeb, type: 3}
     animatorController: {fileID: 22100000, guid: 50218f823216c95478a458ee9ab689ce, type: 2}
-    characterMaterial: {fileID: -3846018093981099296, guid: 02fd5f5b00bfeee429a33585d46eedeb, type: 3}
+    characterMaterial: {fileID: 2100000, guid: cf6674a44ac012242bf44fb2440238e5, type: 2}
     characterAvatar: {fileID: 9000000, guid: 02fd5f5b00bfeee429a33585d46eedeb, type: 3}
   currentCharacter: 0
   debugMenuParent: {fileID: 0}
