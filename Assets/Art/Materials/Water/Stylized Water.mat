@@ -32,7 +32,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: 
+  m_LockedProperties: _RefractionSpeed
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -59,8 +59,8 @@ Material:
     m_Ints: []
     m_Floats:
     - _Absorbtion_Coefficient: 0
-    - _Depth: 1
-    - _DepthStrength: 0.51
+    - _Depth: 2.5
+    - _DepthStrength: 0.15
     - _FoamAlpha: 255
     - _FoamAmount: 3
     - _FoamCutoff: 1
@@ -71,10 +71,10 @@ Material:
     - _NormalStrength: 1
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _RefractNoiseScale: 3.09
-    - _RefractStrength: 1
+    - _RefractNoiseScale: 5
+    - _RefractStrength: 5
     - _RefractionScale: 7
-    - _RefractionSpeed: 0.1
+    - _RefractionSpeed: 0.08
     - _RefractionStrength: 1.73
     - _SingleDirection: 0
     - _Smoothness: 0
