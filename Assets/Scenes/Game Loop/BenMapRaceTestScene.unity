@@ -20896,7 +20896,7 @@ Transform:
   m_GameObject: {fileID: 834092461}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 205.3, y: 3, z: 130.8}
+  m_LocalPosition: {x: 205, y: 3.1, z: 130.93}
   m_LocalScale: {x: -1, y: -1, z: -1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -31897,7 +31897,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 2095455048}
+  m_Mesh: {fileID: 1090700853}
 --- !u!33 &1262308373
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -34028,7 +34028,7 @@ GameObject:
   - component: {fileID: 1321035436}
   - component: {fileID: 1321035435}
   - component: {fileID: 1321035434}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube (12)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43508,7 +43508,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 1858188555}
+  m_Mesh: {fileID: 398012883}
 --- !u!33 &1667538361
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -53146,7 +53146,7 @@ Transform:
   m_GameObject: {fileID: 2096536868}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5, y: -0.5, z: 0.5, w: -0.5}
-  m_LocalPosition: {x: 129.1083, y: 2.4912663, z: 24.270676}
+  m_LocalPosition: {x: 129, y: 2.578, z: 24.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
